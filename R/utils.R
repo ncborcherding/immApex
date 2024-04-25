@@ -2,16 +2,17 @@ amino.acids <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M"
 
 #Add additional sequence padding to max length
 .padded.strings <- function(strings, 
-                            max.length
+                            max.length,
                             padded.token = NULL) {
   max_length <- max.length
   
   x <- lapply(strings, function(str) {
-    str_len <- length(str)
+    str_len <- nchar(str)
     if (str_len < max_length) {
-      str <- c(str, rep(padded.token, max_length - str_len))
+      str <- paste(c(str, rep(padded.token, max_length - str_len)), collapse = "")
     } else {
       str
     }
   })
+  
 }
