@@ -36,7 +36,8 @@ one.hot.encoder <- function(input.sequences,
   print("Padding sequences...")
   padded_sequences <- .padded.strings(strings = input.sequences, 
                                       max.length = max.length,
-                                      padded.token = ".")
+                                      padded.token = ".",
+                                      concatenate = TRUE)
   
   
   print("One Hot Encoding sequences...")

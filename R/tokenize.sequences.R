@@ -55,7 +55,8 @@ tokenize.sequences <- function(input.sequences,
   print("Padding sequences...")
   sequences_tokenized <- .padded.strings(sequences_tokenized, 
                                          max.length,
-                                         padded.token = length(char_to_int) + 1)
+                                         padded.token = length(char_to_int) + 1,
+                                         concatenate = FALSE)
   
   if(convert.to.matrix) {
     print("Preparing a tokenized matrix...")
