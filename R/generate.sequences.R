@@ -14,10 +14,10 @@
 #' @param prefix.motif Add defined amino acid sequence to the start of the generated sequences.
 #' @param suffix.motif Add defined amino acid sequence to the end of the generated sequences
 #' @param number.of.sequence Number of sequences to generate
-#' @param sequence.dictionary The letters to use in sequence generation (default are all amino acids)
 #' @param min.length Minimum length of the final sequence (will be adjusted if 
 #' incongruent with prefix.motif/suffix.motif)
 #' @max.length Maximum length of the final sequence
+#' @param sequence.dictionary The letters to use in sequence generation (default are all amino acids)
 #' 
 #' @export
 #' @importFrom stringi function stri_rand_strings
@@ -26,9 +26,9 @@
 generate.sequences <- function(prefix.motif = NULL,
                                suffix.motif = NULL,
                                number.of.sequences = 100,
-                               sequence.dictionary = c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V"),
                                min.length = 1,
-                               max.length = 10) {
+                               max.length = 10,
+                               sequence.dictionary = c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")) {
   if(!is.null(prefix.motif) | !is.null(suffix.motif)) {
     motif.length <- sum(nchar(c(prefix.motif,suffix.motif)))
     if(min.length < motif.length) {

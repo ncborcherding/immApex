@@ -16,7 +16,7 @@
 #'                                      stop.token = "^", 
 #'                                      convert.to.matrix = TRUE)
 #'                         
-#' @param input.sequences The amino acid sequences to use.
+#' @param input.sequences The amino acid sequences to use
 #' @param add.startstop Add start and stop tokens to the sequence
 #' @param start.token The character to use for the start token
 #' @param stop.token The character to use for the stop token
@@ -53,7 +53,9 @@ tokenize.sequences <- function(input.sequences,
   }
   
   print("Padding sequences...")
-  sequences_tokenized <- .padded.strings(sequences_tokenized, max.length)
+  sequences_tokenized <- .padded.strings(sequences_tokenized, 
+                                         max.length,
+                                         padded.token = length(char_to_int) + 1)
   
   if(convert.to.matrix) {
     print("Preparing a tokenized matrix...")
