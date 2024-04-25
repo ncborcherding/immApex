@@ -23,9 +23,15 @@
 one.hot.encoder <- function(input.sequences, 
                             max.length = NULL,
                             split.length = 1,
-                            convert.to.matrix = TRUE) {
-  
-  char_set <- c(amino.acids, ".")
+                            convert.to.matrix = TRUE,
+                            sequence.dictionary = amino.acids[1:20]) {
+  if(split.length == 1) {
+    char_set <- c(sequence.dictionary, ".")
+  } else {
+    all_motifs <- expand.grid(replicate(split.length, sequence.dictionary, simplify = FALSE))
+    unique_motifs <- unique(apply(all_motifs, 1, paste, collapse = ""))
+    char_set <- c(unique_motifs, ".")
+  }
   # Create a mapping of amino acids to integers
   char_to_int <- setNames(seq_along(char_set), char_set)
   
@@ -33,13 +39,14 @@ one.hot.encoder <- function(input.sequences,
     max.length <- max(nchar(input.sequences))
   }
   
+  #How to pad motifs
   print("Padding sequences...")
   padded_sequences <- .padded.strings(strings = input.sequences, 
                                       max.length = max.length,
                                       padded.token = ".",
                                       concatenate = TRUE)
   
-  
+  #How to convert to motifs
   print("One Hot Encoding sequences...")
   onehot_sequences <- .convert.one.hot(unlist(padded_sequences),
                                        max.length = max.length,

@@ -13,7 +13,7 @@
 #'                         
 #' @param prefix.motif Add defined amino acid sequence to the start of the generated sequences.
 #' @param suffix.motif Add defined amino acid sequence to the end of the generated sequences
-#' @param number.of.sequence Number of sequences to generate
+#' @param number.of.sequences Number of sequences to generate
 #' @param min.length Minimum length of the final sequence (will be adjusted if 
 #' incongruent with prefix.motif/suffix.motif)
 #' @max.length Maximum length of the final sequence
@@ -41,7 +41,7 @@ generate.sequences <- function(prefix.motif = NULL,
   seq.length <- sample(length.range, number.of.sequences, replace = TRUE)
   
   # Generate the random sequences
-  lapply(seq_len(number.of.sequence), function(x) {
+  lapply(seq_len(number.of.sequences), function(x) {
       sequence <- stri_rand_strings(n = 1, length = seq.length[x], pattern = paste0("[", paste(sequence.dictionary, collapse = ""), "]"))
       #add prefix and suffix
       if(!is.null(prefix.motif) | !is.null(suffix.motif)) {

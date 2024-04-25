@@ -31,3 +31,27 @@ amino.acids <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M"
   return(x)
   
 }
+
+#Split Strings by motif.length
+substring.extractor <- function(strings, motif.length) {
+  lapply(strings, function(x) {
+    # Determine the length of the current string
+    string_length <- nchar(x)
+    
+    # Calculate the number of substrings possible
+    num_substrings <- string_length - motif.length + 1
+    
+    if (num_substrings > 0) {
+      # Generate all substrings of the specified length
+      substrings <- sapply(1:num_substrings, function(j) {
+        substring(x, j, j + motif.length - 1)
+      })
+    } else {
+      # Return NA if the string is too short
+      substrings <- NA
+    }
+  }) -> motif.list
+  return(motif.list)
+}
+
+
