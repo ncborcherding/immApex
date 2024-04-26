@@ -1,7 +1,7 @@
 # Apex
 API for single-cell immune repertoire deep learning models
 
-<img align="right" src="https://github.com/ncborcherding/Apex/blob/main/www/apex_hex.png" width="352" height="352">
+<img align="right" src="https://github.com/ncborcherding/Apex/blob/main/www/apex_hex.png" width="305" height="352">
 
 ## Introduction
 Single-cell sequencing is now a integral tool in the field of immunology and oncology that allows researchers to couple RNA quantification and other modalities, 
