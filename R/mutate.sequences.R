@@ -40,7 +40,7 @@ mutate.sequences <- function(input.sequences,
   
   lapply(sequences, function(x) {
     lapply(seq_len(n.sequences), function(y) {
-      mutate.sequence(x, 
+      .mutate.sequence(x, 
                       mutation.rate = mutation.rate,
                       position.start = position.start,
                       position.end = position.end,
@@ -60,15 +60,15 @@ mutate.sequences <- function(input.sequences,
                              position.end = position.end,
                              sequence.dictionary = sequence.dictionary) {
     amino_acids <- strsplit(sequence, "")[[1]]
-    num_mutations <- ceiling(length(amino_acids) * mutation_rate)
-    if (is.null(position.start | position.start %!in% seq_len(length(amino_acids)) {
+    num_mutations <- ceiling(length(amino_acids) * mutation.rate)
+    if (is.null(position.start | position.start %!in% seq_len(length(amino_acids)))) {
         position.start <- 1
     }
     if (is.null(position.end) | position.end %!in% seq_len(length(amino_acids))) {
       position.end <- length(amino_acids)
     }
     
-    positions_to_mutate <- sample(position.start:position.end num_mutations)
+    positions_to_mutate <- sample(position.start:position.end, num_mutations)
     
     for (pos in positions_to_mutate) {
       # Select a random amino acid that is different from the current one

@@ -18,6 +18,8 @@
 #' to the max length of input.sequences
 #' @param convert.to.matrix Return a matrix (TRUE) or a 3D array (FALSE)
 #' 
+#' @importFrom keras array_reshape
+#' 
 #' @export
 #' @return Tokenized amino acid sequences in a matrix of vector
 one.hot.encoder <- function(input.sequences, 

@@ -1,0 +1,75 @@
+---
+title: Welcome to Apex
+author: 
+- name: Nick Borcherding
+  email: ncborch@gmail.com
+  affiliation: Washington University in St. Louis, School of Medicine, St. Louis, MO, USA
+date: "April 26, 2024"
+output:
+  BiocStyle::html_document:
+    toc_float: true
+package: Trex
+vignette: >
+  %\VignetteEngine{knitr::knitr}
+  %\VignetteIndexEntry{Running Apex}
+  %\usepackage[UTF-8]{inputenc}
+---
+
+```{r, echo=FALSE, results="hide", message=FALSE}
+knitr::opts_chunk$set(error=FALSE, message=FALSE, warning=FALSE)
+library(BiocStyle)
+```
+
+# Introduction
+
+## Load Libraries
+
+```{r}
+suppressMessages(library(Apex))
+suppressMessages(library(keras))
+```
+
+Apex is meant to serve as an API for deep learning models based on immune receptor sequencing. These collection of functions serve to process amino acid sequences, 
+
+****************
+
+# Generate.sequences
+
+```{r}
+sequences <- generate.sequences(prefix.motif = "CAS",
+                                suffix.motif = "YF",
+                                number.of.sequences = 1000,
+                                min.length = 8,
+                                max.length = 16)
+head(sequences)
+```
+
+
+# Mutate.sequences
+
+```{r}
+mutated_sequences <- mutate.sequences(sequences, 
+                                      n.sequence = 1,
+                                      position.start = 3,                                  
+                                      position.end = 8)
+head(sequences)
+head(mutated_sequences)
+```
+
+# One.hot.encoder
+
+```{r}
+sequence.matrix <- one.hot.encoder(input.sequences =  c(sequences, mutated_sequences), 
+                                   convert.to.matrix = TRUE)
+```
+
+***
+# Conclusion
+
+This has been a general overview of the capabilities of Trex for incorporating TCR information into the embedding space of single-cell data. If you have any questions, comments, or suggestions, feel free to visit the github repository or [email me](mailto:ncborch@gmail.com).
+
+## Session Info
+
+```{r}
+sessionInfo()
+```
