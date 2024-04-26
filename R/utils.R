@@ -1,5 +1,7 @@
 amino.acids <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V", ".")
 
+"%!in%" <- Negate("%in%")
+
 #Add additional sequence padding to max length
 .padded.strings <- function(strings, 
                             max.length,

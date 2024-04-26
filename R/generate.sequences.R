@@ -22,7 +22,7 @@
 #' @export
 #' @importFrom stringi function stri_rand_strings
 #' 
-#' @return A vector of generated seqeunces
+#' @return A vector of generated sequences
 generate.sequences <- function(prefix.motif = NULL,
                                suffix.motif = NULL,
                                number.of.sequences = 100,
