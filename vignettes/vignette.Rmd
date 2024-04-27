@@ -55,14 +55,16 @@ mutated_sequences <- mutate.sequences(sequences,
 head(sequences)
 head(mutated_sequences)
 ```
+# Encoders
 
-# One.hot.encoder
+## One.hot.encoder
 
 ```{r}
 sequence.matrix <- one.hot.encoder(input.sequences =  c(sequences, mutated_sequences), 
                                    convert.to.matrix = TRUE)
 ```
 
+## 
 ***
 # Conclusion
 
