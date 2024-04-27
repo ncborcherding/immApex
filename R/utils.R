@@ -56,4 +56,7 @@ substring.extractor <- function(strings, motif.length) {
   return(motif.list)
 }
 
+.min.max.normalize <- function(x){
+  (x- min(x)) /(max(x)-min(x))
+}
 

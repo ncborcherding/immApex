@@ -25,7 +25,7 @@
 #' @param convert.to.matrix Return a matrix (TRUE) or a vector (FALSE)
 #' 
 #' @export
-#' @return Tokenized amino acid sequences in a matrix of vector
+#' @return Tokenized amino acid sequences in a matrix or vector
 tokenize.sequences <- function(input.sequences, 
                                add.startstop = TRUE,
                                start.token = "!",

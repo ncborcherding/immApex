@@ -21,7 +21,7 @@
 #' @importFrom keras array_reshape
 #' 
 #' @export
-#' @return Tokenized amino acid sequences in a matrix of vector
+#' @return One hot encoded amino acid sequences in a matrix or 3D array
 one.hot.encoder <- function(input.sequences, 
                             max.length = NULL,
                             split.length = 1,

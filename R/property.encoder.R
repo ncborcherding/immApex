@@ -1,33 +1,48 @@
-"crucianiProperties" = crucianiProperties,
-"fasgaiVectors" = fasgaiVectors,
-"kideraFactors" = kideraFactors,
-"mswhimScores" = mswhimScores,
-"protFP" protFP,
-"stScales" = stScales,
-"tScales" = tScales,
-"vhseScales" = vhseScales, 
-"zScales" = zScales
+#' Encoder from Amino Acid String by Properties
+#' 
+#' Use this to transform amino acid sequences a
+#' a matrix by amino acid properties derived from 
+#' dimensional reduction strategies
+#' 
+#' @examples
+#' new.sequences <- generate.sequences(prefix.motif = "CAS",
+#'                                     suffix.motif = "YF",
+#'                                     number.of.sequences = 100,
+#'                                     min.length = 8,
+#'                                     max.length = 16)
+#'                           
+#' sequence.matrix <- one.hot.encoder(new.sequences, 
+#'                                    method.to.use = VHSE",
+#'                                    convert.to.matrix = TRUE)
+#'                         
+#' @param input.sequences The amino acid sequences to use
+#' @param max.length Additional length to pad, NULL will pad sequences 
+#' to the max length of input.sequences
+#' @param method.to.use The method or approach to use for the conversion: 
+#' "atchleyFactors", "crucianiProperties", "FASGAI", "kideraFactors", "MSWHIM",
+#' "ProtFP", "stScales", "tScales", "VHSE", "zScales"            
+#' @param convert.to.matrix Return a matrix (TRUE) or a 3D array (FALSE)
+#' 
+#' @importFrom keras array_reshape
+#' 
+#' @export
+#' @return Converted amino acid sequences by property in a matrix or 3D array
 
 property.encoder <- function(input.sequences, 
                              max.length = NULL,
                              method.to.use = NULL,
                              convert.to.matrix = TRUE) {
-  
-  propertyFunc <- switch(method.to.use, 
-                         "crucianiProperties" = crucianiProperties,
-                         "fasgaiVectors" = fasgaiVectors,
-                         "kideraFactors" = kideraFactors,
-                         "mswhimScores" = mswhimScores,
-                         "protFP" protFP,
-                         "stScales" = stScales,
-                         "tScales" = tScales,
-                         "vhseScales" = vhseScales, 
-                         "zScales" = zScales)
+  load(apex_AA_data)
+  if(method.to.use %!in% names(apex_AA_data)) {
+    stop(paste0("Please select one of the following for method.to.use: ", paste(sort(names(apex_AA_data)), collapse = ", ")))
+  }
+  vectors <- apex_AA_data[[method.to.use]]
+  vectors <- lapply(vectors, .min.max.normalize)
   
   #TODO Add Apex AA list
   #TODO Extract Vectors
   #TODO Normalize Vectors
-  vectors <- AAdata$FASGAI
+  
   
   if(is.null(max.length)) {
     max.length <- max(nchar(input.sequences))

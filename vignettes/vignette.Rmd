@@ -64,6 +64,14 @@ sequence.matrix <- one.hot.encoder(input.sequences =  c(sequences, mutated_seque
                                    convert.to.matrix = TRUE)
 ```
 
+## Property.encoder
+
+```{r}
+property.matrix <- property.encoder(input.sequences =  c(sequences, mutated_sequences), 
+                                    method.to.use = "FASGAI",
+                                    convert.to.matrix = TRUE)
+```
+
 ## 
 ***
 # Conclusion
