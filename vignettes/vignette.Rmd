@@ -72,6 +72,13 @@ property.matrix <- property.encoder(input.sequences =  c(sequences, mutated_sequ
                                     convert.to.matrix = TRUE)
 ```
 
+## Positional.encoder
+
+```{r}
+positional.matrix <- positional.encoder(number.of.sequences = length(c(sequences, mutated_sequences)),
+                                        latent.dims = 40)
+```
+
 ## 
 ***
 # Conclusion
