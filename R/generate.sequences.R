@@ -16,11 +16,11 @@
 #' @param number.of.sequences Number of sequences to generate
 #' @param min.length Minimum length of the final sequence (will be adjusted if 
 #' incongruent with prefix.motif/suffix.motif)
-#' @max.length Maximum length of the final sequence
+#' @param max.length Maximum length of the final sequence
 #' @param sequence.dictionary The letters to use in sequence generation (default are all amino acids)
 #' 
 #' @export
-#' @importFrom stringi function stri_rand_strings
+#' @importFrom stringi stri_rand_strings
 #' 
 #' @return A vector of generated sequences
 generate.sequences <- function(prefix.motif = NULL,

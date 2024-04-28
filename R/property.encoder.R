@@ -12,7 +12,7 @@
 #'                                     max.length = 16)
 #'                           
 #' sequence.matrix <- one.hot.encoder(new.sequences, 
-#'                                    method.to.use = VHSE",
+#'                                    method.to.use = "VHSE",
 #'                                    convert.to.matrix = TRUE)
 #'                         
 #' @param input.sequences The amino acid sequences to use
