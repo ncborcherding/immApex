@@ -59,6 +59,11 @@ head(mutated_sequences)
 
 ## One.hot.encoder
 
+#' @param input.sequences The amino acid sequences to use
+#' @param max.length Additional length to pad, NULL will pad sequences 
+#' to the max length of input.sequences
+#' @param convert.to.matrix Return a matrix (TRUE) or a 3D array (FALSE)
+
 ```{r}
 sequence.matrix <- one.hot.encoder(input.sequences =  c(sequences, mutated_sequences), 
                                    convert.to.matrix = TRUE)
@@ -66,10 +71,28 @@ sequence.matrix <- one.hot.encoder(input.sequences =  c(sequences, mutated_seque
 
 ## Property.encoder
 
+Encode **input.sequences** into an array/matrix based on amino acid properties. 
+
+**method.to.use**  
+
+* atchleyFactors - \href{https://pubmed.ncbi.nlm.nih.gov/15851683/}{citation}).
+* crucianiProperties - \href{https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/abs/10.1002/cem.856}{citation}).
+* FASGAI - \href{https://pubmed.ncbi.nlm.nih.gov/18318694/}).
+* kideraFactors - \href{https://link.springer.com/article/10.1007/BF01025492}{citation}).
+* MSWHIM - \href{https://pubs.acs.org/doi/10.1021/ci980211b}{citation}).
+* ProtFP - \href{https://pubmed.ncbi.nlm.nih.gov/24059694/}{citation}).
+* stScales - \href{https://pubmed.ncbi.nlm.nih.gov/19373543/}{citation}).
+* tScales - \href{https://www.sciencedirect.com/science/article/abs/pii/S0022286006006314}{citation}).
+* VHSE - \href{https://pubmed.ncbi.nlm.nih.gov/15895431/}{citation}).
+* zScales - \href{https://pubmed.ncbi.nlm.nih.gov/9651153/}{citation}).
+
+
 ```{r}
 property.matrix <- property.encoder(input.sequences =  c(sequences, mutated_sequences), 
                                     method.to.use = "FASGAI",
                                     convert.to.matrix = TRUE)
+
+head(property.matrix[,1:20])
 ```
 
 ## Positional.encoder
