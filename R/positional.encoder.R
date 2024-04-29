@@ -1,4 +1,4 @@
-#' Adding position-specific information to sequences
+#' Adding Position-Specific Information to Sequences
 #' 
 #' Use this calculate positional encoding for recurrent
 #' neural networks using sin/cos and position information.

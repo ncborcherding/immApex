@@ -1,4 +1,4 @@
-#' Randomly generate amino acid seqeunces
+#' Randomly Generate Amino Acid Sequences
 #' 
 #' Use this to make synthetic amino acid sequences
 #' for purposes of testing code, training models,

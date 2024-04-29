@@ -1,4 +1,4 @@
-#' Randomly mutate sequences of amino acids
+#' Randomly Mutate Sequences of Amino Acids
 #' 
 #' Use this to mutate amino acid sequences
 #' for purposes of testing code, training models,
