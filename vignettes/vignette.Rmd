@@ -110,7 +110,9 @@ head(sequence.matrix[,1:20])
 
 ## Property.encoder
 
-An alternative to one hot encoding is to transform the sequences into an array/matrix of numerical values using amino acid properties. These properties are largely based on dimensional reduction strategies, but it is important to know the assumptions for each approach (links to original work below). **Important to note** this is the only encoding strategy that is specific for amino acids. 
+An alternative to one hot encoding is to transform the sequences into an array/matrix of numerical values using amino acid properties. 
+
+These properties are largely based on dimensional reduction strategies, but it is important to know the assumptions for each approach (links to original work below). **Important to note** this is the only encoding strategy that is specific for amino acids. 
 
 **method.to.use**  
 
@@ -158,13 +160,13 @@ head(token.matrix[,1:18])
 ## Positional.encoder
 
 ```{r}
-positional.matrix <- positional.encoder(number.of.sequences = length(c(sequences, mutated_sequences)),
+positional.matrix <- positional.encoder(number.of.sequences = length(c(sequences, mutated.sequences)),
                                         latent.dims = 40)
 ```
 
 # Training a Model
 
-For the purposes of the vignette - we will use a autoencoder for sequence embedding. The code below is based on the [Trex](https://github.com/ncborcherding/Trex) R package. 
+For the purposes of the vignette - we will use a autoencoder for sequence embedding. The code below is based on the [Trex](https://github.com/ncborcherding/Trex) R package. The overall structure of the autoencoder is the same, however, some of the parameters are modified for the sake of the vignette.
 
 The steps to train the model include: 
 

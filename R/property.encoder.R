@@ -32,7 +32,6 @@ property.encoder <- function(input.sequences,
                              max.length = NULL,
                              method.to.use = NULL,
                              convert.to.matrix = TRUE) {
-  load(apex_AA_data)
   if(method.to.use %!in% names(apex_AA_data)) {
     stop(paste0("Please select one of the following for method.to.use: ", paste(sort(names(apex_AA_data)), collapse = ", ")))
   }

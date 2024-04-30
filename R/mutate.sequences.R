@@ -10,10 +10,10 @@
 #'                                 number.of.sequences = 100,
 #'                                 min.length = 8,
 #'                                 max.length = 16)
-#' mutated_sequences <- mutate.sequence(sequences, 
-#'                                      n.sequence = 1,
-#'                                      position.start = 3,
-#'                                      position.end = 8)
+#' mutated_sequences <- mutate.sequences(sequences, 
+#'                                       n.sequence = 1,
+#'                                       position.start = 3,
+#'                                       position.end = 8)
 #' 
 #' 
 #' @param input.sequences The amino acid or nucleotide sequences to use

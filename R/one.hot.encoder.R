@@ -16,7 +16,9 @@
 #' @param input.sequences The amino acid or nucleotide sequences to use
 #' @param max.length Additional length to pad, NULL will pad sequences 
 #' to the max length of input.sequences
-#' @param convert.to.matrix Return a matrix (TRUE) or a 3D array (FALSE)
+#' @param convert.to.matrix Return a matrix (**TRUE**) or a 3D array (**FALSE**)
+#' @param sequence.dictionary The letters to use in sequence generation (default are all amino acids). 
+#' This will be overrode if using a motif approach (split.length > 1).
 #' 
 #' @importFrom keras array_reshape
 #' 
