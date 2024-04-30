@@ -13,7 +13,7 @@
 #'sequence.matrix <- one.hot.encoder(new.sequences, 
 #'                                   convert.to.matrix = TRUE)
 #'                         
-#' @param input.sequences The amino acid sequences to use
+#' @param input.sequences The amino acid or nucleotide sequences to use
 #' @param max.length Additional length to pad, NULL will pad sequences 
 #' to the max length of input.sequences
 #' @param convert.to.matrix Return a matrix (TRUE) or a 3D array (FALSE)

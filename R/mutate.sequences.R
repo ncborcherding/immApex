@@ -16,7 +16,7 @@
 #'                                      position.end = 8)
 #' 
 #' 
-#' @param input.sequences The amino acid sequences to use
+#' @param input.sequences The amino acid or nucleotide sequences to use
 #' @param n.sequences The number of mutated sequences to return
 #' @param mutation.rate The rate of mutations to introduce into sequences
 #' @param position.start The starting position to mutate along the sequence. 

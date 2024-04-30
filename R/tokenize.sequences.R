@@ -16,7 +16,7 @@
 #'                                      stop.token = "^", 
 #'                                      convert.to.matrix = TRUE)
 #'                         
-#' @param input.sequences The amino acid sequences to use
+#' @param input.sequences The amino acid or nucleotide sequences to use
 #' @param add.startstop Add start and stop tokens to the sequence
 #' @param start.token The character to use for the start token
 #' @param stop.token The character to use for the stop token
