@@ -162,6 +162,82 @@ positional.matrix <- positional.encoder(number.of.sequences = length(c(sequences
                                         latent.dims = 40)
 ```
 
+# Training a Model
+
+For the purposes of the vignette - we will use a autoencoder for sequence embedding. The code below is based on the [Trex](https://github.com/ncborcherding/Trex) R package. 
+
+The steps to train the model include: 
+
+1. Subsetting sequences
+2. Defining parameters for the model
+3. Forming the autoencoder structure - encoder and decoder
+4. Fitting the model
+
+```{r}
+#Sampling to make Training/Valid Data
+set.seed(42)
+num_sequences <- nrow(sequence.matrix)
+indices <- 1:num_sequences
+train_indices <- sample(indices, size = floor(0.8 * num_sequences))
+val_indices <- setdiff(indices, train_indices)
+    
+x_train <- sequence.matrix[train_indices,]
+x_val <- sequence.matrix[val_indices,]
+   
+# Parameters
+input_shape <- dim(x_train)[2]
+epochs <- 20
+batch_size <- 128
+encoding_dim <- 40 
+hidden_dim1 <- 256 # Hidden layer 1 size
+hidden_dim2 <- 128  # Hidden layer 2 size
+    
+es = callback_early_stopping(monitor = "val_loss",
+                             min_delta = 0,
+                             patience = 4,
+                             verbose = 1,
+                             mode = "min")
+                    
+# Define the Model
+input_seq <- layer_input(shape = c(input_shape))
+        
+# Encoder Layers
+encoded <- input_seq %>%
+          layer_dense(units = hidden_dim1, name = "e.1") %>%
+          layer_batch_normalization(name = "bn.1") %>%
+          layer_activation('leaky_relu', name = "act.1") %>%
+          layer_dense(units = hidden_dim2, name = "e.2") %>%
+          layer_batch_normalization(name = "bn.2") %>%
+          layer_activation('leaky_relu', name = "act.2") %>%
+          layer_dense(units = encoding_dim, activation = 'selu', name = "latent")
+                
+# Decoder Layers
+decoded <- encoded %>%
+          layer_dense(units = hidden_dim2, name = "d.2") %>%
+          layer_batch_normalization(name = "bn.3") %>%
+          layer_activation('leaky_relu', name = "act.3") %>%
+          layer_dense(units = hidden_dim1, name = "d.1") %>%
+          layer_batch_normalization(name = "bn.4") %>%
+          layer_activation('leaky_relu', name = "act.4") %>%
+          layer_dense(units = input_shape, activation = 'sigmoid')
+      
+# Autoencoder Model
+autoencoder <- keras_model(input_seq, decoded)
+autoencoder %>% keras::compile(optimizer = optimizer_adam(learning_rate = 0.0001),
+                                   loss = "mse")
+      
+# Train the model
+history <- autoencoder %>% fit(x = x_train,
+                               y = x_train,
+                               validation_data = list(x_val, x_val),
+                               epochs = epochs,
+                               batch_size = batch_size,
+                               shuffle = TRUE,
+                               callbacks = es)
+
+plot(history)
+```
+
 
 ***
 # Conclusion
