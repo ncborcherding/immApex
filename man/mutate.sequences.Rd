@@ -2,7 +2,7 @@
 % Please edit documentation in R/mutate.sequences.R
 \name{mutate.sequences}
 \alias{mutate.sequences}
-\title{Randomly mutate sequences of amino acids}
+\title{Randomly Mutate Sequences of Amino Acids}
 \usage{
 mutate.sequences(
   input.sequences,
@@ -14,7 +14,7 @@ mutate.sequences(
 )
 }
 \arguments{
-\item{input.sequences}{The amino acid sequences to use}
+\item{input.sequences}{The amino acid or nucleotide sequences to use}
 
 \item{n.sequences}{The number of mutated sequences to return}
 

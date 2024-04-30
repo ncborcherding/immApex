@@ -14,7 +14,7 @@ tokenize.sequences(
 )
 }
 \arguments{
-\item{input.sequences}{The amino acid sequences to use}
+\item{input.sequences}{The amino acid or nucleotide sequences to use}
 
 \item{add.startstop}{Add start and stop tokens to the sequence}
 

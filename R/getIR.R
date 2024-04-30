@@ -22,7 +22,7 @@ getIR <- function(input.data,
   
   col.pos <- switch(sequence.type,
                     "aa" = "CTaa",
-                    "nt" = "CTnt"
+                    "nt" = "CTnt",
                     stop("Please select either 'aa' or 'nt' for sequence.type."))
   
   if (inherits(x=input.data, what ="Seurat") | inherits(x=input.data, what ="SingleCellExperiment")) {

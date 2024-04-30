@@ -2,7 +2,7 @@
 % Please edit documentation in R/positional.encoder.R
 \name{positional.encoder}
 \alias{positional.encoder}
-\title{Adding position-specific information to sequences}
+\title{Adding Position-Specific Information to Sequences}
 \usage{
 positional.encoder(number.of.sequences, latent.dims = NULL)
 }

@@ -13,7 +13,7 @@ one.hot.encoder(
 )
 }
 \arguments{
-\item{input.sequences}{The amino acid sequences to use}
+\item{input.sequences}{The amino acid or nucleotide sequences to use}
 
 \item{max.length}{Additional length to pad, NULL will pad sequences 
 to the max length of input.sequences}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/generate.sequences.R
 \name{generate.sequences}
 \alias{generate.sequences}
-\title{Randomly generate amino acid seqeunces}
+\title{Randomly Generate Amino Acid Sequences}
 \usage{
 generate.sequences(
   prefix.motif = NULL,
@@ -15,9 +15,9 @@ generate.sequences(
 )
 }
 \arguments{
-\item{prefix.motif}{Add defined amino acid sequence to the start of the generated sequences.}
+\item{prefix.motif}{Add defined amino acid/nucleotide sequence to the start of the generated sequences.}
 
-\item{suffix.motif}{Add defined amino acid sequence to the end of the generated sequences}
+\item{suffix.motif}{Add defined amino acid/nucleotide sequence to the end of the generated sequences}
 
 \item{number.of.sequences}{Number of sequences to generate}
 
