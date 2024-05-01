@@ -32,7 +32,7 @@ test_that("one.hot.encoder works", {
                                convert.to.matrix = FALSE)
   
   expect_equal(
-    ohe.array,
+    ohe.padded.array,
     getdata("ohe.encoder", "one.hot.encoder_padded.array")
   )
   

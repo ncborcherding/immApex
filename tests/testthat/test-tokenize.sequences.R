@@ -23,7 +23,7 @@ test_that("tokenize.sequences works", {
                                      convert.to.matrix = TRUE)
   
   expect_equal(
-    token.noAdded,
+    token.matrix,
     getdata("tokenize.sequences", "tokenize.sequences_matrix")
   )
   

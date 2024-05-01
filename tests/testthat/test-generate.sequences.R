@@ -22,6 +22,6 @@ test_that("generate.sequences works", {
   
   expect_equal(
     t2.sequences,
-    getdata("generate.sequences", "generate.sequences_T1")
+    getdata("generate.sequences", "generate.sequences_T2")
   )
 })
