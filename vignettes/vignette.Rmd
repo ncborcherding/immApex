@@ -166,6 +166,8 @@ positional.matrix <- positional.encoder(number.of.sequences = length(c(sequences
 
 # Training a Model
 
+## Autoencoder
+
 For the purposes of the vignette - we will use a autoencoder for sequence embedding. The code below is based on the [Trex](https://github.com/ncborcherding/Trex) R package. The overall structure of the autoencoder is the same, however, some of the parameters are modified for the sake of the vignette.
 
 The steps to train the model include: 
@@ -239,6 +241,9 @@ history <- autoencoder %>% fit(x = x_train,
 
 plot(history)
 ```
+
+## Classifier
+
 
 
 ***

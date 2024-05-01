@@ -3,6 +3,11 @@ API for single-cell immune repertoire deep learning models
 
 <img align="right" src="https://github.com/ncborcherding/Apex/blob/main/www/apex_hex.png" width="305" height="352">
 
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/ncborcherding/Apex/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ncborcherding/Apex/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/ncborcherding/Apex/branch/main/graph/badge.svg)](https://app.codecov.io/gh/ncborcherding/Apex?branch=main)
+<!-- badges: end -->
+
 ## Introduction
 Single-cell sequencing is now a integral tool in the field of immunology and oncology that allows researchers to couple RNA quantification and other modalities, 
 like immune cell receptor profiling at the level of an individual cell. Towards this end, we developed the [scRepertoire](https://github.com/ncborcherding/scRepertoire) 
