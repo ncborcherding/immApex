@@ -14,12 +14,16 @@ biocViews: Software, ImmunoOncology, SingleCell, Classification, Annotation, Seq
 Depends: 
 	R (>= 4.0)
 Imports: keras,
+	methods,
 	SingleCellExperiment,
+	stats,
 	stringi,
 	stringr
 Suggests: 
 	BiocStyle,
 	knitr,
+	scRepertoire,
+	spelling,
         testthat
 VignetteBuilder: knitr
 Language: en-US

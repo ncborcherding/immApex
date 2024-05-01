@@ -11,9 +11,9 @@
 #'                                     min.length = 8,
 #'                                     max.length = 16)
 #'                           
-#' sequence.matrix <- one.hot.encoder(new.sequences, 
-#'                                    method.to.use = "VHSE",
-#'                                    convert.to.matrix = TRUE)
+#' sequence.matrix <- property.encoder(new.sequences, 
+#'                                     method.to.use = "VHSE",
+#'                                     convert.to.matrix = TRUE)
 #'                         
 #' @param input.sequences The amino acid sequences to use
 #' @param max.length Additional length to pad, NULL will pad sequences 

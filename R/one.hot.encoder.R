@@ -21,6 +21,7 @@
 #' This will be overrode if using a motif approach (split.length > 1).
 #' 
 #' @importFrom keras array_reshape
+#' @importFrom stats setNames
 #' 
 #' @export
 #' @return One hot encoded amino acid sequences in a matrix or 3D array

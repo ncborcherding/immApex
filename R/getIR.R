@@ -60,6 +60,7 @@ getIR <- function(input.data,
 }
 
 #' @importFrom SingleCellExperiment colData 
+#' @importFrom methods slot
 .grabMeta <- function(sc) {
   if (inherits(x=sc, what ="Seurat")) {
     meta <- data.frame(sc[[]], slot(sc, "active.ident"))
