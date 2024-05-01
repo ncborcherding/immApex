@@ -18,7 +18,9 @@ Imports: keras,
 	stringi,
 	stringr
 Suggests: 
-	knitr
+	BiocStyle,
+	knitr,
+        testthat
 VignetteBuilder: knitr
 Language: en-US
 URL: https://github.com/ncborcherding/Apex/
