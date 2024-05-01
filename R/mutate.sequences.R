@@ -10,6 +10,7 @@
 #'                                 number.of.sequences = 100,
 #'                                 min.length = 8,
 #'                                 max.length = 16)
+#'                                 
 #' mutated_sequences <- mutate.sequences(sequences, 
 #'                                       n.sequence = 1,
 #'                                       position.start = 3,
@@ -38,7 +39,7 @@ mutate.sequences <- function(input.sequences,
                              position.end = NULL,
                              sequence.dictionary = amino.acids[1:20]) {
   
-  lapply(sequences, function(x) {
+  lapply(input.sequences, function(x) {
     lapply(seq_len(n.sequences), function(y) {
       .mutate.sequence(x, 
                       mutation.rate = mutation.rate,
@@ -61,10 +62,10 @@ mutate.sequences <- function(input.sequences,
                              sequence.dictionary = sequence.dictionary) {
     amino_acids <- strsplit(sequence, "")[[1]]
     num_mutations <- ceiling(length(amino_acids) * mutation.rate)
-    if (is.null(position.start | position.start %!in% seq_len(length(amino_acids)))) {
+    if (is.null(position.start) || position.start %!in% seq_len(length(amino_acids))) {
         position.start <- 1
     }
-    if (is.null(position.end) | position.end %!in% seq_len(length(amino_acids))) {
+    if (is.null(position.end) || position.end %!in% seq_len(length(amino_acids))) {
       position.end <- length(amino_acids)
     }
     

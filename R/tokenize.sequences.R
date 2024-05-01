@@ -39,6 +39,7 @@ tokenize.sequences <- function(input.sequences,
     sequences_updated <- sapply(input.sequences, function(x) paste(start.token, x, stop.token, sep = ""))
   } else {
     char_set <- c(amino.acids)
+    sequences_updated <- input.sequences
   }
   
   # Create a mapping of amino acids to integers
