@@ -18,7 +18,10 @@ one.hot.encoder(
 \item{max.length}{Additional length to pad, NULL will pad sequences 
 to the max length of input.sequences}
 
-\item{convert.to.matrix}{Return a matrix (TRUE) or a 3D array (FALSE)}
+\item{convert.to.matrix}{Return a matrix (**TRUE**) or a 3D array (**FALSE**)}
+
+\item{sequence.dictionary}{The letters to use in sequence generation (default are all amino acids). 
+This will be overrode if using a motif approach (split.length > 1).}
 }
 \value{
 One hot encoded amino acid sequences in a matrix or 3D array
