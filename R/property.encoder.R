@@ -36,12 +36,8 @@ property.encoder <- function(input.sequences,
     stop(paste0("Please select one of the following for method.to.use: ", paste(sort(names(apex_AA_data)), collapse = ", ")))
   }
   vectors <- apex_AA_data[[method.to.use]]
+  #TODO Think about other normalization
   vectors <- lapply(vectors, .min.max.normalize)
-  
-  #TODO Add Apex AA list
-  #TODO Extract Vectors
-  #TODO Normalize Vectors
-  
   
   if(is.null(max.length)) {
     max.length <- max(nchar(input.sequences))
@@ -62,6 +58,7 @@ property.encoder <- function(input.sequences,
   if(convert.to.matrix) {
     print("Preparing a matrix...")
     property_matrix <- array_reshape(property_sequences, c(dim(property_sequences)[1], dim(property_sequences)[2]*dim(property_sequences)[3]))
+    colnames(property_matrix) <- array.dimnamer(property_sequences)
     return(property_matrix)
   } else {
     return(property_sequences)
@@ -82,8 +79,8 @@ property.encoder <- function(input.sequences,
     property_array[i,,] <- transformed
   }
   
-  dimnames(property_array) <- list(paste0("Seq_", 1:length(sequences)),
-                                  paste0("Pos_", 1:max.length),
+  dimnames(property_array) <- list(paste0("Seq.", 1:length(sequences)),
+                                  paste0("Pos.", 1:max.length),
                                   names(vectors))
   return(property_array)
 }

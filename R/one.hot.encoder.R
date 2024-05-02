@@ -30,12 +30,12 @@ one.hot.encoder <- function(input.sequences,
                             split.length = 1,
                             convert.to.matrix = TRUE,
                             sequence.dictionary = amino.acids[1:20]) {
-  if(split.length == 1) {
-    char_set <- c(sequence.dictionary, ".")
-  } else {
-    all_motifs <- expand.grid(replicate(split.length, sequence.dictionary, simplify = FALSE))
-    unique_motifs <- unique(apply(all_motifs, 1, paste, collapse = ""))
-    char_set <- c(unique_motifs, ".")
+  
+  char_set <- c(sequence.dictionary, ".")
+
+  if (split.length > 1) {
+    all_motifs <- expand.grid(replicate(split.length, char_set, simplify = FALSE))
+    char_set <- unique(apply(all_motifs, 1, paste, collapse = ""))
   }
   # Create a mapping of amino acids to integers
   char_to_int <- setNames(seq_along(char_set), char_set)
@@ -55,37 +55,41 @@ one.hot.encoder <- function(input.sequences,
   print("One Hot Encoding sequences...")
   onehot_sequences <- .convert.one.hot(unlist(padded_sequences),
                                        max.length = max.length,
+                                       split.length = split.length,
                                        char_set = char_set)
 
   if(convert.to.matrix) {
     print("Preparing a matrix...")
     onehot_matrix <- array_reshape(onehot_sequences, c(dim(onehot_sequences)[1], dim(onehot_sequences)[2]*dim(onehot_sequences)[3]))
+    colnames(onehot_matrix) <- array.dimnamer(onehot_sequences)
     return(onehot_matrix)
   } else {
     return(onehot_sequences)
   }
 }
 
-#TODO Allow for motif or single AA encoding
 
 
-
-.convert.one.hot <- function(sequences, 
-                             split.length = 1,
-                             max.length,
-                             char_set = NULL) {
-  
+.convert.one.hot <- function(sequences, split.length = 1, max.length, char_set = NULL) {
+  # Initialize the one-hot array with appropriate dimensions
   one_hot_array <- array(0, dim = c(length(sequences), max.length, length(char_set)))
-  for (i in seq_len(length(sequences))) {
-    chars <- strsplit(sequences[i], "")[[1]]
-    valid_indices <- match(chars, char_set, nomatch = length(char_set) + 1) #NoMatch will not be recorded
+  
+  # Extract all subsequences from each sequence
+  subsequences <- substring.extractor(sequences, split.length)
+  
+  # Apply one-hot encoding
+  for (i in seq_along(subsequences)) {
+    chars <- subsequences[[i]]
+    valid_indices <- match(chars, char_set)
     for(t in seq_along(chars)) {
-      one_hot_array[i, t, valid_indices[t]] <- 1
+      if (!is.na(valid_indices[t])) {
+        one_hot_array[i, t, valid_indices[t]] <- 1
+      }
     }
   }
   
-  dimnames(one_hot_array) <- list(paste0("Seq_", 1:length(sequences)),
-                                  paste0("Pos_", 1:max.length),
-                                  c(char_set))
+  dimnames(one_hot_array) <- list(paste0("Seq.", 1:length(sequences)),
+                                  paste0("Pos.", 1:max.length),
+                                  char_set)
   return(one_hot_array)
 }

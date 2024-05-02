@@ -38,8 +38,8 @@ new.sequences <- generate.sequences(prefix.motif = "CAS",
                                     min.length = 8,
                                     max.length = 16)
                           
-sequence.matrix <- one.hot.encoder(new.sequences, 
-                                   method.to.use = "VHSE",
-                                   convert.to.matrix = TRUE)
+sequence.matrix <- property.encoder(new.sequences, 
+                                    method.to.use = "VHSE",
+                                    convert.to.matrix = TRUE)
                         
 }

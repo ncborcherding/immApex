@@ -34,15 +34,10 @@ amino.acids <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M"
   
 }
 
-#Split Strings by motif.length
 substring.extractor <- function(strings, motif.length) {
   lapply(strings, function(x) {
-    # Determine the length of the current string
     string_length <- nchar(x)
-    
-    # Calculate the number of substrings possible
     num_substrings <- string_length - motif.length + 1
-    
     if (num_substrings > 0) {
       # Generate all substrings of the specified length
       substrings <- sapply(1:num_substrings, function(j) {
@@ -52,11 +47,20 @@ substring.extractor <- function(strings, motif.length) {
       # Return NA if the string is too short
       substrings <- NA
     }
-  }) -> motif.list
-  return(motif.list)
+    substrings
+  })
 }
 
 .min.max.normalize <- function(x){
   (x- min(x)) /(max(x)-min(x))
+}
+
+#' @importFrom stringr str_sort
+array.dimnamer <- function(array) {
+  combinations <- expand.grid(dimnames(array)[[2]], dimnames(array)[[3]], stringsAsFactors = FALSE, KEEP.OUT.ATTRS = FALSE)
+  combinations[,1] <- str_sort(combinations[,1], numeric = TRUE)
+  combinations[,2] <- dimnames(array)[[3]]
+  combined_strings <- apply(combinations, 1, function(x) paste0(x[1], "_", x[2]))
+  return(combined_strings)
 }
 

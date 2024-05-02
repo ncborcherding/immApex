@@ -3,7 +3,8 @@
 test_that("property.encoder works", {
   
   sequences <- getdata("generate.sequences", "generate.sequences_T1")
-
+  
+  #Return Matrix
   af.matrix <- property.encoder(sequences,
                                 method.to.use = "atchleyFactors",
                                 convert.to.matrix = TRUE)
@@ -13,6 +14,7 @@ test_that("property.encoder works", {
     getdata("property.encoder", "property.encoder_AtchleyFactors_matrix")
   )
   
+  #Return Array
   kf.array <- property.encoder(sequences,
                                method.to.use = "kideraFactors",
                                convert.to.matrix = FALSE)
@@ -22,6 +24,7 @@ test_that("property.encoder works", {
     getdata("property.encoder", "property.encoder_KideraFactors_array")
   )
   
+  #Padded Matrix
   fasgai.matrix <- property.encoder(sequences,
                                     max.length = 40,
                                     method.to.use = "FASGAI",
@@ -32,6 +35,7 @@ test_that("property.encoder works", {
     getdata("property.encoder", "property.encoder_FASGAI_matrix")
   )
   
+  #Padded Array
   vhse.array <- property.encoder(sequences,
                                  max.length = 40,
                                  method.to.use = "VHSE",

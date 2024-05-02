@@ -11,6 +11,13 @@ test_that("one.hot.encoder works", {
     getdata("ohe.encoder", "one.hot.encoder_matrix")
   )
   
+  ohe.2mer <- one.hot.encoder(sequences, 
+                              split.length = 2)
+  expect_equal(
+    ohe.2mer,
+    getdata("ohe.encoder", "one.hot.encoder_2mer.matrix")
+  )
+  
   ohe.padded <- one.hot.encoder(sequences,
                                 max.length = 40)
   
@@ -47,5 +54,3 @@ test_that("one.hot.encoder works", {
   )
   
 })
-
-#TODO Add motif testing
