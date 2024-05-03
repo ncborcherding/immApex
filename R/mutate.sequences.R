@@ -16,22 +16,18 @@
 #'                                       position.start = 3,
 #'                                       position.end = 8)
 #' 
-#' 
 #' @param input.sequences The amino acid or nucleotide sequences to use
 #' @param n.sequences The number of mutated sequences to return
 #' @param mutation.rate The rate of mutations to introduce into sequences
-#' @param position.start The starting position to mutate along the sequence. 
-#' Default NULL will start the random mutations at position 1.
-#' @param position.end The ending position to mutate along the sequence.
-#' Default NULL will end the random mutations at the last position.
-#'@param sequence.dictionary The letters to use in sequence mutation
+#' @param position.start The starting position to mutate along the sequence
+#' Default NULL will start the random mutations at position 1
+#' @param position.end The ending position to mutate along the sequence
+#' Default NULL will end the random mutations at the last position
+#' @param sequence.dictionary The letters to use in sequence mutation
 #' (default are all amino acids)
 #' 
-#' @export
-#' 
+#' @export mutate.sequences
 #' @return A vector of mutated sequences
-
-
 mutate.sequences <- function(input.sequences, 
                              n.sequences = 1, 
                              mutation.rate = 0.01,
