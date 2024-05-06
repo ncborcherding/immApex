@@ -1,50 +1,36 @@
-getIMGT <- function(species = "Homo sapiens",
+getIMGT <- function(species = "human",
                     chain = "TRB",
                     sequence.type = "aa"
-                    region = "v", 
-                    release = 7.6) {
-  
-}
+                    frame = "inframe",
+                    region = "v") {
 
 if(region %!in% c("v", "d", "j", "c")) {
   stop("Please select a region in the following category: v, d, j, c")
 }
 
+selection <- paste0(frame, "_", sequence.type)
 
+selection <- switch(selection, 
+                   "all_nt" = 7.2,
+                   "inframe_nt" = 7.5,
+                   "inframe_aa" = 7.6,
+                   "gap_nt" = 7.1,
+                   "gap_aa" = 7.3,
+                   "The selection made for sequence.type and frame is not available.")
 
-F+ORF+all P = 7.2
-F+ORF+in-frame P = 7.5
-F+ORF+in-frame P AA = 7.6
-F+ORF+in-frame P with IMGT gaps 7.1
-F+ORF+in-frame P with IMGT gaps AA 7.3
 
 chain.update <- toupper(paste0("+", chain, region))
-release <- 7.6
-species.update <- stringr::str_replace(species, " ", "+")
-
-base.url <- https://www.imgt.org/genedb/GENElect?query=7.6+IGHV&species=Homo+sapiens
+species.update <- parseSpecies(species)
+species.update <- stringr::str_replace(species.update, " ", "+")
 base.url <- "https://www.imgt.org/genedb/GENElect?query="
 
-updated.url <- paste0(base.url, release, chain.update, "&species=", species.update)
+updated.url <- paste0(base.url, selection, chain.update, "&species=", species.update)
 
+#TODO FASTA download
+#TODO FASTA conversion
+#TODO Add detection
 
-.parse.url <- function(x) {
-  if not in_args['gapped'] and not in_args['in_frame_p']:
-    return url_stem + "IMGTGENEDB-ReferenceSequences.fasta-nt-WithoutGaps-F+ORF+allP", \
-  ['IMGT-GENEDB', 'ungapped', 'allP']
-  
-  elif not in_args['gapped'] and in_args['in_frame_p']:
-    return url_stem + "IMGTGENEDB-ReferenceSequences.fasta-nt-WithoutGaps-F+ORF+inframeP", \
-  ['IMGT-GENEDB', 'ungapped', 'inframeP']
-  
-  elif in_args['gapped'] and in_args['in_frame_p']:
-    return url_stem + "IMGTGENEDB-ReferenceSequences.fasta-nt-WithGaps-F+ORF+inframeP", \
-  ['IMGT-GENEDB', 'gapped', 'inframeP']
-  
-  elif in_args['gapped'] and not in_args['in_frame_p']:
-    raise IOError("IMGT/GENE-DB does not offer a gapped nucleotide FASTA with in frame pseudogenes.")
 }
-
 
 #' @importFrom hash hash
 parseSpecies <- function(x) {
