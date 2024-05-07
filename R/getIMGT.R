@@ -19,6 +19,9 @@
 #' @param region Sequence gene loci to access
 #' @param sequence.type Type of sequence - "aa" for amino acid or "nt" for nucleotide
 #' 
+#' @importFrom stringr str_extract str_replace str_remove_all str_split
+#' @importFrom httr GET
+#' @importFrom rvest read_html html_text
 #' @export 
 #' @return A list of allele sequences
 getIMGT <- function(species = "human",
@@ -27,12 +30,16 @@ getIMGT <- function(species = "human",
                     frame = "inframe",
                     region = "v") {
 
-  if(region %!in% c("v", "d", "j", "c")) {
-    stop("Please select a region in the following category: v, d, j, c")
+  if(tolower(region) %!in% c("v", "d", "j", "c")) {
+    stop("Please select a region in the following category: 'v', 'd', 'j', 'c'")
   }
   
-  if(sequence.type %!in% c("aa", "nt")) {
-    stop("Please select a sequence.type in the following category: aa or nt")
+  if(tolower(sequence.type) %!in% c("aa", "nt")) {
+    stop("Please select a sequence.type in the following category: 'aa' or 'nt'")
+  }
+  
+  if(tolower(frame) %!in% c("all", "inframe", "inframe+gap")) {
+    stop("Please select a frame in the following category: 'all', 'inframe', or 'inframe+gap'")
   }
   
   if(frame == "inframe+gap" and chain %in% c("IGLJ" "IGKJ" "IGHJ" "IGHD")) {
@@ -40,7 +47,7 @@ getIMGT <- function(species = "human",
   }
   
   
-  selection <- paste0(frame, "_", sequence.type)
+  selection <- paste0(tolower(frame), "_", tolower(sequence.type))
   
   selection <- switch(selection, 
                      "all_nt" = 7.2,
@@ -50,12 +57,11 @@ getIMGT <- function(species = "human",
                      "inframe+gap_aa" = 7.3,
                      "The selection made for sequence.type and frame is not available.")
   
-  
+  #Formatting selection into URL for IMGT fasta
   chain.update <- toupper(paste0("+", chain, region))
   species.update <- parseSpecies(species)
   species.update <- stringr::str_replace(species.update, " ", "+")
   base.url <- "https://www.imgt.org/genedb/GENElect?query="
-  
   updated.url <- paste0(base.url, selection, chain.update, "&species=", species.update)
   
   print("Getting the sequences from IMGT...")
@@ -78,15 +84,26 @@ getIMGT <- function(species = "human",
       next  # Skip this sequence if it does not have enough parts
     }
     
-    # Extract the sequence part which generally starts after the last "|"
-    sequence <- str_extract(seq, "(?<=\\|)[\\s\\S]*$")
-    
     # Remove any non-sequence characters (like digits, description text, etc.)
-    sequence <- gsub("[^A-Z]", "", sequence)  # Assuming only uppercase letters are valid
+    if(tolower(sequence.type) == "aa") {
+      sequence <- str_extract(seq, "(?<=\\|)[\\s\\S]*$")
+      sequence <- gsub("[^A-Z]", "", sequence)  # Assuming only uppercase letters are valid
+    } else if(tolower(sequence.type) == "nt") {
+      sequence <- str_extract(seq, "[acgt]+$")
+      sequence <- gsub("[^a-z]", "", sequence)  # Assuming only uppercase letters are valid
+    }
     
     # Assign the sequence to the allele name in the list
     fasta_list[[allele_name]] <- sequence
   }
+  
+  result.list <- list(sequences = fasta_list,
+                      misc = list(species = species.update,
+                                  chain = chain,
+                                  sequence.type = sequence.type
+                                  frame = frame,
+                                  region = region))
+  return(result.list)
 
 #TODO Add detection
 #TODO Add testthat
