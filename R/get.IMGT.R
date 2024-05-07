@@ -5,13 +5,13 @@
 #' IMGT can be found at {https://www.imgt.org/}{imgt.org}.
 #' 
 #' @examples
-#'TRBV_aa <- getIMGT <- function(species = "human",
-#'                               chain = "TRB",
-#'                               frame = "inframe",
-#'                               region = "v",
-#'                               sequence.type = "aa") 
+#'TRBV_aa <- get.IMGT(species = "human",
+#'                    chain = "TRB",
+#'                    frame = "inframe",
+#'                    region = "v",
+#'                    sequence.type = "aa") 
 #'                               
-#' @param species One word designation of species. Currently supporting: 
+#' @param species One or two word designation of species. Currently supporting: 
 #' "human", "mouse", "rat", "rabbit", "rhesus monkey", "sheep", "pig", "platypus",
 #' "alpaca", "dog", "chicken", and "ferret"
 #' @param chain Sequence chain to access
@@ -22,11 +22,11 @@
 #' @importFrom stringr str_extract str_replace str_remove_all str_split
 #' @importFrom httr GET
 #' @importFrom rvest read_html html_text
-#' @export 
+#' @export get.IMGT
 #' @return A list of allele sequences
-getIMGT <- function(species = "human",
+get.IMGT <- function(species = "human",
                     chain = "TRB",
-                    sequence.type = "aa"
+                    sequence.type = "aa",
                     frame = "inframe",
                     region = "v") {
 
@@ -42,7 +42,7 @@ getIMGT <- function(species = "human",
     stop("Please select a frame in the following category: 'all', 'inframe', or 'inframe+gap'")
   }
   
-  if(frame == "inframe+gap" and chain %in% c("IGLJ" "IGKJ" "IGHJ" "IGHD")) {
+  if(frame == "inframe+gap" & chain %in% c("IGLJ", "IGKJ", "IGHJ", "IGHD")) {
     stop("IMGT-gapped sequences are not available for 'IGLJ', 'IGKJ', 'IGHJ' or 'IGHD'")
   }
   
@@ -100,13 +100,10 @@ getIMGT <- function(species = "human",
   result.list <- list(sequences = fasta_list,
                       misc = list(species = species.update,
                                   chain = chain,
-                                  sequence.type = sequence.type
+                                  sequence.type = sequence.type,
                                   frame = frame,
                                   region = region))
   return(result.list)
-
-#TODO Add detection
-#TODO Add testthat
 
 }
 
