@@ -19,16 +19,16 @@
 #' @param region Sequence gene loci to access
 #' @param sequence.type Type of sequence - "aa" for amino acid or "nt" for nucleotide
 #' 
-#' @importFrom stringr str_extract str_replace str_remove_all str_split
+#' @importFrom stringr str_extract str_replace_all str_remove_all str_split
 #' @importFrom httr GET
 #' @importFrom rvest read_html html_text
 #' @export get.IMGT
 #' @return A list of allele sequences
 get.IMGT <- function(species = "human",
-                    chain = "TRB",
-                    sequence.type = "aa",
-                    frame = "inframe",
-                    region = "v") {
+                     chain = "TRB",
+                     sequence.type = "aa",
+                     frame = "inframe",
+                     region = "v") {
 
   if(tolower(region) %!in% c("v", "d", "j", "c")) {
     stop("Please select a region in the following category: 'v', 'd', 'j', 'c'")
@@ -60,7 +60,7 @@ get.IMGT <- function(species = "human",
   #Formatting selection into URL for IMGT fasta
   chain.update <- toupper(paste0("+", chain, region))
   species.update <- parseSpecies(species)
-  species.update <- stringr::str_replace(species.update, " ", "+")
+  species.update <- stringr::str_replace_all(species.update, " ", "+")
   base.url <- "https://www.imgt.org/genedb/GENElect?query="
   updated.url <- paste0(base.url, selection, chain.update, "&species=", species.update)
   
@@ -88,6 +88,7 @@ get.IMGT <- function(species = "human",
     if(tolower(sequence.type) == "aa") {
       sequence <- str_extract(seq, "(?<=\\|)[\\s\\S]*$")
       sequence <- gsub("[^A-Z]", "", sequence)  # Assuming only uppercase letters are valid
+      sequence <- stringr::str_remove_all(sequence, paste0(chain, toupper(region)))
     } else if(tolower(sequence.type) == "nt") {
       sequence <- str_extract(seq, "[acgt]+$")
       sequence <- gsub("[^a-z]", "", sequence)  # Assuming only uppercase letters are valid
