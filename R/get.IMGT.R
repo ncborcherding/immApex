@@ -2,7 +2,7 @@
 #' 
 #' Use this to access the ImMunoGeneTics (IMGT) sequences for a
 #' specific species and gene loci. More information on 
-#' IMGT can be found at {https://www.imgt.org/}{imgt.org}.
+#' IMGT can be found at \href{https://www.imgt.org/}{imgt.org}.
 #' 
 #' @examples
 #'TRBV_aa <- get.IMGT(species = "human",
