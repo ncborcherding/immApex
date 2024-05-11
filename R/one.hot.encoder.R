@@ -1,7 +1,7 @@
-#' One Hot Encoder from Amino Acid String
+#' One Hot Encoder from Amino Acid or Nucleotide Strings
 #' 
-#' Use this to transform amino acid sequences a
-#' one hot encoding of the sequence.
+#' Use this to transform amino acid or nucleotide sequences 
+#' into a one hot encoding of the sequence.
 #' 
 #' @examples
 #' new.sequences <- generate.sequences(prefix.motif = "CAS",
@@ -17,14 +17,15 @@
 #' @param max.length Additional length to pad, NULL will pad sequences 
 #' to the max length of input.sequences
 #' @param convert.to.matrix Return a matrix (**TRUE**) or a 3D array (**FALSE**)
-#' @param sequence.dictionary The letters to use in sequence generation (default are all amino acids). 
-#' This will be overrode if using a motif approach (split.length > 1).
+#' @param sequence.dictionary The letters to use in sequence generation 
+#' (default are all amino acids). This will be overrode if using a
+#'  motif approach (split.length > 1).
 #' 
 #' @importFrom keras array_reshape
 #' @importFrom stats setNames
 #' 
 #' @export
-#' @return One hot encoded amino acid sequences in a matrix or 3D array
+#' @return One hot encoded sequences in a matrix or 3D array
 one.hot.encoder <- function(input.sequences, 
                             max.length = NULL,
                             split.length = 1,
