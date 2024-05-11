@@ -23,9 +23,21 @@
 #' @return Geometric encoded amino acid sequences in a matrix
 
 
-geommetric.encoder <- function(input.sequences, 
+geometric.encoder <- function(input.sequences, 
                                method.to.use = "BLOSUM62",
                                theta = pi) {
+  possible.methods <- c("BLOSUM45", "BLOSUM50", "BLOSUM62", "BLOSUM80", 
+                        "BLOSUM100", "PAM30","PAM40", "PAM70", "PAM120", "PAM250")
+  
+  if (method.to.use %!in% possible.methods) {
+    stop(paste0("Please select a method.to.us from the following options: ", 
+                paste(possible.methods, collapse = ", ")))
+  }
+  
+  if(any(unlist(strsplit(input.sequences[1:10], "")) %!in% amino.acids[1:20])) {
+    stop("geometric.encoder() works only on the sequences with the conventional 20 amino acids")
+  }
+  
   dim <- 20
   rotation_matrix <- diag(dim)
   
@@ -36,8 +48,8 @@ geommetric.encoder <- function(input.sequences,
     rotation_matrix[i:(i+1), i:(i+1)] = rotation_2d
   }
   
-  
-  transformed <- lapply(input.sequences, function(x) {
+  print("Performing geometric transformation...")
+  geometric_sequences <- lapply(input.sequences, function(x) {
     if(is.na(x)) {
       tmp <- rep(0, 20)
     } else {
@@ -48,16 +60,12 @@ geommetric.encoder <- function(input.sequences,
     }
     tmp
   })
-  score <- do.call(rbind,transformed)
-  rownames(score) <- TCR[[1]]$barcode
-  colnames(score) <- paste0("Trex_", seq_len(ncol(score)))
-  return(score)
   
-  
-  print("Performing geometric transformation...")
-  reduction <- .geometric.encoding(TCR, theta)
+  geommetric_matrix <- do.call(rbind,geometric_sequences)
+  return(geommetric_matrix)
 }
 
+#Create BLOSUM/PAM Matrix
 .aa_to_submatrix <- function(sequence,
                              method) {
   aa_indices <- match(strsplit(as.character(sequence), '')[[1]], amino.acids[1:20])

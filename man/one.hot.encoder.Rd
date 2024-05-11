@@ -2,7 +2,7 @@
 % Please edit documentation in R/one.hot.encoder.R
 \name{one.hot.encoder}
 \alias{one.hot.encoder}
-\title{One Hot Encoder from Amino Acid String}
+\title{One Hot Encoder from Amino Acid or Nucleotide Strings}
 \usage{
 one.hot.encoder(
   input.sequences,
@@ -20,15 +20,16 @@ to the max length of input.sequences}
 
 \item{convert.to.matrix}{Return a matrix (**TRUE**) or a 3D array (**FALSE**)}
 
-\item{sequence.dictionary}{The letters to use in sequence generation (default are all amino acids). 
-This will be overrode if using a motif approach (split.length > 1).}
+\item{sequence.dictionary}{The letters to use in sequence generation 
+(default are all amino acids). This will be overrode if using a
+ motif approach (split.length > 1).}
 }
 \value{
-One hot encoded amino acid sequences in a matrix or 3D array
+One hot encoded sequences in a matrix or 3D array
 }
 \description{
-Use this to transform amino acid sequences a
-one hot encoding of the sequence.
+Use this to transform amino acid or nucleotide sequences 
+into a one hot encoding of the sequence.
 }
 \examples{
 new.sequences <- generate.sequences(prefix.motif = "CAS",

@@ -4,7 +4,7 @@
 \alias{mutate.sequences}
 \title{Randomly Mutate Sequences of Amino Acids}
 \usage{
-\method{mutate}{sequences}(
+mutate.sequences(
   input.sequences,
   n.sequences = 1,
   mutation.rate = 0.01,

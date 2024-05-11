@@ -20,8 +20,8 @@
 #' @param sequence.type Type of sequence - "aa" for amino acid or "nt" for nucleotide
 #' 
 #' @importFrom stringr str_extract str_replace_all str_remove_all str_split
-#' @importFrom httr GET
-#' @importFrom rvest read_html html_text
+#' @importFrom httr GET content
+#' @importFrom rvest read_html html_text html_nodes
 #' @export get.IMGT
 #' @return A list of allele sequences
 get.IMGT <- function(species = "human",
