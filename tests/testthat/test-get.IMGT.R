@@ -88,7 +88,5 @@ test_that("get.IMGT works", {
     "Macaca mulatta"
   )
   
-  
-  
 })
 
