@@ -33,6 +33,12 @@ library(tensorflow)
 install_tensorflow()
 ```
 
-***
-### Contact
-Questions, comments, suggestions, please feel free to contact Nick Borcherding via this repository, [email](mailto:ncborch@gmail.com), or using [twitter](https://twitter.com/theHumanBorch). 
+## Bug Reports/New Features
+
+#### If you run into any issues or bugs please submit a [GitHub issue](https://github.com/ncborcherding/Apex/issues) with details of the issue.
+
+- If possible please include a [reproducible example](https://reprex.tidyverse.org/). 
+
+#### Any requests for new features or enhancements can also be submitted as [GitHub issues](https://github.com/ncborcherding/Apex/issues).
+
+#### [Pull Requests](https://github.com/ncborcherding/Apex/pulls) are welcome for bug fixes, new features, or enhancements.
