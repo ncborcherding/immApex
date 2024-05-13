@@ -64,3 +64,14 @@ array.dimnamer <- function(array) {
   return(combined_strings)
 }
 
+#' @importFrom matrixStats colMedians colMeans2 colSums2 colVars colMads
+.get.stat.function <- function(method) {
+  statFunc <- switch(method,
+                     "median" = colMedians,
+                     "mean"  = colMeans2,
+                     "sum"      = colSums2,
+                     "vars" = colVars,
+                     "mads"  = colMads, 
+                     stop("Invalid summary.metric provided"))
+  return(statFunc) 
+}
