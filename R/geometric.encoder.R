@@ -10,8 +10,9 @@
 #'                                     min.length = 8,
 #'                                     max.length = 16)
 #'                           
-#' sequence.matrix <- one.hot.encoder(new.sequences, 
-#'                                    convert.to.matrix = TRUE)
+#' sequence.matrix <- geometric.encoder(new.sequences, 
+#'                                      method.to.use = "BLOSUM62",
+#'                                      theta = pi/3)
 #'                         
 #' @param input.sequences The amino acid sequences to use
 #' @param method.to.use The method or approach to use for the conversion: 
@@ -25,7 +26,7 @@
 
 geometric.encoder <- function(input.sequences, 
                                method.to.use = "BLOSUM62",
-                               theta = pi) {
+                               theta = pi/3) {
   possible.methods <- c("BLOSUM45", "BLOSUM50", "BLOSUM62", "BLOSUM80", 
                         "BLOSUM100", "PAM30","PAM40", "PAM70", "PAM120", "PAM250")
   

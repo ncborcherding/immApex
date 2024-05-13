@@ -4,7 +4,8 @@ test_that("geometric.encoder works", {
   
   sequences <- getdata("generate.sequences", "generate.sequences_T1")
 
-  geom.default <- geometric.encoder(sequences)
+  geom.default <- geometric.encoder(sequences,
+                                    theta = pi)
   
   expect_equal(
     geom.default,

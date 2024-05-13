@@ -135,6 +135,20 @@ property.matrix <- property.encoder(input.sequences =  c(sequences, mutated.sequ
 
 head(property.matrix[,1:20])
 ```
+## Geometric.encoder
+
+Parameters for ```geometric.encoder()```
+
+* **method.to.use** Select the following substitution matrices: "BLOSUM45", "BLOSUM50", "BLOSUM62", "BLOSUM80", "BLOSUM100", "PAM30", "PAM40", "PAM70", "PAM120", or "PAM250"
+
+* **theta** The angle in which to create the roataion matrix
+
+```{r}
+geometric.matrix <- geometric.encoder(new.sequences, 
+                                      method.to.use = "BLOSUM62",
+                                      theta = pi/3)
+head(geometric.matrix)
+```
 
 ## Tokenize.sequences
 
@@ -157,6 +171,8 @@ token.matrix <- tokenize.sequences(input.sequences =  c(sequences, mutated.seque
                                    convert.to.matrix = TRUE)
 head(token.matrix[,1:18])
 ```
+
+
 ## Positional.encoder
 
 ```{r}
