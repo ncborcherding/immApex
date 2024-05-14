@@ -72,6 +72,6 @@ array.dimnamer <- function(array) {
                      "sum"      = colSums2,
                      "vars" = colVars,
                      "mads"  = colMads, 
-                     stop("Invalid summary.metric provided"))
+                     stop("Invalid summary.function provided"))
   return(statFunc) 
 }

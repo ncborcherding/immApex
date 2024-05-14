@@ -20,9 +20,11 @@
 #' to the max length of input.sequences
 #' @param method.to.use The method or approach to use for the conversion: 
 #' "atchleyFactors", "crucianiProperties", "FASGAI", "kideraFactors", "MSWHIM",
-#' "ProtFP", "stScales", "tScales", "VHSE", "zScales"            
+#' "ProtFP", "stScales", "tScales", "VHSE", or "zScales"            
 #' @param convert.to.matrix Return a matrix (TRUE) or a 3D array (FALSE)
-#' 
+#' @param summary.function Return a matrix that summarize the amino acid method/property
+#' Available summaries include: "median", "mean", "sum", variance ("vars"), or 
+#' Median Absolute Deviation ("mads")
 #' @importFrom keras array_reshape
 #' 
 #' @export
@@ -31,7 +33,8 @@
 property.encoder <- function(input.sequences, 
                              max.length = NULL,
                              method.to.use = NULL,
-                             convert.to.matrix = TRUE) {
+                             convert.to.matrix = TRUE,
+                             summary.function = NULL) {
   if(method.to.use %!in% names(apex_AA_data)) {
     stop(paste0("Please select one of the following for method.to.use: ", paste(sort(names(apex_AA_data)), collapse = ", ")))
   }
@@ -55,6 +58,21 @@ property.encoder <- function(input.sequences,
                                           max.length = max.length,
                                           vectors = vectors)
   
+  if(!is.null(summary.function)) {
+    if (tolower(summary.function) %!in% c("median", "mean", "sum", "vars", "mads") {
+      stop("Please select one of the following summary.function options: 'median', 'mean', 'sum', 'vars', or 'mads'")
+    }
+    print(paste0("Summarising properties using ", summary.function, "...")
+    stat.function <- .get.stat.function(summary.function)
+    stat_matrix <- matrix(nrow = dim(property_sequences)[1], ncol = dim(property_sequences)[3])
+    
+    for (i in seq_len(length(input.sequences))) {
+      stat_matrix[i, ] <- stat.function(property_sequences[i, , ], na.rm = TRUE)
+    }
+    colnames(stat_matrix) <- dimnames(property_sequences)[[3]]
+    return(stat_matrix)
+  }
+  
   if(convert.to.matrix) {
     print("Preparing a matrix...")
     property_matrix <- array_reshape(property_sequences, c(dim(property_sequences)[1], dim(property_sequences)[2]*dim(property_sequences)[3]))
@@ -66,6 +84,7 @@ property.encoder <- function(input.sequences,
   
 }
 
+#Converting the sequence into numerical matrix
 .convert.property <- function(sequences, 
                              max.length,
                              vectors = vectors) {
