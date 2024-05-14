@@ -25,8 +25,8 @@
 
 
 geometric.encoder <- function(input.sequences, 
-                               method.to.use = "BLOSUM62",
-                               theta = pi/3) {
+                              method.to.use = "BLOSUM62",
+                              theta = pi/3) {
   possible.methods <- c("BLOSUM45", "BLOSUM50", "BLOSUM62", "BLOSUM80", 
                         "BLOSUM100", "PAM30","PAM40", "PAM70", "PAM120", "PAM250")
   

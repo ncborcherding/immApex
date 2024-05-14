@@ -10,16 +10,18 @@
 #'                                     min.length = 8,
 #'                                     max.length = 16)
 #'                           
-#'sequence.matrix <- one.hot.encoder(new.sequences, 
-#'                                   convert.to.matrix = TRUE)
+#' sequence.matrix <- one.hot.encoder(new.sequences, 
+#'                                    convert.to.matrix = TRUE)
 #'                         
 #' @param input.sequences The amino acid or nucleotide sequences to use
 #' @param max.length Additional length to pad, NULL will pad sequences 
 #' to the max length of input.sequences
+#' @param motif.length The length of the amino acid residues to encode -
+#'  motif.length = 1 produces single amino acid encodings
 #' @param convert.to.matrix Return a matrix (**TRUE**) or a 3D array (**FALSE**)
 #' @param sequence.dictionary The letters to use in sequence generation 
 #' (default are all amino acids). This will be overrode if using a
-#'  motif approach (split.length > 1).
+#'  motif approach (motif.length > 1).
 #' 
 #' @importFrom keras array_reshape
 #' @importFrom stats setNames
@@ -28,14 +30,14 @@
 #' @return One hot encoded sequences in a matrix or 3D array
 one.hot.encoder <- function(input.sequences, 
                             max.length = NULL,
-                            split.length = 1,
+                            motif.length = 1,
                             convert.to.matrix = TRUE,
                             sequence.dictionary = amino.acids[1:20]) {
   
   char_set <- c(sequence.dictionary, ".")
 
-  if (split.length > 1) {
-    all_motifs <- expand.grid(replicate(split.length, char_set, simplify = FALSE))
+  if (motif.length > 1) {
+    all_motifs <- expand.grid(replicate(motif.length, char_set, simplify = FALSE))
     char_set <- unique(apply(all_motifs, 1, paste, collapse = ""))
   }
   # Create a mapping of amino acids to integers
@@ -56,7 +58,7 @@ one.hot.encoder <- function(input.sequences,
   print("One Hot Encoding sequences...")
   onehot_sequences <- .convert.one.hot(unlist(padded_sequences),
                                        max.length = max.length,
-                                       split.length = split.length,
+                                       motif.length = motif.length,
                                        char_set = char_set)
 
   if(convert.to.matrix) {
@@ -71,12 +73,12 @@ one.hot.encoder <- function(input.sequences,
 
 
 
-.convert.one.hot <- function(sequences, split.length = 1, max.length, char_set = NULL) {
+.convert.one.hot <- function(sequences, motif.length = 1, max.length, char_set = NULL) {
   # Initialize the one-hot array with appropriate dimensions
   one_hot_array <- array(0, dim = c(length(sequences), max.length, length(char_set)))
   
   # Extract all subsequences from each sequence
-  subsequences <- substring.extractor(sequences, split.length)
+  subsequences <- substring.extractor(sequences, motif.length)
   
   # Apply one-hot encoding
   for (i in seq_along(subsequences)) {

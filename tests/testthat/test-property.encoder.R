@@ -46,4 +46,32 @@ test_that("property.encoder works", {
     getdata("property.encoder", "property.encoder_VSHE_array")
   )
   
+  #Return Summary Matrix
+  median.matrix <- property.encoder(sequences,
+                                    method.to.use = "atchleyFactors",
+                                    summary.function = "median")
+  
+  expect_equal(
+    median.matrix,
+    getdata("property.encoder", "property.encoder_AtchleyFactors_median.matrix")
+  )
+  
+  #Return multiple properties
+  multi.matrix <- property.encoder(sequences,
+                                   method.to.use = c("atchleyFactors", "kideraFactors"))
+  
+  expect_equal(
+    multi.matrix,
+    getdata("property.encoder", "property.encoder_multi_matrix")
+  )
+  
+  multi.array <- property.encoder(sequences,
+                                  method.to.use = c("VHSE", "tScales"),
+                                  convert.to.matrix = FALSE)
+  
+  expect_equal(
+    multi.array,
+    getdata("property.encoder", "property.encoder_multi_array")
+  )
+  
 })

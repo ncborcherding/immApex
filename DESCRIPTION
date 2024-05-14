@@ -13,8 +13,12 @@ RoxygenNote: 7.3.1
 biocViews: Software, ImmunoOncology, SingleCell, Classification, Annotation, Sequencing
 Depends: 
 	R (>= 4.0)
-Imports: keras,
+Imports: hash,
+	httr,
+	keras,
+	matrixStats,
 	methods,
+	rvest,
 	SingleCellExperiment,
 	stats,
 	stringi,

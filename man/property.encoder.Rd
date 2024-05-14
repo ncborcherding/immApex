@@ -8,7 +8,8 @@ property.encoder(
   input.sequences,
   max.length = NULL,
   method.to.use = NULL,
-  convert.to.matrix = TRUE
+  convert.to.matrix = TRUE,
+  summary.function = NULL
 )
 }
 \arguments{
@@ -19,9 +20,14 @@ to the max length of input.sequences}
 
 \item{method.to.use}{The method or approach to use for the conversion: 
 "atchleyFactors", "crucianiProperties", "FASGAI", "kideraFactors", "MSWHIM",
-"ProtFP", "stScales", "tScales", "VHSE", "zScales"}
+"ProtFP", "stScales", "tScales", "VHSE", or "zScales". Multiple embeddings are
+possible, provide a vector of approaches - c("atchleyFactors", "VHSE")}
 
 \item{convert.to.matrix}{Return a matrix (TRUE) or a 3D array (FALSE)}
+
+\item{summary.function}{Return a matrix that summarize the amino acid method/property
+Available summaries include: "median", "mean", "sum", variance ("vars"), or 
+Median Absolute Deviation ("mads")}
 }
 \value{
 Converted amino acid sequences by property in a matrix or 3D array

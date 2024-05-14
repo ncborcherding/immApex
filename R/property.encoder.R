@@ -20,7 +20,8 @@
 #' to the max length of input.sequences
 #' @param method.to.use The method or approach to use for the conversion: 
 #' "atchleyFactors", "crucianiProperties", "FASGAI", "kideraFactors", "MSWHIM",
-#' "ProtFP", "stScales", "tScales", "VHSE", or "zScales"            
+#' "ProtFP", "stScales", "tScales", "VHSE", or "zScales". Multiple embeddings are
+#' possible, provide a vector of approaches - c("atchleyFactors", "VHSE")           
 #' @param convert.to.matrix Return a matrix (TRUE) or a 3D array (FALSE)
 #' @param summary.function Return a matrix that summarize the amino acid method/property
 #' Available summaries include: "median", "mean", "sum", variance ("vars"), or 
@@ -35,10 +36,14 @@ property.encoder <- function(input.sequences,
                              method.to.use = NULL,
                              convert.to.matrix = TRUE,
                              summary.function = NULL) {
-  if(method.to.use %!in% names(apex_AA_data)) {
+  if(any(method.to.use %!in% names(apex_AA_data))) {
     stop(paste0("Please select one of the following for method.to.use: ", paste(sort(names(apex_AA_data)), collapse = ", ")))
   }
-  vectors <- apex_AA_data[[method.to.use]]
+  vectors <- apex_AA_data[method.to.use]
+  vector.names <- as.vector(unlist(lapply(vectors, names)))
+  vectors <- do.call(c, vectors)
+  names(vectors) <- vector.names
+  
   #TODO Think about other normalization
   vectors <- lapply(vectors, .min.max.normalize)
   
@@ -59,10 +64,10 @@ property.encoder <- function(input.sequences,
                                           vectors = vectors)
   
   if(!is.null(summary.function)) {
-    if (tolower(summary.function) %!in% c("median", "mean", "sum", "vars", "mads") {
+    if (tolower(summary.function) %!in% c("median", "mean", "sum", "vars", "mads")) {
       stop("Please select one of the following summary.function options: 'median', 'mean', 'sum', 'vars', or 'mads'")
     }
-    print(paste0("Summarising properties using ", summary.function, "...")
+    print(paste0("Summarising properties using ", summary.function, "..."))
     stat.function <- .get.stat.function(summary.function)
     stat_matrix <- matrix(nrow = dim(property_sequences)[1], ncol = dim(property_sequences)[3])
     
@@ -86,8 +91,8 @@ property.encoder <- function(input.sequences,
 
 #Converting the sequence into numerical matrix
 .convert.property <- function(sequences, 
-                             max.length,
-                             vectors = vectors) {
+                              max.length,
+                              vectors = vectors) {
   property_array <- array(0, dim = c(length(sequences), max.length, length(vectors)))
   
   for (i in seq_len(length(sequences))) {

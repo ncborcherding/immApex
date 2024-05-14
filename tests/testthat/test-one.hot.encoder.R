@@ -12,7 +12,7 @@ test_that("one.hot.encoder works", {
   )
   
   ohe.2mer <- one.hot.encoder(sequences, 
-                              split.length = 2)
+                              motif.length = 2)
   expect_equal(
     ohe.2mer,
     getdata("ohe.encoder", "one.hot.encoder_2mer.matrix")
