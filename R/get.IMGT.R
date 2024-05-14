@@ -59,7 +59,7 @@ get.IMGT <- function(species = "human",
   
   #Formatting selection into URL for IMGT fasta
   chain.update <- toupper(paste0("+", chain, region))
-  species.update <- parseSpecies(species)
+  species.update <- .parseSpecies(species)
   species.update <- stringr::str_replace_all(species.update, " ", "+")
   base.url <- "https://www.imgt.org/genedb/GENElect?query="
   updated.url <- paste0(base.url, selection, chain.update, "&species=", species.update)
@@ -109,7 +109,7 @@ get.IMGT <- function(species = "human",
 }
 
 #' @importFrom hash hash
-parseSpecies <- function(x) {
+.parseSpecies <- function(x) {
   
   species <- c("human", "mouse", "rat", "rabbit",
                "rhesus monkey", "sheep", "pig", "platypus",
