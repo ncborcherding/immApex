@@ -26,6 +26,8 @@ Imports: hash,
 Suggests: 
 	BiocStyle,
 	knitr,
+	markdown,
+	rmarkdown, 
 	scRepertoire,
 	spelling,
         testthat
