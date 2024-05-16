@@ -64,27 +64,27 @@ test_that("get.IMGT works", {
   
   
   expect_equal(
-    parseSpecies("ferret"),
+    .parseSpecies("ferret"),
     "Mustela putorius furo"
   )
   
   expect_equal(
-    parseSpecies("Ferret"),
+    .parseSpecies("Ferret"),
     "Mustela putorius furo"
   )
   
   expect_equal(
-    parseSpecies("rhesus monkey"),
+    .parseSpecies("rhesus monkey"),
     "Macaca mulatta"
   )
   
   expect_equal(
-    parseSpecies("Rhesus monkey"),
+    .parseSpecies("Rhesus monkey"),
     "Macaca mulatta"
   )
   
   expect_equal(
-    parseSpecies("rhesus Monkey"),
+    .parseSpecies("rhesus Monkey"),
     "Macaca mulatta"
   )
   

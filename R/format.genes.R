@@ -1,21 +1,71 @@
+#' Ensure clean gene nomenclature using IMGT annotations
+#' 
+#' This function will format the genes into a clean
+#' nomenclature using the IMGT conventions. 
+
+#' @param input.data Data frame of sequencing data or 
+#' scRepertoire outputs
+#' @param region Sequence gene loci to access - 'v', 'd', 'j', 'c'
+#' or a combination using c('v', 'd', 'j')
+#' @param technology The sequencing technology employed - 'TenX', "Adaptive', 
+#' 'AIRR', or 'Omniscope'.
+#' @param species One or two word designation of species. Currently supporting: 
+#' "human", "mouse", "rat", "rabbit", "rhesus monkey", "sheep", "pig", "platypus",
+#' "alpaca", "dog", "chicken", and "ferret"
+#' @param simplify.format If applicable, remove the allelic designation (TRUE) or
+#' retain all information (FALSE)
+#' 
+#' @examples
+#' format.genes(Apex_example.data[["TenX"]],
+#'              region = "v",
+#'              technology = "TenX")
+#' 
+#' @importFrom stringr str_split
+#' 
+#' @export format.genes
+#' @return A data frame with the new columns of formatted genes added.
+
+
 #' @importFrom stringr str_split
 format.genes <- function(input.data,
-                         genes = "v",
+                         region = "v",
                          technology = NULL,
                          species = "human",
                          simplify.format = TRUE) {
   
-  if(technology %in% c("TenX","Adaptive")) {
-    genes.updated <- paste0(genes, "_gene")
-    if(any(genes.updated %!in% colnames(input.data))) {
-      genes.updated <- paste0(genes, "MaxResolved")
-    }
-  } else if (technology %in% c("AIRR", "Omniscope")) {
-    genes.updated <- paste0(genes, "_call")
+  if(any(tolower(region) %!in% c("v", "d", "j", "c"))) {
+    stop("Please select a region or regions in the following category: 'v', 'd', 'j', 'c'")
   }
-  #TODO Add screpertoire support
+  if(!.is_seurat_or_se_object(input.data)) {
+    if(technology %!in% c("TenX", "AIRR", "Adaptive", "Omniscope")) {
+      stop("Please select a technology in the following category: 'TenX', 'AIRR', 'Adaptive', 'Omniscope'")
+    }
+  }
   
-  gene.list <- apex_gene.list[tolower(genes)]
+  if (.is_seurat_or_se_object(input.data)) {
+    chain.1 <- getIR(input.data, 
+                     chains = "TRA", 
+                     sequence.type = "aa")[[1]]
+    chain.2 <- getIR(input.data, 
+                     chains = "TRB", 
+                     sequence.type = "aa")[[1]]
+    input.data <- rbind(chain.1, chain.2)
+    genes.updated <- region
+  } else {
+    input.data[input.data == ""] <- NA
+    if(technology %in% c("TenX","Adaptive")) {
+      genes.updated <- paste0(region, "_gene")
+      if(any(genes.updated %!in% colnames(input.data))) {
+        genes.updated <- paste0(region, "GeneName")
+        input.data[,genes.updated][is.na(input.data[,genes.updated])] <- str_split(input.data[,"vGeneNameTies"][is.na(input.data[,genes.updated])], "[,]", simplify = TRUE)[,1]
+      }
+    } else if (technology %in% c("AIRR", "Omniscope")) {
+      genes.updated <- paste0(region, "_call")
+    }
+  }
+ 
+  
+  gene.list <- apex_gene.list[tolower(region)]
   lapply(gene.list, function(x) {
     lapply(x, function(y) {
       reference <- y[[tolower(species)]]
@@ -26,22 +76,21 @@ format.genes <- function(input.data,
     }) -> segment.reference
   }) -> gene.reference
   
-  for(i in seq_along(genes)) {
-    input.data[,genes.updated[i]] <- str_split(input.data[,genes.updated[i]], "[|]", simplify = TRUE)[,1]
+  for(i in seq_along(region)) {
+    input.data[,paste0(region[i], "_IMGT")] <- str_split(input.data[,genes.updated[i]], "[|]", simplify = TRUE)[,1]
     if(technology == "Adaptive") {
-      input.data[,genes.updated[i]] <- .remove_leading_zeros(input.data[,genes.updated[i]], genes[i])
+      input.data[,paste0(region[i], "_IMGT")] <- .remove_leading_zeros(input.data[,paste0(region[i], "_IMGT")], region[i])
     }
     if(simplify.format) {
-      input.data[,genes.updated[i]] <- str_split(input.data[,genes.updated[i]], "[*]", simplify = TRUE)[,1]
+      input.data[,paste0(region[i], "_IMGT")]  <- str_split(input.data[,paste0(region[i], "_IMGT")], "[*]", simplify = TRUE)[,1]
     }
-    #TODO Need to method match simplified format or more complex
-    #TODO Test AIRR, Omniscope, 10x
-    which(input.data[,genes.updated[i]] %!in% unlist(gene.reference[[i]]))
-    
-  
+    input.data[,paste0(region[i], "_IMGT.check")] <- 1
+    input.data[,paste0(region[i], "_IMGT.check")][which(input.data[,paste0(region[i], "_IMGT")] %!in% unlist(gene.reference[[i]]))] <- 0
   }
+  return(input.data)
+}
 
-#Working on adaptive gene formatig
+#Working on adaptive gene formatting
 #' @importFrom stringr str_replace_all
 .remove_leading_zeros <- function(x, 
                                   gene) {
@@ -61,7 +110,3 @@ format.genes <- function(input.data,
       }
     })
 }
-  
- 
-
-reference <- as.data.frame(readxl::read_xlsx("~/Documents/GitHub/OS-toolbox/data/gene.reference2.xlsx"))

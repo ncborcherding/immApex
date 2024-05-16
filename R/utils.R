@@ -75,3 +75,9 @@ array.dimnamer <- function(array) {
                      stop("Invalid summary.function provided"))
   return(statFunc) 
 }
+
+.is_seurat_object <- function(obj) inherits(obj, "Seurat")
+.is_se_object <- function(obj) inherits(obj, "SummarizedExperiment")
+.is_seurat_or_se_object <- function(obj) {
+  .is_seurat_object(obj) || .is_se_object(obj)
+}

@@ -7,7 +7,7 @@
 one.hot.encoder(
   input.sequences,
   max.length = NULL,
-  split.length = 1,
+  motif.length = 1,
   convert.to.matrix = TRUE,
   sequence.dictionary = amino.acids[1:20]
 )
@@ -18,11 +18,14 @@ one.hot.encoder(
 \item{max.length}{Additional length to pad, NULL will pad sequences 
 to the max length of input.sequences}
 
+\item{motif.length}{The length of the amino acid residues to encode -
+motif.length = 1 produces single amino acid encodings}
+
 \item{convert.to.matrix}{Return a matrix (**TRUE**) or a 3D array (**FALSE**)}
 
 \item{sequence.dictionary}{The letters to use in sequence generation 
 (default are all amino acids). This will be overrode if using a
- motif approach (split.length > 1).}
+ motif approach (motif.length > 1).}
 }
 \value{
 One hot encoded sequences in a matrix or 3D array
@@ -39,6 +42,6 @@ new.sequences <- generate.sequences(prefix.motif = "CAS",
                                     max.length = 16)
                           
 sequence.matrix <- one.hot.encoder(new.sequences, 
-                                  convert.to.matrix = TRUE)
+                                   convert.to.matrix = TRUE)
                         
 }

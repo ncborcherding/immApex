@@ -31,16 +31,16 @@ getIR <- function(input.data,
     meta <- do.call(rbind,input.data)
     rownames(meta) <- meta[,"barcode"]
   }
-  if(chains %!in% c("TRA", "TRB", "Heavy", "Light")) {
+  if(chains %!in% c("TRA", "TRB", "TRG", "TRD", "Heavy", "Light")) {
     stop("Please select one of the following chains: 'TRA', 'TRB', 'Heavy', 'Light'")
   }
   tmp <- data.frame(barcode = rownames(meta), 
                     str_split(meta[,"CTaa"], "_", simplify = TRUE), 
                     str_split(meta[,"CTgene"], "_", simplify = TRUE))
   if (length(chains) == 1 && chains != "both") {
-    if (chains %in% c("TRA", "IGH")) { #here
+    if (chains %in% c("TRA", "TRG", "Heavy")) { #here
       pos <- list(c(2,4))
-    } else if (chains %in% c("TRB", "IGL")) { #here
+    } else if (chains %in% c("TRB", "TRD", "Light")) { #here
       pos <- list(c(3,5))
     }
   } 
@@ -48,10 +48,20 @@ getIR <- function(input.data,
   IR <- NULL
   for (i in seq_along(pos)) {
     sub <- as.data.frame(tmp[,c(1,pos[[i]])])
+    
     colnames(sub) <- c("barcode", "cdr3_aa", "genes")
-    sub$v <- str_split(sub$genes, "[.]", simplify = TRUE)[,1]
-    sub$j <- str_split(sub$genes, "[.]", simplify = TRUE)[,2]
-    sub[sub == ""] <- NA
+    if(chains %in% c("TRA", "TRG", "Light")) {
+      sub$v <- str_split(sub$genes, "[.]", simplify = TRUE)[,1]
+      sub$d <- NA
+      sub$j <- str_split(sub$genes, "[.]", simplify = TRUE)[,2]
+      sub$c <- str_split(sub$genes, "[.]", simplify = TRUE)[,3]
+    } else if (chains %in% c("TRB", "TRD", "Heavy")) {
+      sub$v <- str_split(sub$genes, "[.]", simplify = TRUE)[,1]
+      sub$d <- str_split(sub$genes, "[.]", simplify = TRUE)[,2]
+      sub$j <- str_split(sub$genes, "[.]", simplify = TRUE)[,3]
+      sub$c <- str_split(sub$genes, "[.]", simplify = TRUE)[,4]
+    }
+    sub[sub == "" | sub == "None"] <- NA
     IR[[i]] <- sub
     sub <- NULL
   }

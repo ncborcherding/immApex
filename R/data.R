@@ -31,6 +31,6 @@ NULL
 #'  
 #' @docType data
 #' @concept Data
-#' @name apex_gene.list
+#' @name apex_example.data
 #' 
 NULL
