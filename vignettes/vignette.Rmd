@@ -90,6 +90,31 @@ head(sequences)
 head(mutated.sequences)
 ```
 
+## Format.genes
+
+Across sequencing platforms immune receptor nomenclature can be highly variable, preparing data for models, we can use ```format.genes()``` to universalize the gene formats into IMGT nomenclature. 
+
+Parameters for ```format.genes()```
+* **input.data** Data frame of sequencing data or scRepertoire outputs
+* **region** Sequence gene loci to access - 'v', 'd', 'j', 'c' or a combination using c('v', 'd', 'j')
+* **technology** The sequencing technology employed - 'TenX', "Adaptive', 'AIRR', or 'Omniscope'.
+* **species** One or two word designation of species. Currently supporting: "human", "mouse", "rat", "rabbit", "rhesus monkey", "sheep", "pig", "platypus", "alpaca", "dog", "chicken", and "ferret"
+* **simplify.format** If applicable, remove the allelic designation (TRUE) or retain all information (FALSE)
+
+Here we will use the built-in example from Adaptive Biotechnologies and reformat and simplify the **v** region. ```format.genes()``` will add 2 columns to the end of the data frame per region selected - 1) **v_IMGT** will be the formatted gene calls and 2) **v_IMGT.check** is a binary for if the formatted region appears in the IMGT database. In the below example "TRBV2-1" is not a recognized designation within IMGT.
+
+
+```{r}
+Adaptive_example <- format.genes(Apex_example.data[["Adaptive"]],
+                                 region = "v",
+                                 technology = "Adaptive", 
+                                 simplify.format = TRUE) 
+
+head(Adaptive_example[,c("aminoAcid","vGeneName", "v_IMGT", "v_IMGT.check")])
+```
+
+
+
 # Encoders
 
 ## One.hot.encoder
