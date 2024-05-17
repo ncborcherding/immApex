@@ -21,7 +21,8 @@
 #' @param convert.to.matrix Return a matrix (**TRUE**) or a 3D array (**FALSE**)
 #' @param sequence.dictionary The letters to use in sequence generation 
 #' (default are all amino acids). This will be overrode if using a
-#'  motif approach (motif.length > 1).
+#'  motif approach (motif.length > 1)
+#'  @param padding.symbol Symbol to use for padding at the end of sequences
 #' 
 #' @importFrom keras array_reshape
 #' @importFrom stats setNames
@@ -32,9 +33,14 @@ one.hot.encoder <- function(input.sequences,
                             max.length = NULL,
                             motif.length = 1,
                             convert.to.matrix = TRUE,
-                            sequence.dictionary = amino.acids[1:20]) {
+                            sequence.dictionary = amino.acids[1:20],
+                            padding.symbol = ".") {
   
-  char_set <- c(sequence.dictionary, ".")
+  char_set <- c(sequence.dictionary, padding.symbol)
+  
+  if(.check.sequences(input.sequences, sequence.dictionary)) {
+    stop("The sequence.dictionary does not cover the input.sequences, please modify or add the additional characters.")
+  }
 
   if (motif.length > 1) {
     all_motifs <- expand.grid(replicate(motif.length, char_set, simplify = FALSE))
@@ -51,7 +57,7 @@ one.hot.encoder <- function(input.sequences,
   print("Padding sequences...")
   padded_sequences <- .padded.strings(strings = input.sequences, 
                                       max.length = max.length,
-                                      padded.token = ".",
+                                      padded.token = padding.symbol,
                                       concatenate = TRUE)
   
   #How to convert to motifs

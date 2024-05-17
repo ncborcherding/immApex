@@ -9,7 +9,8 @@ property.encoder(
   max.length = NULL,
   method.to.use = NULL,
   convert.to.matrix = TRUE,
-  summary.function = NULL
+  summary.function = NULL,
+  padding.symbol = "."
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ possible, provide a vector of approaches - c("atchleyFactors", "VHSE")}
 \item{summary.function}{Return a matrix that summarize the amino acid method/property
 Available summaries include: "median", "mean", "sum", variance ("vars"), or 
 Median Absolute Deviation ("mads")}
+
+\item{padding.symbol}{Symbol to use for padding at the end of sequences}
 }
 \value{
 Converted amino acid sequences by property in a matrix or 3D array

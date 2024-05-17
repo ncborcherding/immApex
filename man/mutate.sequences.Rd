@@ -33,7 +33,7 @@ Default NULL will end the random mutations at the last position}
 A vector of mutated sequences
 }
 \description{
-Use this to mutate amino acid sequences
+Use this to mutate or mask sequences
 for purposes of testing code, training models,
 or noise.
 }

@@ -26,6 +26,7 @@
 #' @param summary.function Return a matrix that summarize the amino acid method/property
 #' Available summaries include: "median", "mean", "sum", variance ("vars"), or 
 #' Median Absolute Deviation ("mads")
+#' @param padding.symbol Symbol to use for padding at the end of sequences
 #' @importFrom keras array_reshape
 #' 
 #' @export
@@ -35,7 +36,8 @@ property.encoder <- function(input.sequences,
                              max.length = NULL,
                              method.to.use = NULL,
                              convert.to.matrix = TRUE,
-                             summary.function = NULL) {
+                             summary.function = NULL,
+                             padding.symbol = ".") {
   if(any(method.to.use %!in% names(apex_AA_data))) {
     stop(paste0("Please select one of the following for method.to.use: ", paste(sort(names(apex_AA_data)), collapse = ", ")))
   }
@@ -55,7 +57,7 @@ property.encoder <- function(input.sequences,
   print("Padding sequences...")
   padded_sequences <- .padded.strings(strings = input.sequences, 
                                       max.length = max.length,
-                                      padded.token = ".",
+                                      padded.token = padding.symbol,
                                       concatenate = TRUE)
   
   print("Property-based Encoding sequences...")

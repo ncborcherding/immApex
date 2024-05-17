@@ -2,6 +2,12 @@ amino.acids <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M"
 
 "%!in%" <- Negate("%in%")
 
+.check.sequences <- function(sequences, sequence.dictionary) {
+  any(unlist(strsplit(sequences[1:10], "")) %!in% sequence.dictionary)
+}
+  
+
+
 #Add additional sequence padding to max length
 .padded.strings <- function(strings, 
                             max.length,

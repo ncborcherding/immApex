@@ -1,6 +1,6 @@
 #' Randomly Mutate Sequences of Amino Acids
 #' 
-#' Use this to mutate amino acid sequences
+#' Use this to mutate or mask sequences
 #' for purposes of testing code, training models,
 #' or noise.
 #' 
@@ -74,4 +74,4 @@ mutate.sequences <- function(input.sequences,
     }
     
     return(paste0(amino_acids, collapse = ""))
-  }
+}

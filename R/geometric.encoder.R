@@ -35,7 +35,7 @@ geometric.encoder <- function(input.sequences,
                 paste(possible.methods, collapse = ", ")))
   }
   
-  if(any(unlist(strsplit(input.sequences[1:10], "")) %!in% amino.acids[1:20])) {
+  if(.check.sequences(input.sequences, amino.acids[1:20])) {
     stop("geometric.encoder() works only on the sequences with the conventional 20 amino acids")
   }
   
