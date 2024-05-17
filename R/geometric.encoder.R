@@ -66,7 +66,7 @@ geometric.encoder <- function(input.sequences,
   return(geommetric_matrix)
 }
 
-#Create BLOSUM/PAM Matrix
+# Create BLOSUM/PAM Matrix
 .aa_to_submatrix <- function(sequence,
                              method) {
   aa_indices <- match(strsplit(as.character(sequence), '')[[1]], amino.acids[1:20])

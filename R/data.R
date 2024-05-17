@@ -34,3 +34,23 @@ NULL
 #' @name apex_example.data
 #' 
 NULL
+
+#' List of amino acid substitution matrices
+#' 
+#' @description A list of amino acid substitution matrices, including:
+#' 
+#' * BLOSUM45
+#' * BLOSUM50  
+#' * BLOSUM62  
+#' * BLOSUM80  
+#' * BLOSUM100
+#' * PAM30
+#' * PAM40
+#' * PAM70    
+#' * PAM120
+#' * PAM250   
+#' 
+#' @docType data
+#' @concept Data
+#' @name apex_blosum.pam.matrices
+#' 

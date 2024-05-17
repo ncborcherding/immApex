@@ -22,7 +22,7 @@
 #' @param sequence.dictionary The letters to use in sequence generation 
 #' (default are all amino acids). This will be overrode if using a
 #'  motif approach (motif.length > 1)
-#'  @param padding.symbol Symbol to use for padding at the end of sequences
+#' @param padding.symbol Symbol to use for padding at the end of sequences
 #' 
 #' @importFrom keras array_reshape
 #' @importFrom stats setNames
