@@ -32,7 +32,6 @@ format.genes <- function(input.data,
                          technology = NULL,
                          species = "human",
                          simplify.format = TRUE) {
-  data("apex_gene.list")
   if(any(tolower(region) %!in% c("v", "d", "j", "c"))) {
     stop("Please select a region or regions in the following category: 'v', 'd', 'j', 'c'")
   }
