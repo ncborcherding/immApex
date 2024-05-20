@@ -181,7 +181,6 @@ median.property.matrix <- property.encoder(input.sequences =  c(sequences, mutat
                                           summary.function = "median")
 ```
 
-
 ## Geometric.encoder
 
 Parameters for ```geometric.encoder()```
@@ -217,6 +216,28 @@ token.matrix <- tokenize.sequences(input.sequences =  c(sequences, mutated.seque
                                    stop.token = "^", 
                                    convert.to.matrix = TRUE)
 head(token.matrix[,1:18])
+```
+
+## PPM.sequences
+
+Another method for encoding a group of sequences is to calculate the positional probability of sequences using ```PPM.sequences()```. This could be used to represent a collection of antigen-specific sequences or even work on embedding a total repertoire.  
+
+```{r}
+ppm.matrix <- PPM.sequences(sequences)
+head(ppm.matrix)
+```
+In addition, ```PPM.sequences()``` can be used to convert the positional probability matrix into a positional weight matrix using log likelihood using the argument **convert.PWM** = TRUE. We can provide a set of background frequencies for the amino acids with **background.frequencies** or leave this blank to assume a uniform distribution for all amino acids. Here we are going to use a example background. 
+
+```{r}
+set.seed(42)
+back.freq <- sample(1:1000, 20)
+back.freq <- back.freq/sum(back.freq)
+
+pwm.matrix <- PPM.sequences(sequences,
+                            max.length = 20,
+                            convert.PWM = TRUE,
+                            background.frequencies = back.freq)
+head(pwm.matrix)
 ```
 
 
