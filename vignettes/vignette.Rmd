@@ -30,6 +30,7 @@ Apex is meant to serve as an API for deep learning models based on immune recept
 suppressMessages(library(Apex))
 suppressMessages(library(keras))
 suppressMessages(library(scRepertoire))
+data("apex_example.data")
 ```
 
 ****************
@@ -104,9 +105,8 @@ Parameters for ```format.genes()```
 
 Here we will use the built-in example from Adaptive Biotechnologies and reformat and simplify the **v** region. ```format.genes()``` will add 2 columns to the end of the data frame per region selected - 1) **v_IMGT** will be the formatted gene calls and 2) **v_IMGT.check** is a binary for if the formatted region appears in the IMGT database. In the below example "TRBV2-1" is not a recognized designation within IMGT.
 
-
 ```{r}
-Adaptive_example <- format.genes(Apex_example.data[["Adaptive"]],
+Adaptive_example <- format.genes(apex_example.data[["Adaptive"]],
                                  region = "v",
                                  technology = "Adaptive", 
                                  simplify.format = TRUE) 

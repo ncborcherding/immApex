@@ -8,4 +8,3 @@
 A list of gene names to use for converting for 
 uniformity. Data pulled from IMGT.org 09/05/2024.
 }
-\concept{Data}

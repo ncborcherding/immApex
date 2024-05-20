@@ -46,7 +46,7 @@ TRBV_aa <- get.IMGT(species = "human",
                     sequence.type = "aa") 
                     
 # Ensuring sequences are formatted to IMGT                   
-TenX_formatted <- format.genes(Apex_example.data[["TenX"]],
+TenX_formatted <- format.genes(apex_example.data[["TenX"]],
                                region = "v",
                                technology = "TenX")
              

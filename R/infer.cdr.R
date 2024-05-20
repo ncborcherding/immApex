@@ -14,7 +14,7 @@
 #'                     sequence.type = "aa") 
 #'                     
 #' # Ensuring sequences are formatted to IMGT                   
-#' TenX_formatted <- format.genes(Apex_example.data[["TenX"]],
+#' TenX_formatted <- format.genes(apex_example.data[["TenX"]],
 #'                                region = "v",
 #'                                technology = "TenX")
 #'              
@@ -57,10 +57,6 @@ infer.cdr <- function(input.data,
   
   if(technology %!in% c("TenX", "AIRR", "Adaptive", "Omniscope")) {
       stop("Please select a technology in the following category: 'TenX', 'AIRR', 'Adaptive', 'Omniscope'")
-  }
-
-  if (technology %in% c("Adaptive", "TenX") || .is_seurat_or_se_object(input.data)) {
-    .sequence.positions[["FR3.F"]] <- c(97:103) #Adaptive/10x include the last position of FR3.F in cdr3
   }
   
   if ("v_IMGT" %!in% colnames(input.data)) {

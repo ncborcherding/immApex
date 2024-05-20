@@ -1,21 +1,21 @@
 # test script for format.genes.R - testcases are NOT comprehensive!
 
 test_that("format.genes works", {
-
-  format.genes_TenX <- format.genes(Apex_example.data[["TenX"]],
+  data(apex_example.data)
+  format.genes_TenX <- format.genes(apex_example.data[["TenX"]],
                                     region = "v",
                                     technology = "TenX") 
   
-  format.genes_AIRR <- format.genes(Apex_example.data[["AIRR"]],
+  format.genes_AIRR <- format.genes(apex_example.data[["AIRR"]],
                                     region = "v",
                                     technology = "AIRR", 
                                     simplify.format = FALSE) 
   
-  format.genes_OS <- format.genes(Apex_example.data[["Omniscope"]],
+  format.genes_OS <- format.genes(apex_example.data[["Omniscope"]],
                                   region = c("v", "j"),
                                   technology = "Omniscope") 
 
-  format.genes_Adaptive <- format.genes(Apex_example.data[["Adaptive"]],
+  format.genes_Adaptive <- format.genes(apex_example.data[["Adaptive"]],
                                         region = "v",
                                         technology = "Adaptive") 
   

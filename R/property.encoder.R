@@ -38,6 +38,7 @@ property.encoder <- function(input.sequences,
                              convert.to.matrix = TRUE,
                              summary.function = NULL,
                              padding.symbol = ".") {
+  data("apex_AA.data")
   if(any(method.to.use %!in% names(apex_AA.data))) {
     stop(paste0("Please select one of the following for method.to.use: ", paste(sort(names(apex_AA.data)), collapse = ", ")))
   }
