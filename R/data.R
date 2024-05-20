@@ -5,7 +5,7 @@
 #'  
 #' @docType data
 #' @concept Data
-#' @name apex_AA_data
+#' @name apex_AA.data
 #' 
 NULL
 

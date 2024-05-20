@@ -19,6 +19,8 @@ output from format.genes().}
 
 \item{reference}{IMGT sequences from get.IMGT()}
 
+\item{chain}{Sequence chain to access}
+
 \item{technology}{The sequencing technology employed - 'TenX', "Adaptive', 
 'AIRR', or 'Omniscope'}
 

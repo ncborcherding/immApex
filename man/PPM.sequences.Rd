@@ -2,7 +2,7 @@
 % Please edit documentation in R/PPM.sequences.R
 \name{PPM.sequences}
 \alias{PPM.sequences}
-\title{Position Probabiligy Matrix for Amino Acid or Nucleotide Sequences}
+\title{Position Probability Matrix for Amino Acid or Nucleotide Sequences}
 \usage{
 PPM.sequences(
   input.sequences,
@@ -44,6 +44,6 @@ new.sequences <- generate.sequences(prefix.motif = "CAS",
                                     min.length = 8,
                                     max.length = 16)
                           
-PPM.matrix <- PPM.sequences(input.sequences)
+PPM.matrix <- PPM.sequences(new.sequences)
                         
 }
