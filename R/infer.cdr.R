@@ -46,6 +46,7 @@ infer.cdr <- function(input.data,
                       sequence.type = "aa",
                       sequences = c("CDR1", "CDR2")) {
   
+  region <- "v"
   if(is.null(reference) || "v" %!in% reference[["misc"]][["region"]]) {
     stop("Please provide a list of V gene reference sequence using 'get.IMGT()'.")
   }

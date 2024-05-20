@@ -39,7 +39,7 @@ property.encoder <- function(input.sequences,
                              summary.function = NULL,
                              padding.symbol = ".") {
   if(any(method.to.use %!in% names(apex_AA.data))) {
-    stop(paste0("Please select one of the following for method.to.use: ", paste(sort(names(apex_AA_data)), collapse = ", ")))
+    stop(paste0("Please select one of the following for method.to.use: ", paste(sort(names(apex_AA.data)), collapse = ", ")))
   }
   vectors <- apex_AA.data[method.to.use]
   vector.names <- as.vector(unlist(lapply(vectors, names)))
