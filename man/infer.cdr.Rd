@@ -54,6 +54,6 @@ TenX_formatted <- infer.cdr(TenX_formatted,
                             reference = TRBV_aa,
                             technology = "TenX", 
                             sequence.type = "aa",
-                            sequences = c("CDR1", "CDR2")
+                            sequences = c("CDR1", "CDR2"))
                             
 }

@@ -24,7 +24,7 @@
 #'                             reference = TRBV_aa,
 #'                             technology = "TenX", 
 #'                             sequence.type = "aa",
-#'                             sequences = c("CDR1", "CDR2")
+#'                             sequences = c("CDR1", "CDR2"))
 #'                             
 #' @param input.data Data frame of sequencing data or 
 #' output from format.genes().
@@ -58,7 +58,7 @@ infer.cdr <- function(input.data,
   }
 
   if (technology %in% c("Adaptive", "TenX") || .is_seurat_or_se_object(input.data)) {
-    sequence.positions[["FR3.F"]] <- c(97:103) #Adaptive/10x include the last position of FR3.F in cdr3
+    .sequence.positions[["FR3.F"]] <- c(97:103) #Adaptive/10x include the last position of FR3.F in cdr3
   }
   
   if ("v_IMGT" %!in% colnames(input.data)) {

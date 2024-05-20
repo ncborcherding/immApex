@@ -23,11 +23,10 @@ to the max length of input.sequences}
 using log likelihood}
 
 \item{background.frequencies}{Provide amino acid or nucleotide frequencies
-for the positional weight matrix. If NULL, assumes equal liklihood.}
+for the positional weight matrix. If NULL, assumes uniform likelihood.}
 
 \item{sequence.dictionary}{The letters to use in sequence generation 
-(default are all amino acids). This will be overrode if using a
- motif approach (motif.length > 1)}
+(default are all amino acids)}
 
 \item{padding.symbol}{Symbol to use for padding at the end of sequences}
 }

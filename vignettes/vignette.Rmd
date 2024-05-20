@@ -95,6 +95,7 @@ head(mutated.sequences)
 Across sequencing platforms immune receptor nomenclature can be highly variable, preparing data for models, we can use ```format.genes()``` to universalize the gene formats into IMGT nomenclature. 
 
 Parameters for ```format.genes()```
+
 * **input.data** Data frame of sequencing data or scRepertoire outputs
 * **region** Sequence gene loci to access - 'v', 'd', 'j', 'c' or a combination using c('v', 'd', 'j')
 * **technology** The sequencing technology employed - 'TenX', "Adaptive', 'AIRR', or 'Omniscope'.
@@ -112,8 +113,52 @@ Adaptive_example <- format.genes(Apex_example.data[["Adaptive"]],
 
 head(Adaptive_example[,c("aminoAcid","vGeneName", "v_IMGT", "v_IMGT.check")])
 ```
+## Get.IMGT
 
+Depending on the sequencing technology and the version, we might want to expand our the length sequence embedding approach. The first step in the process is pulling the reference sequences from the ImMunoGeneTics (IMGT) system using ```get.IMGT()```. More information for IMGT can be found at \href{https://www.imgt.org/}{imgt.org}. 
 
+Parameters for ```get.IMGT()```
+
+* **species** One or two word designation of species. Currently supporting: "human", "mouse", "rat", "rabbit", "rhesus monkey", "sheep", "pig", "platypus", "alpaca", "dog", "chicken", and "ferret"
+* **chain** Sequence chain to access
+* **frame** Designation for "all", "inframe" or "inframe+gap"
+* **region** Sequence gene loci to access
+* **sequence.type** Type of sequence - "aa" for amino acid or "nt" for nucleotide
+
+Here we will use the ```get.IMGT()``` function to get the amino acid sequences for TRBV region to get all the sequences by V gene allele.
+
+```{r}
+TRBV_aa <- get.IMGT(species = "human",
+                    chain = "TRB",
+                    frame = "inframe",
+                    region = "v",
+                    sequence.type = "aa") 
+
+TRBV_aa[[1]][1]
+```
+
+## Infer.cdr
+
+We can now use ```infer.cdr()``` to add additional sequence elements to our example data using the outputs of ```format.genes()``` and ```get.IMGT()```. Here we will use the function to isolate the complementarity determining regions (CDR) 1 and 2. If the gene nomenclature does not match the IMGT the result will be NA for the given sequences. Likewise, if the IMGT nomenclature has been simplified, the first allelic match will be used for sequence extraction. 
+
+Parameters for ```infer.cdr```
+
+* **input.data** Data frame of sequencing data or output from format.genes().
+* **reference** IMGT sequences from ```get.IMGT()```
+* **technology** The sequencing technology employed - 'TenX', "Adaptive', 'AIRR', or 'Omniscope'
+* **sequence.type** Type of sequence - "aa" for amino acid or "nt" for nucleotide
+* **sequences** The specific regions of the CDR loop to get from the data.
+
+```{r}
+Adaptive_example <- infer.cdr(Adaptive_example,
+                              chain = "TRB", 
+                              reference = TRBV_aa,
+                              technology = "Adaptive", 
+                              sequence.type = "aa",
+                              sequences = c("CDR1", "CDR2"))
+
+Adaptive_example[200:210,c("CDR1_IMGT", "CDR2_IMGT")]
+```
 
 # Encoders
 
@@ -186,8 +231,7 @@ median.property.matrix <- property.encoder(input.sequences =  c(sequences, mutat
 Parameters for ```geometric.encoder()```
 
 * **method.to.use** Select the following substitution matrices: "BLOSUM45", "BLOSUM50", "BLOSUM62", "BLOSUM80", "BLOSUM100", "PAM30", "PAM40", "PAM70", "PAM120", or "PAM250"
-
-* **theta** The angle in which to create the rotataion matrix
+* **theta** The angle in which to create the rotation matrix
 
 ```{r}
 geometric.matrix <- geometric.encoder(sequences, 
@@ -239,7 +283,6 @@ pwm.matrix <- PPM.sequences(sequences,
                             background.frequencies = back.freq)
 head(pwm.matrix)
 ```
-
 
 ## Positional.encoder
 
