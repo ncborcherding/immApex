@@ -58,7 +58,7 @@ sequences <- generate.sequences(prefix.motif = "CAS",
 head(sequences)
 ```
 
-If instead of amino acides, we want to look at nucleotide sequences, we just need to change the **sequence.dictionary**.
+If instead of amino acids, we want to look at nucleotide sequences, we just need to change the **sequence.dictionary**.
 
 ```{r}
 nucleotide.sequences <- generate.sequences(number.of.sequences = 1000,
