@@ -69,6 +69,7 @@ geometric.encoder <- function(input.sequences,
 # Create BLOSUM/PAM Matrix
 .aa_to_submatrix <- function(sequence,
                              method) {
+ 
   aa_indices <- match(strsplit(as.character(sequence), '')[[1]], amino.acids[1:20])
   return(apex_blosum.pam.matrices[[method]][aa_indices, ])
 }

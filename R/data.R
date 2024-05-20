@@ -52,3 +52,4 @@ NULL
 #' @docType data
 #' @name apex_blosum.pam.matrices
 #' 
+NULL
