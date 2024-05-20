@@ -29,6 +29,7 @@
 #' @param input.data Data frame of sequencing data or 
 #' output from format.genes().
 #' @param reference IMGT sequences from get.IMGT()
+#' @param chain Sequence chain to access
 #' @param technology The sequencing technology employed - 'TenX', "Adaptive', 
 #' 'AIRR', or 'Omniscope'
 #' @param sequence.type Type of sequence - "aa" for amino acid or "nt" for nucleotide

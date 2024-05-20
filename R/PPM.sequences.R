@@ -1,4 +1,4 @@
-#' Position Probabiligy Matrix for Amino Acid or Nucleotide Sequences
+#' Position Probability Matrix for Amino Acid or Nucleotide Sequences
 #' 
 #' Use this to generate a position-probability or weight matrix 
 #' for a set of given sequences. 
@@ -10,7 +10,7 @@
 #'                                     min.length = 8,
 #'                                     max.length = 16)
 #'                           
-#' PPM.matrix <- PPM.sequences(input.sequences)
+#' PPM.matrix <- PPM.sequences(new.sequences)
 #'                         
 #' @param input.sequences The amino acid or nucleotide sequences to use
 #' @param max.length Additional length to pad, NULL will pad sequences 
@@ -22,6 +22,8 @@
 #' @param sequence.dictionary The letters to use in sequence generation 
 #' (default are all amino acids)
 #' @param padding.symbol Symbol to use for padding at the end of sequences
+#' 
+#' @importFrom stats median
 #' 
 #' @export
 #' @return A matrix with position specific probabilities or weights
