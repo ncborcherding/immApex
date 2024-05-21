@@ -14,11 +14,11 @@
 #'                                      method.to.use = "BLOSUM62",
 #'                                      theta = pi/3)
 #'                         
-#' @param input.sequences The amino acid sequences to use
-#' @param method.to.use The method or approach to use for the conversion: 
+#' @param input.sequences The amino acid sequences 
+#' @param method.to.use The method or approach for the conversion: 
 #' "BLOSUM45", "BLOSUM50", "BLOSUM62", "BLOSUM80", "BLOSUM100", "PAM30", 
 #' "PAM40", "PAM70", "PAM120", or "PAM250"  
-#' @param theta angle to use for geometric transformation
+#' @param theta The angle for geometric transformation
 #' 
 #' @export
 #' @return Geometric encoded amino acid sequences in a matrix
@@ -27,6 +27,7 @@
 geometric.encoder <- function(input.sequences, 
                               method.to.use = "BLOSUM62",
                               theta = pi/3) {
+  
   possible.methods <- c("BLOSUM45", "BLOSUM50", "BLOSUM62", "BLOSUM80", 
                         "BLOSUM100", "PAM30","PAM40", "PAM70", "PAM120", "PAM250")
   

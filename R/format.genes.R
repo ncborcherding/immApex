@@ -5,15 +5,15 @@
 
 #' @param input.data Data frame of sequencing data or 
 #' scRepertoire outputs
-#' @param region Sequence gene loci to access - 'v', 'd', 'j', 'c'
-#' or a combination using c('v', 'd', 'j')
-#' @param technology The sequencing technology employed - 'TenX', "Adaptive', 
-#' 'AIRR', or 'Omniscope'.
+#' @param region Sequence gene loci to access - "v", "d", "j", or "c"
+#' or a combination using c("v", "d", "j")
+#' @param technology The sequencing technology employed - \strong{'TenX'}, \strong{"Adaptive'}, 
+#' \strong{'AIRR'}, or \strong{'Omniscope'}.
 #' @param species One or two word designation of species. Currently supporting: 
 #' "human", "mouse", "rat", "rabbit", "rhesus monkey", "sheep", "pig", "platypus",
 #' "alpaca", "dog", "chicken", and "ferret"
-#' @param simplify.format If applicable, remove the allelic designation (TRUE) or
-#' retain all information (FALSE)
+#' @param simplify.format If applicable, remove the allelic designation (\strong{TRUE}) or
+#' retain all information (\strong{FALSE})
 #' 
 #' @examples
 #' format.genes(apex_example.data[["TenX"]],

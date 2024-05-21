@@ -262,26 +262,36 @@ token.matrix <- tokenize.sequences(input.sequences =  c(sequences, mutated.seque
 head(token.matrix[,1:18])
 ```
 
-## PPM.sequences
+## Probability.matrix
 
-Another method for encoding a group of sequences is to calculate the positional probability of sequences using ```PPM.sequences()```. This could be used to represent a collection of antigen-specific sequences or even work on embedding a total repertoire.  
+Another method for encoding a group of sequences is to calculate the positional probability of sequences using ```probability.matrixs()```. This could be used to represent a collection of antigen-specific sequences or even work on embedding a total repertoire.  
 
 ```{r}
-ppm.matrix <- PPM.sequences(sequences)
+ppm.matrix <- probability.matrix(sequences)
 head(ppm.matrix)
 ```
-In addition, ```PPM.sequences()``` can be used to convert the positional probability matrix into a positional weight matrix using log likelihood using the argument **convert.PWM** = TRUE. We can provide a set of background frequencies for the amino acids with **background.frequencies** or leave this blank to assume a uniform distribution for all amino acids. Here we are going to use a example background. 
+In addition, ```probability.matrix()``` can be used to convert the positional probability matrix into a positional weight matrix using log likelihood using the argument **convert.PWM** = TRUE. We can provide a set of background frequencies for the amino acids with **background.frequencies** or leave this blank to assume a uniform distribution for all amino acids. Here we are going to use a example background. 
 
 ```{r}
 set.seed(42)
 back.freq <- sample(1:1000, 20)
 back.freq <- back.freq/sum(back.freq)
 
-pwm.matrix <- PPM.sequences(sequences,
-                            max.length = 20,
-                            convert.PWM = TRUE,
-                            background.frequencies = back.freq)
+pwm.matrix <- probability.matrix(sequences,
+                                 max.length = 20,
+                                 convert.PWM = TRUE,
+                                 background.frequencies = back.freq)
 head(pwm.matrix)
+```
+
+## Adjacency.matrix
+
+Similar to the positional probability, we can also summarize a given set of sequences by the frequency of adjacency for a given set of amino acid or nucleotide residues using ```adjacency.matrix()```. For this function, a matrix of n x n (defined by the length of **sequence.dictionary**) is created and the number of times a residue is adjacent to one another is calculated. We can **normalize** the values using the total number of residues evaluated. 
+
+```{r}
+adj.matrix <- adjacency.matrix(sequences, 
+                               normalize = FALSE)
+adj.matrix
 ```
 
 ## Positional.encoder

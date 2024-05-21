@@ -14,8 +14,8 @@
 #' @param prefix.motif Add defined amino acid/nucleotide sequence to the start of the generated sequences.
 #' @param suffix.motif Add defined amino acid/nucleotide sequence to the end of the generated sequences
 #' @param number.of.sequences Number of sequences to generate
-#' @param min.length Minimum length of the final sequence (will be adjusted if 
-#' incongruent with prefix.motif/suffix.motif)
+#' @param min.length Minimum length of the final sequence. The min.length may be adjusted if 
+#' incongruent with prefix.motif/suffix.motif lengths
 #' @param max.length Maximum length of the final sequence
 #' @param sequence.dictionary The letters to use in sequence generation (default are all amino acids)
 #' 
@@ -28,7 +28,7 @@ generate.sequences <- function(prefix.motif = NULL,
                                number.of.sequences = 100,
                                min.length = 1,
                                max.length = 10,
-                               sequence.dictionary = c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")) {
+                               sequence.dictionary = amino.acids[1:20]) {
   #TODO Add check for prefix/suffix motif with sequence dictionary
   if(!is.null(prefix.motif) | !is.null(suffix.motif)) {
     motif.length <- sum(nchar(c(prefix.motif,suffix.motif)))

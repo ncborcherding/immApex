@@ -10,8 +10,7 @@ generate.sequences(
   number.of.sequences = 100,
   min.length = 1,
   max.length = 10,
-  sequence.dictionary = c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K",
-    "M", "F", "P", "S", "T", "W", "Y", "V")
+  sequence.dictionary = amino.acids[1:20]
 )
 }
 \arguments{

@@ -10,7 +10,7 @@
 #'                                     min.length = 8,
 #'                                     max.length = 16)
 #'                           
-#' PPM.matrix <- PPM.sequences(new.sequences)
+#' PPM.matrix <- probability.matrix(new.sequences)
 #'                         
 #' @param input.sequences The amino acid or nucleotide sequences to use
 #' @param max.length Additional length to pad, NULL will pad sequences 
@@ -27,12 +27,12 @@
 #' 
 #' @export
 #' @return A matrix with position specific probabilities or weights
-PPM.sequences <- function(input.sequences, 
-                          max.length = NULL,
-                          convert.PWM = FALSE,
-                          background.frequencies = NULL,
-                          sequence.dictionary = amino.acids[1:20],
-                          padding.symbol = ".") {
+probability.matrix <- function(input.sequences, 
+                               max.length = NULL,
+                               convert.PWM = FALSE,
+                               background.frequencies = NULL,
+                               sequence.dictionary = amino.acids[1:20],
+                               padding.symbol = ".") {
   sequence.dictionary <- c(sequence.dictionary, padding.symbol)
   if(!is.null(background.frequencies)) {
     if(length(background.frequencies) != length(sequence.dictionary)-1) {
