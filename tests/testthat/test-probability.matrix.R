@@ -8,7 +8,7 @@ test_that("probability.matrix works", {
   
   expect_equal(
     ppm.default,
-    getdata("ppm.sequences", "ppm.sequences_default")
+    getdata("probability.matrix", "ppm.sequences_default")
   )
   
   pwm.default <- probability.matrix(sequences,
@@ -16,7 +16,7 @@ test_that("probability.matrix works", {
   
   expect_equal(
     pwm.default,
-    getdata("ppm.sequences", "ppm.sequences_pwm.default")
+    getdata("probability.matrix", "ppm.sequences_pwm.default")
   )
   
   set.seed(42)
@@ -29,7 +29,7 @@ test_that("probability.matrix works", {
   
   expect_equal(
     pwm.bf,
-    getdata("ppm.sequences", "ppm.sequences_pwm.bf")
+    getdata("probability.matrix", "ppm.sequences_pwm.bf")
   )
   
   
