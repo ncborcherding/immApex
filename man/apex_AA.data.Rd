@@ -6,5 +6,5 @@
 \title{A list of amino acid properties}
 \description{
 A list of amino acid properties that are
-used for ```property.encoder()``` function.
+used for \code{\link{property.encoder}} function.
 }

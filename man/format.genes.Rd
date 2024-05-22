@@ -16,18 +16,18 @@
 \item{input.data}{Data frame of sequencing data or 
 scRepertoire outputs}
 
-\item{region}{Sequence gene loci to access - 'v', 'd', 'j', 'c'
-or a combination using c('v', 'd', 'j')}
+\item{region}{Sequence gene loci to access - "v", "d", "j", or "c"
+or a combination using c("v", "d", "j")}
 
-\item{technology}{The sequencing technology employed - 'TenX', "Adaptive', 
-'AIRR', or 'Omniscope'.}
+\item{technology}{The sequencing technology employed - \strong{'TenX'}, \strong{"Adaptive'}, 
+\strong{'AIRR'}, or \strong{'Omniscope'}.}
 
 \item{species}{One or two word designation of species. Currently supporting: 
 "human", "mouse", "rat", "rabbit", "rhesus monkey", "sheep", "pig", "platypus",
 "alpaca", "dog", "chicken", and "ferret"}
 
-\item{simplify.format}{If applicable, remove the allelic designation (TRUE) or
-retain all information (FALSE)}
+\item{simplify.format}{If applicable, remove the allelic designation (\strong{TRUE}) or
+retain all information (\strong{FALSE})}
 }
 \value{
 A data frame with the new columns of formatted genes added.

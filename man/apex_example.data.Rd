@@ -12,5 +12,5 @@ A list of example contigs from the following sources:
   \item{AIRR: Human_colon_16S8157851 from \href{https://pubmed.ncbi.nlm.nih.gov/37055623/}{PMID: 37055623}}
   \item{Adaptive: Adaptive_2283_D0 from \href{https://pubmed.ncbi.nlm.nih.gov/36220826/}{PMID: 36220826}}
   \item{Omniscope: Internal Data}
-  }
+}
 }

@@ -7,13 +7,13 @@
 geometric.encoder(input.sequences, method.to.use = "BLOSUM62", theta = pi/3)
 }
 \arguments{
-\item{input.sequences}{The amino acid sequences to use}
+\item{input.sequences}{The amino acid sequences}
 
-\item{method.to.use}{The method or approach to use for the conversion: 
+\item{method.to.use}{The method or approach for the conversion: 
 "BLOSUM45", "BLOSUM50", "BLOSUM62", "BLOSUM80", "BLOSUM100", "PAM30", 
 "PAM40", "PAM70", "PAM120", or "PAM250"}
 
-\item{theta}{angle to use for geometric transformation}
+\item{theta}{The angle for geometric transformation}
 }
 \value{
 Geometric encoded amino acid sequences in a matrix

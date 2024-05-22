@@ -14,7 +14,7 @@ adjacency.matrix(
 \item{input.sequences}{The amino acid or nucleotide sequences to use}
 
 \item{normalize}{Return the values as a function of total number of 
-residues (TRUE) or frequencies (FALSE)}
+residues (\strong{TRUE}) or frequencies (\strong{FALSE})}
 
 \item{sequence.dictionary}{The letters to use in sequence generation 
 (default are all amino acids)}
@@ -23,7 +23,7 @@ residues (TRUE) or frequencies (FALSE)}
 Adjacency matrix based on input.sequences.
 }
 \description{
-Use this calculate frequency of adjacency between residues
+Calculate frequency of adjacency between residues
 along a set of biological sequences.
 }
 \examples{
@@ -33,7 +33,7 @@ new.sequences <- generate.sequences(prefix.motif = "CAS",
                                     min.length = 8,
                                     max.length = 16)
                           
-sequence.matrix <- adjacency.matrix(new.sequences,
+adj.matrix <- adjacency.matrix(new.sequences,
                                     normalize = TRUE)
                         
 }

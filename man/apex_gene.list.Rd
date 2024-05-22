@@ -5,6 +5,7 @@
 \alias{apex_gene.list}
 \title{A list of IMGT gene names by genes, loci, and species}
 \description{
-A list of gene names to use for converting for 
-uniformity. Data pulled from IMGT.org 09/05/2024.
+A list of gene nomenclature to use for converting for 
+uniformity. Data is organize by gene region, loci and species.
+ Data pulled from IMGT.org 09/05/2024.
 }

@@ -7,14 +7,16 @@
 \description{
 A list of amino acid substitution matrices, including:
 
-* BLOSUM45
-* BLOSUM50  
-* BLOSUM62  
-* BLOSUM80  
-* BLOSUM100
-* PAM30
-* PAM40
-* PAM70    
-* PAM120
-* PAM250
+\itemize{
+ \item{BLOSUM45}
+ \item{BLOSUM50}  
+ \item{BLOSUM62}
+ \item{BLOSUM80}
+ \item{BLOSUM100}
+ \item{PAM30}
+ \item{PAM40}
+ \item{PAM70}    
+ \item{PAM120}
+ \item{PAM250}
+ }
 }

@@ -20,8 +20,8 @@ generate.sequences(
 
 \item{number.of.sequences}{Number of sequences to generate}
 
-\item{min.length}{Minimum length of the final sequence (will be adjusted if 
-incongruent with prefix.motif/suffix.motif)}
+\item{min.length}{Minimum length of the final sequence. The min.length may be adjusted if 
+incongruent with prefix.motif/suffix.motif lengths}
 
 \item{max.length}{Maximum length of the final sequence}
 

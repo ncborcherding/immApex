@@ -32,5 +32,5 @@ test_that("probability.matrix works", {
     getdata("probability.matrix", "ppm.sequences_pwm.bf")
   )
   
-  
+  #TODO Add non standard sequence.dictionary
 })
