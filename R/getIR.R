@@ -6,11 +6,11 @@
 
 #' @param input.data Single-cell object or the output of 
 #' \link[scRepertoire]{combineTCR} and \link[scRepertoire]{combineBCR} from
-#' scRepertoire.
+#' scRepertoire
 #' @param chains Immune Receptor chain to use - \strong{TRA}, 
-#' \strong{TRB}, \strong{Heavy}, \strong{Light}
+#' \strong{TRB}, \strong{IGH}, or \strong{IGL}
 #' @param sequence.type Extract amino acid (\strong{aa}) or 
-#' nucleotide (\strong{nt})
+#' nucleotide (\strong{nt}) sequences
 #' 
 #' @importFrom stringr str_split
 #' 
@@ -38,9 +38,9 @@ getIR <- function(input.data,
                     str_split(meta[,"CTaa"], "_", simplify = TRUE), 
                     str_split(meta[,"CTgene"], "_", simplify = TRUE))
   if (length(chains) == 1 && chains != "both") {
-    if (chains %in% c("TRA", "TRG", "Heavy")) { #here
+    if (chains %in% c("TRA", "TRG", "IGH")) { #here
       pos <- list(c(2,4))
-    } else if (chains %in% c("TRB", "TRD", "Light")) { #here
+    } else if (chains %in% c("TRB", "TRD", "IGL", "IGK")) { #here
       pos <- list(c(3,5))
     }
   } 

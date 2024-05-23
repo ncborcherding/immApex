@@ -21,10 +21,10 @@ mutate.sequences(
 \item{mutation.rate}{The rate of mutations to introduce into sequences}
 
 \item{position.start}{The starting position to mutate along the sequence
-Default NULL will start the random mutations at position 1}
+\strong{Default} = NULL will start the random mutations at position 1}
 
 \item{position.end}{The ending position to mutate along the sequence
-Default NULL will end the random mutations at the last position}
+\strong{Default} = NULL will end the random mutations at the last position}
 
 \item{sequence.dictionary}{The letters to use in sequence mutation
 (default are all amino acids)}

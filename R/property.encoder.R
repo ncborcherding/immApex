@@ -19,9 +19,11 @@
 #' @param max.length Additional length to pad, NULL will pad sequences 
 #' to the max length of input.sequences
 #' @param method.to.use The method or approach to use for the conversion: 
-#' "atchleyFactors", "crucianiProperties", "FASGAI", "kideraFactors", "MSWHIM",
-#' "ProtFP", "stScales", "tScales", "VHSE", or "zScales". Multiple embeddings are
-#' possible, provide a vector of approaches - c("atchleyFactors", "VHSE")           
+#' \itemize{
+#'   \item{Indivisual sets: atchleyFactors, crucianiProperties, FASGAI, kideraFactors, MSWHIM,
+#'   ProtFP, stScales, tScales, VHSE, zScales"}
+#'   \item{Multiple Sets: c("atchleyFactors", "VHSE") }
+#' } 
 #' @param convert.to.matrix Return a matrix (TRUE) or a 3D array (FALSE)
 #' @param summary.function Return a matrix that summarize the amino acid method/property
 #' Available summaries include: "median", "mean", "sum", variance ("vars"), or 

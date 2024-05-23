@@ -20,13 +20,13 @@ one.hot.encoder(
 to the max length of input.sequences}
 
 \item{motif.length}{The length of the amino acid residues to encode -
-motif.length = 1 produces single amino acid encodings}
+a motif.length = 1 produces single amino acid encodings}
 
-\item{convert.to.matrix}{Return a matrix (**TRUE**) or a 3D array (**FALSE**)}
+\item{convert.to.matrix}{Return a matrix (\strong{TRUE}) or a 3D array (\strong{FALSE})}
 
 \item{sequence.dictionary}{The letters to use in sequence generation 
 (default are all amino acids). This will be overrode if using a
- motif approach (motif.length > 1)}
+ motif approach (\strong{motif.length} > 1)}
 
 \item{padding.symbol}{Symbol to use for padding at the end of sequences}
 }

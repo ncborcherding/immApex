@@ -13,15 +13,17 @@ get.IMGT(
 )
 }
 \arguments{
-\item{species}{One or two word designation of species. Currently supporting: 
-"human", "mouse", "rat", "rabbit", "rhesus monkey", "sheep", "pig", "platypus",
-"alpaca", "dog", "chicken", and "ferret"}
+\item{species}{One or two word common designation of species. Currently supporting: 
+\strong{human}, \strong{mouse}, \strong{rat}, \strong{rabbit}, \strong{rhesus monkey}, 
+\strong{sheep}, \strong{pig}, \strong{platypus}, \strong{alpaca}, \strong{dog}, \strong{chicken}, 
+and \strong{ferret}}
 
-\item{chain}{Sequence chain to access}
+\item{chain}{Sequence chain to access, like \strong{TRB} or \strong{IGH}}
 
-\item{sequence.type}{Type of sequence - "aa" for amino acid or "nt" for nucleotide}
+\item{sequence.type}{Type of sequence - \strong{aa} for amino acid or \strong{nt} for nucleotide}
 
-\item{frame}{Designation for "all", "inframe" or "inframe+gap"}
+\item{frame}{Designation for \strong{all}, \strong{inframe} or \strong{inframe+gap} that includes
+aligned sequences with teh IMGT gaps.}
 
 \item{region}{Sequence gene loci to access}
 }

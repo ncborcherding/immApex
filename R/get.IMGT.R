@@ -11,13 +11,15 @@
 #'                    region = "v",
 #'                    sequence.type = "aa") 
 #'                               
-#' @param species One or two word designation of species. Currently supporting: 
-#' "human", "mouse", "rat", "rabbit", "rhesus monkey", "sheep", "pig", "platypus",
-#' "alpaca", "dog", "chicken", and "ferret"
-#' @param chain Sequence chain to access
-#' @param frame Designation for "all", "inframe" or "inframe+gap"
+#' @param species One or two word common designation of species. Currently supporting: 
+#' \strong{human}, \strong{mouse}, \strong{rat}, \strong{rabbit}, \strong{rhesus monkey}, 
+#' \strong{sheep}, \strong{pig}, \strong{platypus}, \strong{alpaca}, \strong{dog}, \strong{chicken}, 
+#' and \strong{ferret}
+#' @param chain Sequence chain to access, like \strong{TRB} or \strong{IGH}
+#' @param frame Designation for \strong{all}, \strong{inframe} or \strong{inframe+gap} that includes
+#' aligned sequences with teh IMGT gaps.
 #' @param region Sequence gene loci to access
-#' @param sequence.type Type of sequence - "aa" for amino acid or "nt" for nucleotide
+#' @param sequence.type Type of sequence - \strong{aa} for amino acid or \strong{nt} for nucleotide
 #' 
 #' @importFrom stringr str_extract str_replace_all str_remove_all str_split
 #' @importFrom httr GET content

@@ -26,14 +26,13 @@
 #'                             sequence.type = "aa",
 #'                             sequences = c("CDR1", "CDR2"))
 #'                             
-#' @param input.data Data frame of sequencing data or 
-#' output from format.genes().
-#' @param reference IMGT sequences from get.IMGT()
-#' @param chain Sequence chain to access
-#' @param technology The sequencing technology employed - 'TenX', "Adaptive', 
-#' 'AIRR', or 'Omniscope'
-#' @param sequence.type Type of sequence - "aa" for amino acid or "nt" for nucleotide
-#' @param sequences The specific regions of the CDR loop to get from the data.
+#' @param input.data Data frame output of \code{\link{format.genes}}
+#' @param reference IMGT reference sequences from \code{\link{get.IMGT}}
+#' @param chain Sequence chain to access, like \strong{TRB} or \strong{IGH}
+#' @param technology The sequencing technology employed - \strong{TenX}, \strong{Adaptive}, 
+#' \strong{AIRR}, or \strong{Omniscope}
+#' @param sequence.type Type of sequence - \strong{aa} for amino acid or \strong{nt} for nucleotide
+#' @param sequences The specific regions of the CDR loop to get from the data, such as \strong{CDR1}. 
 #'                             
 #' @importFrom stringr str_split
 #' 

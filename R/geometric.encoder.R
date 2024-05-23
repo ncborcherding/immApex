@@ -14,10 +14,12 @@
 #'                                      method.to.use = "BLOSUM62",
 #'                                      theta = pi/3)
 #'                         
-#' @param input.sequences The amino acid sequences 
+#' @param input.sequences The set of amino acid sequences 
 #' @param method.to.use The method or approach for the conversion: 
-#' "BLOSUM45", "BLOSUM50", "BLOSUM62", "BLOSUM80", "BLOSUM100", "PAM30", 
-#' "PAM40", "PAM70", "PAM120", or "PAM250"  
+#' \itemize{
+#'   \item{BLOcks SUbstitution Matrices: BLOSUM45, BLOSUM50, BLOSUM62, BLOSUM80, BLOSUM100}
+#'   \item{Point Accepted Mutation Matrices: PAM30, PAM40, PAM70, PAM120, PAM250}
+#' } 
 #' @param theta The angle for geometric transformation
 #' 
 #' @export

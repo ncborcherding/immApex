@@ -14,19 +14,18 @@ infer.cdr(
 )
 }
 \arguments{
-\item{input.data}{Data frame of sequencing data or 
-output from format.genes().}
+\item{input.data}{Data frame output of \code{\link{format.genes}}}
 
-\item{reference}{IMGT sequences from get.IMGT()}
+\item{reference}{IMGT reference sequences from \code{\link{get.IMGT}}}
 
-\item{chain}{Sequence chain to access}
+\item{chain}{Sequence chain to access, like \strong{TRB} or \strong{IGH}}
 
-\item{technology}{The sequencing technology employed - 'TenX', "Adaptive', 
-'AIRR', or 'Omniscope'}
+\item{technology}{The sequencing technology employed - \strong{TenX}, \strong{Adaptive}, 
+\strong{AIRR}, or \strong{Omniscope}}
 
-\item{sequence.type}{Type of sequence - "aa" for amino acid or "nt" for nucleotide}
+\item{sequence.type}{Type of sequence - \strong{aa} for amino acid or \strong{nt} for nucleotide}
 
-\item{sequences}{The specific regions of the CDR loop to get from the data.}
+\item{sequences}{The specific regions of the CDR loop to get from the data, such as \strong{CDR1}.}
 }
 \value{
 A data frame with the new columns of CDR sequences added.

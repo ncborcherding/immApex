@@ -9,13 +9,13 @@ getIR(input.data, chains, sequence.type = "aa")
 \arguments{
 \item{input.data}{Single-cell object or the output of 
 \link[scRepertoire]{combineTCR} and \link[scRepertoire]{combineBCR} from
-scRepertoire.}
+scRepertoire}
 
 \item{chains}{Immune Receptor chain to use - \strong{TRA}, 
-\strong{TRB}, \strong{Heavy}, \strong{Light}}
+\strong{TRB}, \strong{IGH}, or \strong{IGL}}
 
 \item{sequence.type}{Extract amino acid (\strong{aa}) or 
-nucleotide (\strong{nt})}
+nucleotide (\strong{nt}) sequences}
 }
 \value{
 A data frame of nucleotide or amino acid sequences
