@@ -26,7 +26,7 @@ Apex is meant to serve as an API for deep-learning models based on immune recept
 
 ## Load Libraries
 
-```{r}
+```{r tidy = FALSE}
 suppressMessages(library(Apex))
 suppressMessages(library(keras))
 suppressMessages(library(scRepertoire))
@@ -50,7 +50,7 @@ number.of.sequences Number of sequences to generate
 * **max.length** Maximum length of the final sequence
 * **sequence.dictionary** The letters to use in sequence generation (default are all amino acids)
 
-```{r}
+```{r tidy = FALSE}
 sequences <- generate.sequences(prefix.motif = "CAS",
                                 suffix.motif = "YF",
                                 number.of.sequences = 1000,
@@ -61,7 +61,7 @@ head(sequences)
 
 If we want to generate nucleotide sequences instead of amino acids, we just need to change the **sequence.dictionary**.
 
-```{r}
+```{r tidy = FALSE}
 nucleotide.sequences <- generate.sequences(number.of.sequences = 1000,
                                            min.length = 8,
                                            max.length = 16, 
@@ -82,7 +82,7 @@ Parameters for ```mutate.sequences()```
 * **position.end** The ending position to mutate along the sequence. Default NULL will end the random mutations at the last position.
 * **sequence.dictionary** The letters to use in sequence mutation (default are all amino acids)
 
-```{r}
+```{r tidy = FALSE}
 mutated.sequences <- mutate.sequences(sequences, 
                                       n.sequence = 1,
                                       position.start = 3,                                  
@@ -105,7 +105,7 @@ Parameters for ```format.genes()```
 
 Here, we will use the built-in example from Adaptive Biotechnologies and reformat and simplify the **v** region. ```format.genes()``` will add 2 columns to the end of the data frame per region selected - 1) **v_IMGT** will be the formatted gene calls and 2) **v_IMGT.check** is a binary for if the formatted region appears in the IMGT database. In the example below, "TRBV2-1" is not recognized as a designation within IMGT.
 
-```{r}
+```{r tidy = FALSE}
 Adaptive_example <- format.genes(apex_example.data[["Adaptive"]],
                                  region = "v",
                                  technology = "Adaptive", 
@@ -127,7 +127,7 @@ Parameters for ```get.IMGT()```
 
 Here, we will use the ```get.IMGT()``` function to get the amino acid sequences for the TRBV region to get all the sequences by V gene allele.
 
-```{r}
+```{r tidy = FALSE}
 TRBV_aa <- get.IMGT(species = "human",
                     chain = "TRB",
                     frame = "inframe",
@@ -149,7 +149,7 @@ Parameters for ```infer.cdr```
 * **sequence.type** Type of sequence - "aa" for amino acid or "nt" for nucleotide
 * **sequences** The specific regions of the CDR loop to get from the data.
 
-```{r}
+```{r tidy = FALSE}
 Adaptive_example <- infer.cdr(Adaptive_example,
                               chain = "TRB", 
                               reference = TRBV_aa,
@@ -173,7 +173,7 @@ Parameters for ```one.hot.encoder()```
 * **convert.to.matrix** Return a matrix (**TRUE**) or a 3D array (**FALSE**)
 * **sequence.dictionary** The letters to use in encoding (default are all amino acids + NA value)
 
-```{r}
+```{r tidy = FALSE}
 sequence.matrix <- one.hot.encoder(input.sequences =  c(sequences, mutated.sequences), 
                                    convert.to.matrix = TRUE)
 head(sequence.matrix[,1:20])
@@ -199,7 +199,7 @@ These properties are largely based on dimensional reduction strategies, but it i
 * zScales - \href{https://pubmed.ncbi.nlm.nih.gov/9651153/}{citation}).
 
 
-```{r}
+```{r tidy = FALSE}
 property.matrix <- property.encoder(input.sequences =  c(sequences, mutated.sequences), 
                                     method.to.use = "FASGAI",
                                     convert.to.matrix = TRUE)
@@ -209,7 +209,7 @@ head(property.matrix[,1:20])
 
 ```property.encoder()``` also allows us to use multiple approaches simultaneously by setting **method.to.use** as a vector.
 
-```{r}
+```{r tidy = FALSE}
 mulit.property.matrix <- property.encoder(input.sequences =  c(sequences, mutated.sequences), 
                                           method.to.use = c("atchleyFactors", "kideraFactors"),
                                           convert.to.matrix = TRUE)
@@ -219,7 +219,7 @@ head(mulit.property.matrix[,1:20])
 
 If, instead, we would like to get the set of summarized values across all amino acid residues for a given **method.to.use**, we can use **summary.function** and select "median", "mean", "sum", variance ("vars"), or Median Absolute Deviation ("mads"). 
 
-```{r}
+```{r tidy = FALSE}
 median.property.matrix <- property.encoder(input.sequences =  c(sequences, mutated.sequences), 
                                           method.to.use = "crucianiProperties",
                                           summary.function = "median")
@@ -234,7 +234,7 @@ Parameters for ```geometric.encoder()```
 * **method.to.use** Select the following substitution matrices: "BLOSUM45", "BLOSUM50", "BLOSUM62", "BLOSUM80", "BLOSUM100", "PAM30", "PAM40", "PAM70", "PAM120", or "PAM250"
 * **theta** The angle in which to create the rotation matrix
 
-```{r}
+```{r tidy = FALSE}
 geometric.matrix <- geometric.encoder(sequences, 
                                       method.to.use = "BLOSUM62",
                                       theta = pi/3)
@@ -254,7 +254,7 @@ Parameters for ```tokenize.sequences()```
 * **convert.to.matrix** Return a matrix (**TRUE**) or a vector (**FALSE**)
 
 
-```{r}
+```{r tidy = FALSE}
 token.matrix <- tokenize.sequences(input.sequences =  c(sequences, mutated.sequences), 
                                    add.startstop = TRUE,
                                    start.token = "!",
@@ -267,14 +267,14 @@ head(token.matrix[,1:18])
 
 Another method for encoding a group of sequences is to calculate the positional probability of sequences using ```probability.matrixs()```. This function could represent a collection of antigen-specific sequences or even work on embedding a total repertoire.  
 
-```{r}
+```{r tidy = FALSE}
 ppm.matrix <- probability.matrix(sequences)
 head(ppm.matrix)
 ```
 
 In addition, ```probability.matrix()``` can convert the positional probability matrix into a positional weight matrix using log-likelihood using the argument **convert.PWM** = TRUE. We can provide a set of background frequencies for the amino acids with **background.frequencies** or leave this blank to assume a uniform distribution for all amino acids. Here, we are going to use an example background. 
 
-```{r}
+```{r tidy = FALSE}
 set.seed(42)
 back.freq <- sample(1:1000, 20)
 back.freq <- back.freq/sum(back.freq)
@@ -290,7 +290,7 @@ head(pwm.matrix)
 
 Similar to the positional probability, we can also summarize a given set of sequences by the frequency of adjacency for a given set of amino acid or nucleotide residues using ```adjacency.matrix()```. For this function, a matrix of n x n (defined by the length of **sequence.dictionary**) is created and the number of times a residue is adjacent to one another is calculated. We can **normalize** the values using the total number of residues evaluated. 
 
-```{r}
+```{r tidy = FALSE}
 adj.matrix <- adjacency.matrix(sequences, 
                                normalize = FALSE)
 adj.matrix
@@ -298,7 +298,7 @@ adj.matrix
 
 ## Positional.encoder
 
-```{r}
+```{r tidy = FALSE}
 positional.matrix <- positional.encoder(number.of.sequences = length(c(sequences, mutated.sequences)),
                                         latent.dims = 40)
 ```
@@ -316,7 +316,7 @@ The steps to train the model include:
 3. Forming the autoencoder structure - encoder and decoder
 4. Fitting the model
 
-```{r}
+```{r tidy = FALSE}
 #Sampling to make Training/Valid Data
 set.seed(42)
 num_sequences <- nrow(sequence.matrix)
@@ -383,7 +383,68 @@ plot(history)
 
 ## Classifier
 
+We can also build classifiers directly using deep or shallow neural networks. Building deep classifiers generally requires a lot more data than classical machine learning methods, like random forests, so the vignette might not be ideal. 
 
+The first step is to generate distinct types of sequences using ```generate.sequences()``` and ```one.hot.encoder()``` to prepare the data for the model. 
+
+```{r tidy = FALSE}
+class1.sequences <- generate.sequences(prefix.motif = "CAS",
+                                       suffix.motif = "YF",
+                                       number.of.sequences = 10000,
+                                       min.length = 8,
+                                       max.length = 16)
+
+class2.sequences <- generate.sequences(prefix.motif = "CASF",
+                                       suffix.motif = "YF",
+                                       number.of.sequences = 10000,
+                                       min.length = 8,
+                                       max.length = 16)
+
+labels <- as.numeric(c(rep(0, 10000), rep(1, 10000)))
+
+classifier.matrix <- one.hot.encoder(input.sequences =  c(class1.sequences, class2.sequences), 
+                                     convert.to.matrix = TRUE)
+```
+
+Next, we will define and train the Keras classifier model using artificial sequences. We will use a simple convolutional neural network with 2 layers and then a single neuron that will classify the sequences into class 1 or class 2 (here, the labels are 0 and 1).
+
+```{r tidy = FALSE}
+#Input shape will be 1D as we are using a matrix
+input.shape <- dim(classifier.matrix)[2]
+
+#Simple model structure
+classifier.model <- keras_model_sequential() %>% 
+                        layer_dense(units = 128, activation = "relu", 
+                                    input_shape = c(input.shape)) %>%
+                        layer_dense(units = 32, activation = "relu") %>%
+                        layer_dense(units = 1, activation = "sigmoid")
+
+classifier.model %>% compile(
+        optimizer = optimizer_adam(learning_rate = 0.00001),
+        loss = "binary_crossentropy",
+        metrics = c("accuracy")
+)
+
+#Seperating data and labels
+set.seed(42)
+val_indices <- sample(nrow(classifier.matrix), 10000*0.2)
+x_val <- classifier.matrix[val_indices,]
+x_train <- classifier.matrix[-val_indices,]
+
+val_labels <- labels[val_indices]
+train_labels <- labels[-val_indices]
+
+#Training the classifier.model
+history <- classifier.model %>% fit(x_train, 
+                                    train_labels, 
+                                    epochs = 20, 
+                                    batch_size = 32, 
+                                    validation_data = list(x_val, val_labels)
+)
+
+plot(history)
+```
+Here, we can achieve a validation accuracy of 98.25%, which is impressive. But to contextualize, we used ```generate.sequences()``` and distinct motifs - "CAS" vs "CASF" to create our 2 classes of sequences. Using sequences from experimental data will likely result in lower accuracy or require greater model complexity.
 
 ***
 # Conclusion
