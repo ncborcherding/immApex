@@ -5,15 +5,15 @@
 #' dimensional reduction strategies
 #' 
 #' @examples
-#' new.sequences <- generate.sequences(prefix.motif = "CAS",
-#'                                     suffix.motif = "YF",
-#'                                     number.of.sequences = 100,
-#'                                     min.length = 8,
-#'                                     max.length = 16)
+#' new.sequences <- generateSequences(prefix.motif = "CAS",
+#'                                    suffix.motif = "YF",
+#'                                    number.of.sequences = 100,
+#'                                    min.length = 8,
+#'                                    max.length = 16)
 #'                           
-#' sequence.matrix <- property.encoder(new.sequences, 
-#'                                     method.to.use = "VHSE",
-#'                                     convert.to.matrix = TRUE)
+#' sequence.matrix <- propertyEncoder(new.sequences, 
+#'                                    method.to.use = "VHSE",
+#'                                    convert.to.matrix = TRUE)
 #'                         
 #' @param input.sequences The amino acid sequences to use
 #' @param max.length Additional length to pad, NULL will pad sequences 
@@ -34,12 +34,12 @@
 #' @export
 #' @return Converted amino acid sequences by property in a matrix or 3D array
 
-property.encoder <- function(input.sequences, 
-                             max.length = NULL,
-                             method.to.use = NULL,
-                             convert.to.matrix = TRUE,
-                             summary.function = NULL,
-                             padding.symbol = ".") {
+propertyEncoder <- function(input.sequences, 
+                            max.length = NULL,
+                            method.to.use = NULL,
+                            convert.to.matrix = TRUE,
+                            summary.function = NULL,
+                            padding.symbol = ".") {
   if(any(method.to.use %!in% names(apex_AA.data))) {
     stop(paste0("Please select one of the following for method.to.use: ", paste(sort(names(apex_AA.data)), collapse = ", ")))
   }

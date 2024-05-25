@@ -1,56 +1,56 @@
-# test script for mutate.sequences.R - testcases are NOT comprehensive!
+# test script for mutateSequences.R - testcases are NOT comprehensive!
 
-test_that("mutate.sequences works", {
+test_that("mutateSequences works", {
   
   sequences <- getdata("generate.sequences", "generate.sequences_T1")
 
   set.seed(42)
-  mutate.default <- mutate.sequences(sequences)
+  mutate.default <- mutateSequences(sequences)
   
   expect_equal(
     mutate.default,
-    getdata("mutate.sequences", "mutate.sequences_default")
+    getdata("mutateSequences", "mutateSequences_default")
   )
   
   set.seed(42)
-  mutate.mutation.rate <- mutate.sequences(sequences,
+  mutate.mutation.rate <- mutateSequences(sequences,
                                            mutation.rate = 0.2)
   
   expect_equal(
     mutate.mutation.rate,
-    getdata("mutate.sequences", "mutate.sequences_mutation.rate")
+    getdata("mutateSequences", "mutateSequences_mutation.rate")
   )
   
   set.seed(42)
-  mutate.set.position <- mutate.sequences(sequences,
+  mutate.set.position <- mutateSequences(sequences,
                                           position.start = 4,
                                           position.end = 8)
   
   expect_equal(
     mutate.set.position,
-    getdata("mutate.sequences", "mutate.sequences_set.position")
+    getdata("mutateSequences", "mutateSequences_set.position")
   )
   
   set.seed(42)
-  mutate.specific.mutation <- mutate.sequences(sequences,
+  mutate.specific.mutation <- mutateSequences(sequences,
                                                position.start = 4,
                                                position.end = 8,
                                                sequence.dictionary = c("V", "L", "I"))
   
   expect_equal(
     mutate.specific.mutation,
-    getdata("mutate.sequences", "mutate.sequences_specific.mutation")
+    getdata("mutateSequences", "mutateSequences_specific.mutation")
   )
   
   nt.sequences <- getdata("generate.sequences", "generate.sequences_T2")
   
   set.seed(42)
-  mutate.nt <- mutate.sequences(nt.sequences,
+  mutate.nt <- mutateSequences(nt.sequences,
                                 sequence.dictionary = c("A", "C", "T", "G"))
   
   expect_equal(
     mutate.nt,
-    getdata("mutate.sequences", "mutate.sequences_nucleotides")
+    getdata("mutateSequences", "mutateSequences_nucleotides")
   )
 })
 

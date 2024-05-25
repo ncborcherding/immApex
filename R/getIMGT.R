@@ -5,7 +5,7 @@
 #' IMGT can be found at \href{https://www.imgt.org/}{imgt.org}.
 #' 
 #' @examples
-#'TRBV_aa <- get.IMGT(species = "human",
+#' TRBV_aa <- getIMGT(species = "human",
 #'                    chain = "TRB",
 #'                    frame = "inframe",
 #'                    region = "v",
@@ -26,11 +26,11 @@
 #' @importFrom rvest read_html html_text html_nodes
 #' @export get.IMGT
 #' @return A list of allele sequences
-get.IMGT <- function(species = "human",
-                     chain = "TRB",
-                     sequence.type = "aa",
-                     frame = "inframe",
-                     region = "v") {
+getIMGT <- function(species = "human",
+                    chain = "TRB",
+                    sequence.type = "aa",
+                    frame = "inframe",
+                    region = "v") {
 
   if(tolower(region) %!in% c("v", "d", "j", "c")) {
     stop("Please select a region in the following category: 'v', 'd', 'j', 'c'")

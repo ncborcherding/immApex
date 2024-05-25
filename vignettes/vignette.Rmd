@@ -37,11 +37,11 @@ data("apex_example.data")
 
 # Getting and Manipulating Sequences
 
-## Generate.sequences
+## generateSequences
 
-A quick way to get started testing the model code is to generate synthetic sequences. ```generate.sequences()``` can also generate realistic noise for generative adversarial networks. 
+A quick way to get started testing the model code is to generate synthetic sequences. ```generateSequences()``` can also generate realistic noise for generative adversarial networks. 
 
-Parameters for ```generate.sequences()```
+Parameters for ```generateSequences()```
 
 * **prefix.motif** Add a defined sequence to the start of the generated sequences.
 * **suffix.motif** Add a defined sequence to the end of the generated sequences
@@ -51,7 +51,7 @@ number.of.sequences Number of sequences to generate
 * **sequence.dictionary** The letters to use in sequence generation (default are all amino acids)
 
 ```{r tidy = FALSE}
-sequences <- generate.sequences(prefix.motif = "CAS",
+sequences <- generateSequences(prefix.motif = "CAS",
                                 suffix.motif = "YF",
                                 number.of.sequences = 1000,
                                 min.length = 8,
@@ -62,18 +62,18 @@ head(sequences)
 If we want to generate nucleotide sequences instead of amino acids, we just need to change the **sequence.dictionary**.
 
 ```{r tidy = FALSE}
-nucleotide.sequences <- generate.sequences(number.of.sequences = 1000,
+nucleotide.sequences <- generateSequences(number.of.sequences = 1000,
                                            min.length = 8,
                                            max.length = 16, 
                                            sequence.dictionary = c("A", "C", "T", "G"))
 head(nucleotide.sequences)
 ```
 
-## Mutate.sequences
+## mutateSequences
 
-A common approach is to mutate sequences randomly or at specific intervals. This can be particularly helpful if we have fewer sequences or want to test a model for accuracy given new, altered sequences. ```mutate.sequences()``` allows us to tune the type of mutation, where along the sequences to introduce the mutation, and the overall number of mutations.
+A common approach is to mutate sequences randomly or at specific intervals. This can be particularly helpful if we have fewer sequences or want to test a model for accuracy given new, altered sequences. ```mutateSequences()``` allows us to tune the type of mutation, where along the sequences to introduce the mutation, and the overall number of mutations.
 
-Parameters for ```mutate.sequences()```
+Parameters for ```mutateSequences()```
 
 * **input.sequences** The amino acid or nucleotide sequences to use
 * **n.sequences** The number of mutated sequences to return per input.sequence
@@ -83,7 +83,7 @@ Parameters for ```mutate.sequences()```
 * **sequence.dictionary** The letters to use in sequence mutation (default are all amino acids)
 
 ```{r tidy = FALSE}
-mutated.sequences <- mutate.sequences(sequences, 
+mutated.sequences <- mutateSequences(sequences, 
                                       n.sequence = 1,
                                       position.start = 3,                                  
                                       position.end = 8)
@@ -91,11 +91,11 @@ head(sequences)
 head(mutated.sequences)
 ```
 
-## Format.genes
+## formatGenes
 
-Across sequencing platforms, immune receptor nomenclature can be highly variable. When preparing data for models, we can use ``format.genes()``` to universalize the gene formats into IMGT nomenclature. 
+Across sequencing platforms, immune receptor nomenclature can be highly variable. When preparing data for models, we can use ``formatGenes()``` to universalize the gene formats into IMGT nomenclature. 
 
-Parameters for ```format.genes()```
+Parameters for ```formatGenes()```
 
 * **input.data** Data frame of sequencing data or scRepertoire outputs
 * **region** Sequence gene loci to access - 'v', 'd', 'j', 'c' or a combination using c('v', 'd', 'j')
@@ -103,21 +103,22 @@ Parameters for ```format.genes()```
 * **species** One or two word designation of species. Currently supporting: "human", "mouse", "rat", "rabbit", "rhesus monkey", "sheep", "pig", "platypus", "alpaca", "dog", "chicken", and "ferret"
 * **simplify.format** If applicable, remove the allelic designation (TRUE) or retain all information (FALSE)
 
-Here, we will use the built-in example from Adaptive Biotechnologies and reformat and simplify the **v** region. ```format.genes()``` will add 2 columns to the end of the data frame per region selected - 1) **v_IMGT** will be the formatted gene calls and 2) **v_IMGT.check** is a binary for if the formatted region appears in the IMGT database. In the example below, "TRBV2-1" is not recognized as a designation within IMGT.
+Here, we will use the built-in example from Adaptive Biotechnologies and reformat and simplify the **v** region. ```formatGenes()``` will add 2 columns to the end of the data frame per region selected - 1) **v_IMGT** will be the formatted gene calls and 2) **v_IMGT.check** is a binary for if the formatted region appears in the IMGT database. In the example below, "TRBV2-1" is not recognized as a designation within IMGT.
 
 ```{r tidy = FALSE}
-Adaptive_example <- format.genes(apex_example.data[["Adaptive"]],
+Adaptive_example <- formatGenes(apex_example.data[["Adaptive"]],
                                  region = "v",
                                  technology = "Adaptive", 
                                  simplify.format = TRUE) 
 
 head(Adaptive_example[,c("aminoAcid","vGeneName", "v_IMGT", "v_IMGT.check")])
 ```
-## Get.IMGT
 
-Depending on the sequencing technology and the version, we might want to expand the length of our sequence embedding approach. The first step in the process is pulling the reference sequences from the ImMunoGeneTics (IMGT) system using ```get.IMGT()```. More information for IMGT can be found at \href{https://www.imgt.org/}{imgt.org}. 
+## getIMGT
 
-Parameters for ```get.IMGT()```
+Depending on the sequencing technology and the version, we might want to expand the length of our sequence embedding approach. The first step in the process is pulling the reference sequences from the ImMunoGeneTics (IMGT) system using ```getIMGT()```. More information for IMGT can be found at \href{https://www.imgt.org/}{imgt.org}. 
+
+Parameters for ```getIMGT()```
 
 * **species** One or two word designation of species. Currently supporting: "human", "mouse", "rat", "rabbit", "rhesus monkey", "sheep", "pig", "platypus", "alpaca", "dog", "chicken", and "ferret"
 * **chain** Sequence chain to access
@@ -125,10 +126,10 @@ Parameters for ```get.IMGT()```
 * **region** Sequence gene loci to access
 * **sequence.type** Type of sequence - "aa" for amino acid or "nt" for nucleotide
 
-Here, we will use the ```get.IMGT()``` function to get the amino acid sequences for the TRBV region to get all the sequences by V gene allele.
+Here, we will use the ```getIMGT()``` function to get the amino acid sequences for the TRBV region to get all the sequences by V gene allele.
 
 ```{r tidy = FALSE}
-TRBV_aa <- get.IMGT(species = "human",
+TRBV_aa <- getIMGT(species = "human",
                     chain = "TRB",
                     frame = "inframe",
                     region = "v",
@@ -137,20 +138,20 @@ TRBV_aa <- get.IMGT(species = "human",
 TRBV_aa[[1]][1]
 ```
 
-## Infer.cdr
+## inferCDR
 
-We can now use ```infer.cdr()``` to add additional sequence elements to our example data using the outputs of ```format.genes()``` and ```get.IMGT()```. Here, we will use the function to isolate the complementarity-determining regions (CDR) 1 and 2. If the gene nomenclature does not match the IMGT the result will be NA for the given sequences. Likewise, if the IMGT nomenclature has been simplified, the first allelic match will be used for sequence extraction. 
+We can now use ```inferCDR()``` to add additional sequence elements to our example data using the outputs of ```formatGenes()``` and ```getIMGT()```. Here, we will use the function to isolate the complementarity-determining regions (CDR) 1 and 2. If the gene nomenclature does not match the IMGT the result will be NA for the given sequences. Likewise, if the IMGT nomenclature has been simplified, the first allelic match will be used for sequence extraction. 
 
-Parameters for ```infer.cdr```
+Parameters for ```inferCDR```
 
-* **input.data** Data frame of sequencing data or output from format.genes().
-* **reference** IMGT sequences from ```get.IMGT()```
+* **input.data** Data frame of sequencing data or output from formatGenes().
+* **reference** IMGT sequences from ```getIMGT()```
 * **technology** The sequencing technology employed - 'TenX', "Adaptive', 'AIRR', or 'Omniscope'
 * **sequence.type** Type of sequence - "aa" for amino acid or "nt" for nucleotide
 * **sequences** The specific regions of the CDR loop to get from the data.
 
 ```{r tidy = FALSE}
-Adaptive_example <- infer.cdr(Adaptive_example,
+Adaptive_example <- inferCDR(Adaptive_example,
                               chain = "TRB", 
                               reference = TRBV_aa,
                               technology = "Adaptive", 
@@ -162,11 +163,11 @@ Adaptive_example[200:210,c("CDR1_IMGT", "CDR2_IMGT")]
 
 # Encoders
 
-## One.hot.encoder
+## onehotEncoder
 
 One hot encoding of amino acid or nucleotide sequences is a common method for transforming sequences into numeric matrices compatible with Keras (or other workflows).
 
-Parameters for ```one.hot.encoder()```
+Parameters for ```onehotEncoder()```
 
 * **input.sequences** The amino acid or nucleotide sequences to use
 * **max.length** Additional length to pad, NULL will pad sequences to the max length of input.sequences
@@ -174,12 +175,12 @@ Parameters for ```one.hot.encoder()```
 * **sequence.dictionary** The letters to use in encoding (default are all amino acids + NA value)
 
 ```{r tidy = FALSE}
-sequence.matrix <- one.hot.encoder(input.sequences =  c(sequences, mutated.sequences), 
+sequence.matrix <- onehotEncoder(input.sequences =  c(sequences, mutated.sequences), 
                                    convert.to.matrix = TRUE)
 head(sequence.matrix[,1:20])
 ```
 
-## Property.encoder
+## propertyEncoder
 
 An alternative to one hot encoding is transforming the sequences into an array/matrix of numerical values using amino acid properties. 
 
@@ -200,17 +201,17 @@ These properties are largely based on dimensional reduction strategies, but it i
 
 
 ```{r tidy = FALSE}
-property.matrix <- property.encoder(input.sequences =  c(sequences, mutated.sequences), 
+property.matrix <- propertyEncoder(input.sequences =  c(sequences, mutated.sequences), 
                                     method.to.use = "FASGAI",
                                     convert.to.matrix = TRUE)
 
 head(property.matrix[,1:20])
 ```
 
-```property.encoder()``` also allows us to use multiple approaches simultaneously by setting **method.to.use** as a vector.
+```propertyEncoder()``` also allows us to use multiple approaches simultaneously by setting **method.to.use** as a vector.
 
 ```{r tidy = FALSE}
-mulit.property.matrix <- property.encoder(input.sequences =  c(sequences, mutated.sequences), 
+mulit.property.matrix <- propertyEncoder(input.sequences =  c(sequences, mutated.sequences), 
                                           method.to.use = c("atchleyFactors", "kideraFactors"),
                                           convert.to.matrix = TRUE)
 
@@ -220,32 +221,32 @@ head(mulit.property.matrix[,1:20])
 If, instead, we would like to get the set of summarized values across all amino acid residues for a given **method.to.use**, we can use **summary.function** and select "median", "mean", "sum", variance ("vars"), or Median Absolute Deviation ("mads"). 
 
 ```{r tidy = FALSE}
-median.property.matrix <- property.encoder(input.sequences =  c(sequences, mutated.sequences), 
+median.property.matrix <- propertyEncoder(input.sequences =  c(sequences, mutated.sequences), 
                                           method.to.use = "crucianiProperties",
                                           summary.function = "median")
 ```
 
-## Geometric.encoder
+## geometricEncoder
 
 One aprpoach to encode amino acid sequences has been through geometric isometry, such as \href{GIANA}{https://pubmed.ncbi.nlm.nih.gov/34349111/}.
 
-Parameters for ```geometric.encoder()```
+Parameters for ```geometricEncoder()```
 
 * **method.to.use** Select the following substitution matrices: "BLOSUM45", "BLOSUM50", "BLOSUM62", "BLOSUM80", "BLOSUM100", "PAM30", "PAM40", "PAM70", "PAM120", or "PAM250"
 * **theta** The angle in which to create the rotation matrix
 
 ```{r tidy = FALSE}
-geometric.matrix <- geometric.encoder(sequences, 
+geometric.matrix <- geometricEncoder(sequences, 
                                       method.to.use = "BLOSUM62",
                                       theta = pi/3)
 head(geometric.matrix)
 ```
 
-## Tokenize.sequences
+## tokenizeSequences
 
 Another approach to transforming a sequence into numerical values is tokenizing it into numbers. This is a common approach for recurrent neural networks where one letter corresponds to a single integer. In addition, we can add a start and stop tokens to our original sequences to differentiate between the beginning and end of the sequences. 
 
-Parameters for ```tokenize.sequences()```
+Parameters for ```tokenizeSequences()```
 
 * **add.startstop** Add start and stop tokens to the sequence
 * **start.token** The character to use for the start token
@@ -255,7 +256,7 @@ Parameters for ```tokenize.sequences()```
 
 
 ```{r tidy = FALSE}
-token.matrix <- tokenize.sequences(input.sequences =  c(sequences, mutated.sequences), 
+token.matrix <- tokenizeSequences(input.sequences =  c(sequences, mutated.sequences), 
                                    add.startstop = TRUE,
                                    start.token = "!",
                                    stop.token = "^", 
@@ -263,51 +264,44 @@ token.matrix <- tokenize.sequences(input.sequences =  c(sequences, mutated.seque
 head(token.matrix[,1:18])
 ```
 
-## Probability.matrix
+## probabilityMatrix
 
-Another method for encoding a group of sequences is to calculate the positional probability of sequences using ```probability.matrixs()```. This function could represent a collection of antigen-specific sequences or even work on embedding a total repertoire.  
+Another method for encoding a group of sequences is to calculate the positional probability of sequences using ```probabilityMatrixs()```. This function could represent a collection of antigen-specific sequences or even work on embedding a total repertoire.  
 
 ```{r tidy = FALSE}
-ppm.matrix <- probability.matrix(sequences)
+ppm.matrix <- probabilityMatrix(sequences)
 head(ppm.matrix)
 ```
 
-In addition, ```probability.matrix()``` can convert the positional probability matrix into a positional weight matrix using log-likelihood using the argument **convert.PWM** = TRUE. We can provide a set of background frequencies for the amino acids with **background.frequencies** or leave this blank to assume a uniform distribution for all amino acids. Here, we are going to use an example background. 
+In addition, ```probabilityMatrix()``` can convert the positional probability matrix into a positional weight matrix using log-likelihood using the argument **convert.PWM** = TRUE. We can provide a set of background frequencies for the amino acids with **background.frequencies** or leave this blank to assume a uniform distribution for all amino acids. Here, we are going to use an example background. 
 
 ```{r tidy = FALSE}
 set.seed(42)
 back.freq <- sample(1:1000, 20)
 back.freq <- back.freq/sum(back.freq)
 
-pwm.matrix <- probability.matrix(sequences,
+pwm.matrix <- probabilityMatrix(sequences,
                                  max.length = 20,
                                  convert.PWM = TRUE,
                                  background.frequencies = back.freq)
 head(pwm.matrix)
 ```
 
-## Adjacency.matrix
+## adjacencyMatrix
 
-Similar to the positional probability, we can also summarize a given set of sequences by the frequency of adjacency for a given set of amino acid or nucleotide residues using ```adjacency.matrix()```. For this function, a matrix of n x n (defined by the length of **sequence.dictionary**) is created and the number of times a residue is adjacent to one another is calculated. We can **normalize** the values using the total number of residues evaluated. 
+Similar to the positional probability, we can also summarize a given set of sequences by the frequency of adjacency for a given set of amino acid or nucleotide residues using ```adjacencyMatrix()```. For this function, a matrix of n x n (defined by the length of **sequence.dictionary**) is created and the number of times a residue is adjacent to one another is calculated. We can **normalize** the values using the total number of residues evaluated. 
 
 ```{r tidy = FALSE}
-adj.matrix <- adjacency.matrix(sequences, 
+adj.matrix <- adjacencyMatrix(sequences, 
                                normalize = FALSE)
 adj.matrix
-```
-
-## Positional.encoder
-
-```{r tidy = FALSE}
-positional.matrix <- positional.encoder(number.of.sequences = length(c(sequences, mutated.sequences)),
-                                        latent.dims = 40)
 ```
 
 # Training a Model
 
 ## Autoencoder
 
-For the vignette - we will use an autoencoder for sequence embedding. The code below is based on the [Trex](https://github.com/ncborcherding/Trex) R package. The overall structure of the autoencoder is the same. However, some of the parameters are modified for the sake of the vignette. We will use the **sequence.matrix** we generated above from the ```one.hot.encoder()```.
+For the vignette - we will use an autoencoder for sequence embedding. The code below is based on the [Trex](https://github.com/ncborcherding/Trex) R package. The overall structure of the autoencoder is the same. However, some of the parameters are modified for the sake of the vignette. We will use the **sequence.matrix** we generated above from the ```onehotEncoder()```.
 
 The steps to train the model include: 
 
@@ -385,16 +379,16 @@ plot(history)
 
 We can also build classifiers directly using deep or shallow neural networks. Building deep classifiers generally requires a lot more data than classical machine learning methods, like random forests, so the vignette might not be ideal. 
 
-The first step is to generate distinct types of sequences using ```generate.sequences()``` and ```one.hot.encoder()``` to prepare the data for the model. 
+The first step is to generate distinct types of sequences using ```generateSequences()``` and ```onehotEncoder()``` to prepare the data for the model. 
 
 ```{r tidy = FALSE}
-class1.sequences <- generate.sequences(prefix.motif = "CAS",
+class1.sequences <- generateSequences(prefix.motif = "CAS",
                                        suffix.motif = "YF",
                                        number.of.sequences = 10000,
                                        min.length = 8,
                                        max.length = 16)
 
-class2.sequences <- generate.sequences(prefix.motif = "CASF",
+class2.sequences <- generateSequences(prefix.motif = "CASF",
                                        suffix.motif = "YF",
                                        number.of.sequences = 10000,
                                        min.length = 8,
@@ -402,7 +396,7 @@ class2.sequences <- generate.sequences(prefix.motif = "CASF",
 
 labels <- as.numeric(c(rep(0, 10000), rep(1, 10000)))
 
-classifier.matrix <- one.hot.encoder(input.sequences =  c(class1.sequences, class2.sequences), 
+classifier.matrix <- onehotEncoder(input.sequences =  c(class1.sequences, class2.sequences), 
                                      convert.to.matrix = TRUE)
 ```
 
@@ -444,7 +438,7 @@ history <- classifier.model %>% fit(x_train,
 
 plot(history)
 ```
-Here, we can achieve a validation accuracy of 98.25%, which is impressive. But to contextualize, we used ```generate.sequences()``` and distinct motifs - "CAS" vs "CASF" to create our 2 classes of sequences. Using sequences from experimental data will likely result in lower accuracy or require greater model complexity.
+Here, we can achieve a validation accuracy of 98.25%, which is impressive. But to contextualize, we used ```generateSequences()``` and distinct motifs - "CAS" vs "CASF" to create our 2 classes of sequences. Using sequences from experimental data will likely result in lower accuracy or require greater model complexity.
 
 ***
 # Conclusion

@@ -4,14 +4,14 @@
 #' into a one hot encoding of the sequence.
 #' 
 #' @examples
-#' new.sequences <- generate.sequences(prefix.motif = "CAS",
-#'                                     suffix.motif = "YF",
-#'                                     number.of.sequences = 100,
-#'                                     min.length = 8,
-#'                                     max.length = 16)
+#' new.sequences <- generateSequences(prefix.motif = "CAS",
+#'                                    suffix.motif = "YF",
+#'                                    number.of.sequences = 100,
+#'                                    min.length = 8,
+#'                                    max.length = 16)
 #'                           
-#' sequence.matrix <- one.hot.encoder(new.sequences, 
-#'                                    convert.to.matrix = TRUE)
+#' sequence.matrix <- onehotEncoder(new.sequences, 
+#'                                  convert.to.matrix = TRUE)
 #'                         
 #' @param input.sequences The amino acid or nucleotide sequences to use
 #' @param max.length Additional length to pad, NULL will pad sequences 
@@ -29,12 +29,12 @@
 #' 
 #' @export
 #' @return One hot encoded sequences in a matrix or 3D array
-one.hot.encoder <- function(input.sequences, 
-                            max.length = NULL,
-                            motif.length = 1,
-                            convert.to.matrix = TRUE,
-                            sequence.dictionary = amino.acids[1:20],
-                            padding.symbol = ".") {
+onehotEncoder <- function(input.sequences, 
+                          max.length = NULL,
+                          motif.length = 1,
+                          convert.to.matrix = TRUE,
+                          sequence.dictionary = amino.acids[1:20],
+                          padding.symbol = ".") {
   
   char_set <- c(sequence.dictionary, padding.symbol)
   

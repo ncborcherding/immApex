@@ -4,17 +4,17 @@
 #' tokens in preparing for deep learning models. 
 #' 
 #' @examples
-#' new.sequences <- generate.sequences(prefix.motif = "CAS",
-#'                                     suffix.motif = "YF",
-#'                                     number.of.sequences = 100,
-#'                                     min.length = 8,
-#'                                     max.length = 16)
+#' new.sequences <- generateSequences(prefix.motif = "CAS",
+#'                                    suffix.motif = "YF",
+#'                                    number.of.sequences = 100,
+#'                                    min.length = 8,
+#'                                    max.length = 16)
 #'                           
-#'sequence.matrix <- tokenize.sequences(new.sequences, 
-#'                                      add.startstop = TRUE,
-#'                                      start.token = "!",
-#'                                      stop.token = "^", 
-#'                                      convert.to.matrix = TRUE)
+#'sequence.matrix <- tokenizeSequences(new.sequences, 
+#'                                     add.startstop = TRUE,
+#'                                     start.token = "!",
+#'                                     stop.token = "^", 
+#'                                     convert.to.matrix = TRUE)
 #'                         
 #' @param input.sequences The amino acid or nucleotide sequences to use
 #' @param add.startstop Add start and stop tokens to the sequence
@@ -25,13 +25,13 @@
 #' @param convert.to.matrix Return a matrix (TRUE) or a vector (FALSE)
 #' 
 #' @export
-#' @return Tokenized amino acid sequences in a matrix or vector
-tokenize.sequences <- function(input.sequences, 
-                               add.startstop = TRUE,
-                               start.token = "!",
-                               stop.token = "^", 
-                               max.length = NULL,
-                               convert.to.matrix = TRUE) {
+#' @return Tokenize sequences in a matrix or vector
+tokenizeSequences <- function(input.sequences, 
+                              add.startstop = TRUE,
+                              start.token = "!",
+                              stop.token = "^", 
+                              max.length = NULL,
+                              convert.to.matrix = TRUE) {
   
   if(add.startstop) {
     char_set <- c(start.token,amino.acids, stop.token)

@@ -4,8 +4,8 @@
 #' neural networks using sin/cos and position information.
 #' 
 #'                           
-#' position.info <- positional.encoder(number.of.sequences = 1000, 
-#'                                     latent.dims = 64)
+#' position.info <- positionalEncoder(number.of.sequences = 1000, 
+#'                                    latent.dims = 64)
 #'                         
 #' @param number.of.sequences The number of sequences to generate 
 #' position information
@@ -14,8 +14,8 @@
 #' @export
 #' @return A matrix of values 
 
-positional.encoder <- function(number.of.sequences, 
-                               latent.dims = NULL) {
+positionalEncoder <- function(number.of.sequences, 
+                              latent.dims = NULL) {
   
   if(length(number.of.sequences) != 1) {
     number.of.sequences <- length(number.of.sequences)

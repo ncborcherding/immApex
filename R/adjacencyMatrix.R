@@ -4,14 +4,14 @@
 #' along a set of biological sequences.
 #' 
 #' @examples
-#' new.sequences <- generate.sequences(prefix.motif = "CAS",
-#'                                     suffix.motif = "YF",
-#'                                     number.of.sequences = 100,
-#'                                     min.length = 8,
-#'                                     max.length = 16)
+#' new.sequences <- generateSequences(prefix.motif = "CAS",
+#'                                    suffix.motif = "YF",
+#'                                    number.of.sequences = 100,
+#'                                    min.length = 8,
+#'                                    max.length = 16)
 #'                           
-#' adj.matrix <- adjacency.matrix(new.sequences,
-#'                                     normalize = TRUE)
+#' adj.matrix <- adjacencyMatrix(new.sequences,
+#'                               normalize = TRUE)
 #'                         
 #' @param input.sequences The amino acid or nucleotide sequences to use
 #' @param normalize Return the values as a function of total number of 
@@ -21,9 +21,9 @@
 #' 
 #' @export
 #' @return Adjacency matrix based on input.sequences.
-adjacency.matrix <- function(input.sequences = NULL, 
-                             normalize = TRUE,
-                             sequence.dictionary = amino.acids[1:20]) {
+adjacencyMatrix <- function(input.sequences = NULL, 
+                            normalize = TRUE,
+                            sequence.dictionary = amino.acids[1:20]) {
   
   # Initialize the adjacency matrix with zeros
   n <- length(sequence.dictionary)

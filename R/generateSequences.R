@@ -5,11 +5,11 @@
 #' or noise.
 #' 
 #' @examples
-#' generate.sequences(prefix.motif = "CAS",
-#'                    suffix.motif = "YF",
-#'                    number.of.sequences = 100,
-#'                    min.length = 8,
-#'                    max.length = 16)
+#' generateSequences(prefix.motif = "CAS",
+#'                   suffix.motif = "YF",
+#'                   number.of.sequences = 100,
+#'                   min.length = 8,
+#'                   max.length = 16)
 #'                         
 #' @param prefix.motif Add defined amino acid/nucleotide sequence to the start of the generated sequences.
 #' @param suffix.motif Add defined amino acid/nucleotide sequence to the end of the generated sequences
@@ -23,12 +23,12 @@
 #' @importFrom stringi stri_rand_strings
 #' 
 #' @return A vector of generated sequences
-generate.sequences <- function(prefix.motif = NULL,
-                               suffix.motif = NULL,
-                               number.of.sequences = 100,
-                               min.length = 1,
-                               max.length = 10,
-                               sequence.dictionary = amino.acids[1:20]) {
+generateSequences <- function(prefix.motif = NULL,
+                              suffix.motif = NULL,
+                              number.of.sequences = 100,
+                              min.length = 1,
+                              max.length = 10,
+                              sequence.dictionary = amino.acids[1:20]) {
   #TODO Add check for prefix/suffix motif with sequence dictionary
   if(!is.null(prefix.motif) | !is.null(suffix.motif)) {
     motif.length <- sum(nchar(c(prefix.motif,suffix.motif)))

@@ -7,24 +7,24 @@
 #' 
 #' @examples
 #' # Getting the Sequence Reference
-#' TRBV_aa <- get.IMGT(species = "human",
-#'                     chain = "TRB",
-#'                     frame = "inframe",
-#'                     region = "v",
-#'                     sequence.type = "aa") 
+#' TRBV_aa <- getIMGT(species = "human",
+#'                    chain = "TRB",
+#'                    frame = "inframe",
+#'                    region = "v",
+#'                    sequence.type = "aa") 
 #'                     
 #' # Ensuring sequences are formatted to IMGT                   
-#' TenX_formatted <- format.genes(apex_example.data[["TenX"]],
-#'                                region = "v",
-#'                                technology = "TenX")
+#' TenX_formatted <- formatGenes(apex_example.data[["TenX"]],
+#'                               region = "v",
+#'                               technology = "TenX")
 #'              
 #' # Inferring CDR loop elements           
-#' TenX_formatted <- infer.cdr(TenX_formatted,
-#'                             chain = "TRB", 
-#'                             reference = TRBV_aa,
-#'                             technology = "TenX", 
-#'                             sequence.type = "aa",
-#'                             sequences = c("CDR1", "CDR2"))
+#' TenX_formatted <- inferCDR(TenX_formatted,
+#'                            chain = "TRB", 
+#'                            reference = TRBV_aa,
+#'                            technology = "TenX", 
+#'                            sequence.type = "aa",
+#'                            sequences = c("CDR1", "CDR2"))
 #'                             
 #' @param input.data Data frame output of \code{\link{format.genes}}
 #' @param reference IMGT reference sequences from \code{\link{get.IMGT}}
@@ -38,12 +38,12 @@
 #' 
 #' @export
 #' @return A data frame with the new columns of CDR sequences added.
-infer.cdr <- function(input.data, 
-                      reference = NULL,
-                      chain = "TRB", 
-                      technology = NULL, 
-                      sequence.type = "aa",
-                      sequences = c("CDR1", "CDR2")) {
+inferCDR <- function(input.data, 
+                     reference = NULL,
+                     chain = "TRB", 
+                     technology = NULL, 
+                     sequence.type = "aa",
+                     sequences = c("CDR1", "CDR2")) {
   
   region <- "v"
   if(is.null(reference) || "v" %!in% reference[["misc"]][["region"]]) {

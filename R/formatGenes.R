@@ -16,9 +16,9 @@
 #' retain all information (\strong{FALSE})
 #' 
 #' @examples
-#' format.genes(apex_example.data[["TenX"]],
-#'              region = "v",
-#'              technology = "TenX")
+#' formatGenes(apex_example.data[["TenX"]],
+#'             region = "v",
+#'             technology = "TenX")
 #' 
 #' @importFrom stringr str_split
 #' 
@@ -27,11 +27,11 @@
 
 
 #' @importFrom stringr str_split
-format.genes <- function(input.data,
-                         region = "v",
-                         technology = NULL,
-                         species = "human",
-                         simplify.format = TRUE) {
+formatGenes <- function(input.data,
+                        region = "v",
+                        technology = NULL,
+                        species = "human",
+                        simplify.format = TRUE) {
   if(any(tolower(region) %!in% c("v", "d", "j", "c"))) {
     stop("Please select a region or regions in the following category: 'v', 'd', 'j', 'c'")
   }

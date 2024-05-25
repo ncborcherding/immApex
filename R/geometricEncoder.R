@@ -4,15 +4,15 @@
 #' encoding of the sequence.
 #' 
 #' @examples
-#' new.sequences <- generate.sequences(prefix.motif = "CAS",
-#'                                     suffix.motif = "YF",
-#'                                     number.of.sequences = 100,
-#'                                     min.length = 8,
-#'                                     max.length = 16)
+#' new.sequences <- generateSequences(prefix.motif = "CAS",
+#'                                    suffix.motif = "YF",
+#'                                    number.of.sequences = 100,
+#'                                    min.length = 8,
+#'                                    max.length = 16)
 #'                           
-#' sequence.matrix <- geometric.encoder(new.sequences, 
-#'                                      method.to.use = "BLOSUM62",
-#'                                      theta = pi/3)
+#' sequence.matrix <- geometricEncoder(new.sequences, 
+#'                                     method.to.use = "BLOSUM62",
+#'                                     theta = pi/3)
 #'                         
 #' @param input.sequences The set of amino acid sequences 
 #' @param method.to.use The method or approach for the conversion: 
@@ -26,9 +26,9 @@
 #' @return Geometric encoded amino acid sequences in a matrix
 
 
-geometric.encoder <- function(input.sequences, 
-                              method.to.use = "BLOSUM62",
-                              theta = pi/3) {
+geometricEncoder <- function(input.sequences, 
+                             method.to.use = "BLOSUM62",
+                             theta = pi/3) {
   
   possible.methods <- c("BLOSUM45", "BLOSUM50", "BLOSUM62", "BLOSUM80", 
                         "BLOSUM100", "PAM30","PAM40", "PAM70", "PAM120", "PAM250")

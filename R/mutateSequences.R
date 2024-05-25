@@ -5,16 +5,16 @@
 #' or noise.
 #' 
 #' @examples
-#' sequences <- generate.sequences(prefix.motif = "CAS",
-#'                                 suffix.motif = "YF",
-#'                                 number.of.sequences = 100,
-#'                                 min.length = 8,
-#'                                 max.length = 16)
+#' sequences <- generateSequences(prefix.motif = "CAS",
+#'                                suffix.motif = "YF",
+#'                                number.of.sequences = 100,
+#'                                min.length = 8,
+#'                                max.length = 16)
 #'                                 
-#' mutated_sequences <- mutate.sequences(sequences, 
-#'                                       n.sequence = 1,
-#'                                       position.start = 3,
-#'                                       position.end = 8)
+#' mutated_sequences <- mutateSequences(sequences, 
+#'                                      n.sequence = 1,
+#'                                      position.start = 3,
+#'                                      position.end = 8)
 #' 
 #' @param input.sequences The amino acid or nucleotide sequences to use
 #' @param n.sequences The number of mutated sequences to return
@@ -28,12 +28,12 @@
 #' 
 #' @export mutate.sequences
 #' @return A vector of mutated sequences
-mutate.sequences <- function(input.sequences, 
-                             n.sequences = 1, 
-                             mutation.rate = 0.01,
-                             position.start = NULL,
-                             position.end = NULL,
-                             sequence.dictionary = amino.acids[1:20]) {
+mutateSequences <- function(input.sequences, 
+                            n.sequences = 1, 
+                            mutation.rate = 0.01,
+                            position.start = NULL,
+                            position.end = NULL,
+                            sequence.dictionary = amino.acids[1:20]) {
   
   lapply(input.sequences, function(x) {
     lapply(seq_len(n.sequences), function(y) {
