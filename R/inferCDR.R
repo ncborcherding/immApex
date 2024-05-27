@@ -26,8 +26,8 @@
 #'                            sequence.type = "aa",
 #'                            sequences = c("CDR1", "CDR2"))
 #'                             
-#' @param input.data Data frame output of \code{\link{format.genes}}
-#' @param reference IMGT reference sequences from \code{\link{get.IMGT}}
+#' @param input.data Data frame output of \code{\link{formatGenes}}
+#' @param reference IMGT reference sequences from \code{\link{getIMGT}}
 #' @param chain Sequence chain to access, like \strong{TRB} or \strong{IGH}
 #' @param technology The sequencing technology employed - \strong{TenX}, \strong{Adaptive}, 
 #' \strong{AIRR}, or \strong{Omniscope}

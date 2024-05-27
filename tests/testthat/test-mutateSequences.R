@@ -2,7 +2,7 @@
 
 test_that("mutateSequences works", {
   
-  sequences <- getdata("generate.sequences", "generate.sequences_T1")
+  sequences <- getdata("generateSequences", "generateSequences_T1")
 
   set.seed(42)
   mutate.default <- mutateSequences(sequences)
@@ -42,7 +42,7 @@ test_that("mutateSequences works", {
     getdata("mutateSequences", "mutateSequences_specific.mutation")
   )
   
-  nt.sequences <- getdata("generate.sequences", "generate.sequences_T2")
+  nt.sequences <- getdata("generateSequences", "generateSequences_T2")
   
   set.seed(42)
   mutate.nt <- mutateSequences(nt.sequences,

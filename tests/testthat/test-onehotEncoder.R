@@ -2,7 +2,7 @@
 
 test_that("onehotEncoder works", {
   
-  sequences <- getdata("generate.sequences", "generate.sequences_T1")
+  sequences <- getdata("generateSequences", "generateSequences_T1")
 
   ohe.default <- onehotEncoder(sequences)
   
@@ -43,7 +43,7 @@ test_that("onehotEncoder works", {
     getdata("ohe.encoder", "onehotEncoder_padded.array")
   )
   
-  nt.sequences <- getdata("generate.sequences", "generate.sequences_T2")
+  nt.sequences <- getdata("generateSequences", "generateSequences_T2")
   
   ohe.nt <- onehotEncoder(nt.sequences,
                             sequence.dictionary = c("A", "C", "T", "G"))

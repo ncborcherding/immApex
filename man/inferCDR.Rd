@@ -14,9 +14,9 @@ inferCDR(
 )
 }
 \arguments{
-\item{input.data}{Data frame output of \code{\link{format.genes}}}
+\item{input.data}{Data frame output of \code{\link{formatGenes}}}
 
-\item{reference}{IMGT reference sequences from \code{\link{get.IMGT}}}
+\item{reference}{IMGT reference sequences from \code{\link{getIMGT}}}
 
 \item{chain}{Sequence chain to access, like \strong{TRB} or \strong{IGH}}
 

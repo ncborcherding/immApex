@@ -1,9 +1,9 @@
-# test script for get.IMGT.R - testcases are NOT comprehensive!
+# test script for getIMGT.R - testcases are NOT comprehensive!
 
-test_that("get.IMGT works", {
+test_that("getIMGT works", {
 
   #Default Test
-  TRBV_human_inframe_aa <- get.IMGT(species = "human",
+  TRBV_human_inframe_aa <- getIMGT(species = "human",
                                     chain = "TRB",
                                     frame = "inframe",
                                     region = "v",
@@ -11,11 +11,11 @@ test_that("get.IMGT works", {
   
   expect_equal(
     TRBV_human_inframe_aa,
-    getdata("get.IMGT", "get.IMGT_TRBV_human_inframe_aa")
+    getdata("getIMGT", "getIMGT_TRBV_human_inframe_aa")
   )
   
   #Test Different Region and Species
-  TRAJ_mouse_inframe_aa <- get.IMGT(species = "mouse",
+  TRAJ_mouse_inframe_aa <- getIMGT(species = "mouse",
                                     chain = "TRB",
                                     frame = "inframe",
                                     region = "j",
@@ -23,11 +23,11 @@ test_that("get.IMGT works", {
   
   expect_equal(
     TRAJ_mouse_inframe_aa,
-    getdata("get.IMGT", "get.IMGT_TRAJ_mouse_inframe_aa")
+    getdata("getIMGT", "getIMGT_TRAJ_mouse_inframe_aa")
   )
   
   #Test All Sequence Pull
-  IGHV_rat_all_nt <- get.IMGT(species = "rat",
+  IGHV_rat_all_nt <- getIMGT(species = "rat",
                               chain = "IGH",
                               frame = "all",
                               region = "v",
@@ -35,11 +35,11 @@ test_that("get.IMGT works", {
   
   expect_equal(
     IGHV_rat_all_nt,
-    getdata("get.IMGT", "get.IMGT_IGHV_rat_all_nt")
+    getdata("getIMGT", "getIMGT_IGHV_rat_all_nt")
   )
   
   #Test IMGT Gap Sequence Pull
-  TRBV_rabbit_gap_aa <- get.IMGT(species = "rabbit",
+  TRBV_rabbit_gap_aa <- getIMGT(species = "rabbit",
                               chain = "TRB",
                               frame = "inframe+gap",
                               region = "v",
@@ -47,11 +47,11 @@ test_that("get.IMGT works", {
   
   expect_equal(
     TRBV_rabbit_gap_aa,
-    getdata("get.IMGT", "get.IMGT_TRBV_rabbit_gap_aa")
+    getdata("getIMGT", "getIMGT_TRBV_rabbit_gap_aa")
   )
   
   
-  TRAJ_pig_inframe_aa <- get.IMGT(species = "pig",
+  TRAJ_pig_inframe_aa <- getIMGT(species = "pig",
                                  chain = "TRA",
                                  frame = "inframe",
                                  region = "v",
@@ -59,7 +59,7 @@ test_that("get.IMGT works", {
   
   expect_equal(
     TRAJ_pig_inframe_aa,
-    getdata("get.IMGT", "get.IMGT_TRAJ_pig_inframe_aa")
+    getdata("getIMGT", "getIMGT_TRAJ_pig_inframe_aa")
   )
   
   

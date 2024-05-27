@@ -26,7 +26,7 @@
 #' @param sequence.dictionary The letters to use in sequence mutation
 #' (default are all amino acids)
 #' 
-#' @export mutate.sequences
+#' @export 
 #' @return A vector of mutated sequences
 mutateSequences <- function(input.sequences, 
                             n.sequences = 1, 
