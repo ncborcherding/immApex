@@ -17,14 +17,14 @@
 #' and \strong{ferret}
 #' @param chain Sequence chain to access, like \strong{TRB} or \strong{IGH}
 #' @param frame Designation for \strong{all}, \strong{inframe} or \strong{inframe+gap} that includes
-#' aligned sequences with teh IMGT gaps.
+#' aligned sequences with the IMGT gaps
 #' @param region Sequence gene loci to access
 #' @param sequence.type Type of sequence - \strong{aa} for amino acid or \strong{nt} for nucleotide
 #' 
 #' @importFrom stringr str_extract str_replace_all str_remove_all str_split
 #' @importFrom httr GET content
 #' @importFrom rvest read_html html_text html_nodes
-#' @export get.IMGT
+#' @export
 #' @return A list of allele sequences
 getIMGT <- function(species = "human",
                     chain = "TRB",

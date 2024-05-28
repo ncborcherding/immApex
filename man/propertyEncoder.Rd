@@ -21,7 +21,7 @@ to the max length of input.sequences}
 
 \item{method.to.use}{The method or approach to use for the conversion: 
 \itemize{
-  \item{Indivisual sets: atchleyFactors, crucianiProperties, FASGAI, kideraFactors, MSWHIM,
+  \item{Individual sets: atchleyFactors, crucianiProperties, FASGAI, kideraFactors, MSWHIM,
   ProtFP, stScales, tScales, VHSE, zScales"}
   \item{Multiple Sets: c("atchleyFactors", "VHSE") }
 }}

@@ -228,7 +228,7 @@ median.property.matrix <- propertyEncoder(input.sequences =  c(sequences, mutate
 
 ## geometricEncoder
 
-One aprpoach to encode amino acid sequences has been through geometric isometry, such as \href{GIANA}{https://pubmed.ncbi.nlm.nih.gov/34349111/}.
+One approach to encode amino acid sequences has been through geometric isometry, such as \href{GIANA}{https://pubmed.ncbi.nlm.nih.gov/34349111/}.
 
 Parameters for ```geometricEncoder()```
 

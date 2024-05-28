@@ -22,7 +22,7 @@
 #' 
 #' @importFrom stringr str_split
 #' 
-#' @export format.genes
+#' @export 
 #' @return A data frame with the new columns of formatted genes added.
 
 

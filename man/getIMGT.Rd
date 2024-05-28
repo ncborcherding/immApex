@@ -23,7 +23,7 @@ and \strong{ferret}}
 \item{sequence.type}{Type of sequence - \strong{aa} for amino acid or \strong{nt} for nucleotide}
 
 \item{frame}{Designation for \strong{all}, \strong{inframe} or \strong{inframe+gap} that includes
-aligned sequences with teh IMGT gaps.}
+aligned sequences with the IMGT gaps}
 
 \item{region}{Sequence gene loci to access}
 }
