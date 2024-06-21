@@ -27,6 +27,7 @@
 #'   \item{Multiple Sets: c("atchleyFactors", "VHSE") }
 #' } 
 #' @param layers The number of hidden layers to employ within the VAE
+#' @param number.of.sequences Number of sequences to generate
 #' @param hidden.dims A vector of the neurons to use in the hidden layers, 
 #' The length needs to match the number of layers
 #' @param latent.dim The size of the latent dimensions
@@ -48,6 +49,7 @@
 
 
 variationalSequences <-function(input.sequences,
+                                number.of.sequences = 100,
                                 encoder = "onehotEncoder",
                                 aa.method.to.use = NULL,
                                 layers = 2, 
@@ -61,7 +63,12 @@ variationalSequences <-function(input.sequences,
                                 activation.function = "relu",
                                 optimizer = "adam",
                                 sequence.dictionary = amino.acids[1:20]){
- 
+  
+  if(length(input.sequences) > number.of.sequences) {
+    step <- round(length(input.sequences)/number.of.sequences)
+  } else {
+    step <- 1
+  }
   
   if (tensorflow::tf$executing_eagerly()) {
     tensorflow::tf$compat$v1$disable_eager_execution()
@@ -188,9 +195,9 @@ variationalSequences <-function(input.sequences,
   z_sample <- z_mean + k_exp(z_log_var / 2) * eps
   z_sample_np <- as.array(z_sample)
   
-  #TODO fix the decoded_sequences code here
   decoded_sequences <- decoder_model %>% 
     predict(z_sample, 
+            steps = step,
             batch_size = batch.size)
   
   #TODO decode the decoder outputs
