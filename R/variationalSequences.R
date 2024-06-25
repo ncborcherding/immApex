@@ -60,6 +60,7 @@ variationalSequences <-function(input.sequences,
                                 learning.rate = 0.001,
                                 epsilon.std = 1,
                                 null.threshold = 0.05,
+                                call.theshold = 0.5,
                                 activation.function = "relu",
                                 optimizer = "adam",
                                 sequence.dictionary = amino.acids[1:20]){
@@ -182,6 +183,7 @@ variationalSequences <-function(input.sequences,
                                   batch_size = batch.size)
   
   #TODO allow for variation/n 
+  #TODO call for sepcific number of sequences
   z_mean <- K$cast(sequences_encoded[[1]],  "float64")
   z_log_var <- K$cast(sequences_encoded[[2]], "float64")
   
@@ -195,12 +197,19 @@ variationalSequences <-function(input.sequences,
   z_sample <- z_mean + k_exp(z_log_var / 2) * eps
   z_sample_np <- as.array(z_sample)
   
-  decoded_sequences <- decoder_model %>% 
+  decoded.sequences <- decoder_model %>% 
     predict(z_sample, 
             steps = step,
             batch_size = batch.size)
   
-  #TODO decode the decoder outputs
+  new.sequences <- sequenceDecoder(decoded_sequences,
+                                   encoder = encoder,
+                                   aa.method.to.use = aa.method.to.use,
+                                   call.threshold = call.theshold,
+                                   sequence.dictionary = sequence.dictionary,
+                                   padding.symbol = padding.symbol)
+  
+  return(new.sequences)
 }
   
 

@@ -43,9 +43,10 @@ sequenceDecoder <- function(sequence.matrix,
     if(any(method.to.use %!in% names(apex_AA.data))) {
       stop(paste0("Please select one of the following for aa.method.to.use: ", paste(sort(names(apex_AA.data)), collapse = ", ")))
     }
-    decoded_sequences <- propertyDecoder(input.sequences, 
-                                         sequence.dictionary = aa.method.to.use,
-                                         padding.symbol = padding.symbol)
+    decoded_sequences <- .propertyDecoder(sequence.matrix, 
+                                          aa.method.to.use = aa.method.to.use,
+                                          call.threshold = call.threshold,
+                                          padding.symbol = padding.symbol)
   }
   
   
@@ -53,7 +54,60 @@ sequenceDecoder <- function(sequence.matrix,
   return(decoded_sequences)
 }
 
-#TODO Add internal propertyDecoder
+.euclidean.distance <- function(vec1, vec2) {
+  sqrt(sum((vec1 - vec2)^2))
+}
+
+#' @importFrom keras array_reshape
+.propertyDecoder <- function(sequence.matrix, 
+                             aa.method.to.use = aa.method.to.use,
+                             call.threshold = call.threshold,
+                             padding.symbol = padding.symbol) {
+  
+  call.threshold = 1/call.threshold
+  vectors <- apex_AA.data[method.to.use]
+  vector.names <- as.vector(unlist(lapply(vectors, names)))
+  vectors <- do.call(c, vectors)
+  names(vectors) <- vector.names
+  vectors <- lapply(vectors, .min.max.normalize)
+  
+  if (inherits(sequence.matrix, "matrix")) {
+    num_sequences <- nrow(sequence.matrix)
+    sequence_length <- ncol(sequence.matrix) / length(vectors)
+    sequence.matrix <- array_reshape(sequence.matrix, 
+                                     c(num_sequences, sequence_length, length(vectors)))
+  } else {
+    num_sequences <- dim(sequence.matrix)[1]
+    sequence_length <- dim(sequence.matrix)[2]
+  }
+  vectors <- do.call(rbind, vectors)
+  decoded_sequences <- character(num_sequences)
+  
+  distances <- apply(vectors, 2, function(col) .euclidean.distance(sequence.matrix[i, j, ], col))
+  if(min(distances) < null.threshold) {
+    index <- names(sort(distances)[1])
+    sequence <- paste0(sequence, index)
+  } else {
+    sequence <- paste0(sequence, padding.symbol)
+  }
+  
+  
+  for (i in seq_len(num_sequences)) {
+    sequence <- ""
+    for (j in seq_len(sequence_length)) {
+      distances <- apply(vectors, 2, function(col) euclidean_distance(sequence.matrix[i, j, ], col))
+      if(min(distances) < call.threshold) {
+        index <- names(sort(distances)[1])
+        sequence <- paste0(sequence, index)
+      } else {
+        sequence <- paste0(sequence, padding.symbol)
+      }
+    }
+    decoded_sequences[i] <- sequence
+  }
+  return(decoded_sequences)
+}
+
 #TODO Add testthat 
 
 #' @importFrom keras array_reshape
@@ -61,6 +115,7 @@ sequenceDecoder <- function(sequence.matrix,
                            sequence.dictionary = amino.acids[1:20],
                            padding.symbol = padding.symbol, 
                            call.threshold = call.threshold) {
+  
   if (inherits(sequence.matrix, "matrix")) {
     num_sequences <- nrow(sequence.matrix)
     sequence_length <- ncol(sequence.matrix) / (length(sequence.dictionary) + 1)
@@ -88,5 +143,6 @@ sequenceDecoder <- function(sequence.matrix,
     }
     decoded_sequences[i] <- sequence
   }
+  return(decoded_sequences)
 }
 
