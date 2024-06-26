@@ -10,12 +10,12 @@
 #'                                min.length = 8,
 #'                                max.length = 16)
 #'                                 
-#'variate_sequences <- variationalSequences(sequences, 
-#'                                          encoder = "onehotEncoder",
-#'                                          layers = 2, 
-#'                                          hidden.dims = c(256, 128)
-#'                                          atent.dim = 16,
-#'                                          batch.size = 16)
+#' variate_sequences <- variationalSequences(sequences, 
+#'                                           encoder = "onehotEncoder",
+#'                                           layers = 2, 
+#'                                           hidden.dims = c(256, 128)
+#'                                           latent.dim = 16,
+#'                                           batch.size = 16)
 #' 
 #' @param input.sequences The amino acid or nucleotide sequences to use
 #' @param encoder The method to prepare the sequencing information - 
@@ -220,7 +220,6 @@ variationalSequences <-function(input.sequences,
 }
 
 #' @importFrom keras k_square k_exp
-k_exp
 .kl_loss <- function(y_true, y_pred) {
   -0.5 * k_sum(1 + z_log_var - k_square(z_mean) - k_exp(z_log_var), axis = -1)
 }
