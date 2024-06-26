@@ -17,11 +17,11 @@
 #'   ProtFP, stScales, tScales, VHSE, zScales"}
 #'   \item{Multiple Sets: c("atchleyFactors", "VHSE") }
 #' } 
+#' @param call.threshold The relative strictness of sequence calling with higher values being more
+#' stringent
 #' @param sequence.dictionary The letters to use in sequence generation 
-#' (default are all amino acids). 
+#' (default are all amino acids)
 #' @param padding.symbol Symbol to use for padding at the end of sequences
-#' @param motif.length The length of the amino acid residues encoded 
-#' (default is 1 for single amino acid encodings)
 #' 
 #' @export
 #' @return Decoded amino acid or nucleotide sequences
@@ -31,25 +31,28 @@ sequenceDecoder <- function(sequence.matrix,
                             call.threshold = 0.5,
                             sequence.dictionary = amino.acids[1:20],
                             padding.symbol = ".") {
+  if(call.threshold <= 0) {
+    stop("Please select number > 0 for call.threshold")
+  }
   
   if(encoder %!in% c("onehotEncoder", "propertyEncoder")) {
     stop("Invalid encoder provided, please select either 'onehotEncoder' or 'propertyEncoder'.")
   }
   if(encoder == "onehotEncoder") {
-    decoded_sequences <- .onehotDecoder(sequence.matrix, 
-                                        sequence.dictionary = sequence.dictionary,
-                                        padding.symbol = padding.symbol)
+    decoded_sequences <- .onehotDecoder(sequence.matrix,
+                                        sequence.dictionary,
+                                        padding.symbol,
+                                        call.threshold)
+    
   } else if (encoder == "propertyEncoder") {
-    if(any(method.to.use %!in% names(apex_AA.data))) {
+    if(any(aa.method.to.use %!in% names(apex_AA.data))) {
       stop(paste0("Please select one of the following for aa.method.to.use: ", paste(sort(names(apex_AA.data)), collapse = ", ")))
     }
-    decoded_sequences <- .propertyDecoder(sequence.matrix, 
-                                          aa.method.to.use = aa.method.to.use,
-                                          call.threshold = call.threshold,
-                                          padding.symbol = padding.symbol)
+    decoded_sequences <- .propertyDecoder(sequence.matrix,
+                                          aa.method.to.use,
+                                          padding.symbol,
+                                          call.threshold)
   }
-  
-  
   
   return(decoded_sequences)
 }
@@ -59,13 +62,13 @@ sequenceDecoder <- function(sequence.matrix,
 }
 
 #' @importFrom keras array_reshape
-.propertyDecoder <- function(sequence.matrix, 
-                             aa.method.to.use = aa.method.to.use,
-                             call.threshold = call.threshold,
-                             padding.symbol = padding.symbol) {
+.propertyDecoder <- function(sequence.matrix,
+                             aa.method.to.use,
+                             padding.symbol,
+                             call.threshold) {
   
   call.threshold = 1/call.threshold
-  vectors <- apex_AA.data[method.to.use]
+  vectors <- apex_AA.data[aa.method.to.use]
   vector.names <- as.vector(unlist(lapply(vectors, names)))
   vectors <- do.call(c, vectors)
   names(vectors) <- vector.names
@@ -83,19 +86,10 @@ sequenceDecoder <- function(sequence.matrix,
   vectors <- do.call(rbind, vectors)
   decoded_sequences <- character(num_sequences)
   
-  distances <- apply(vectors, 2, function(col) .euclidean.distance(sequence.matrix[i, j, ], col))
-  if(min(distances) < null.threshold) {
-    index <- names(sort(distances)[1])
-    sequence <- paste0(sequence, index)
-  } else {
-    sequence <- paste0(sequence, padding.symbol)
-  }
-  
-  
   for (i in seq_len(num_sequences)) {
     sequence <- ""
     for (j in seq_len(sequence_length)) {
-      distances <- apply(vectors, 2, function(col) euclidean_distance(sequence.matrix[i, j, ], col))
+      distances <- apply(vectors, 2, function(col) .euclidean.distance(sequence.matrix[i, j, ], col))
       if(min(distances) < call.threshold) {
         index <- names(sort(distances)[1])
         sequence <- paste0(sequence, index)
@@ -111,10 +105,13 @@ sequenceDecoder <- function(sequence.matrix,
 #TODO Add testthat 
 
 #' @importFrom keras array_reshape
-.onehotDecoder <- function(sequence.matrix, 
-                           sequence.dictionary = amino.acids[1:20],
-                           padding.symbol = padding.symbol, 
-                           call.threshold = call.threshold) {
+.onehotDecoder <- function(sequence.matrix,
+                           sequence.dictionary,
+                           padding.symbol,
+                           call.threshold) {
+  if(call.threshold > 1) {
+    call.threshold <- 1
+  }
   
   if (inherits(sequence.matrix, "matrix")) {
     num_sequences <- nrow(sequence.matrix)
