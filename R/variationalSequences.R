@@ -36,13 +36,20 @@
 #' @param learning.rate The learning rate to use in VAE training
 #' @param epsilon.std The epsilon to use in VAE training
 #' @param null.threshold The null threshold to use in VAE training
+#' @param call.threshold** The relative strictness of sequence calling
+#'  with higher values being more stringent
 #' @param activation.function The activation for the dense connected layers
 #' @param optimizer The optimizer to use in VAE training
 #' @param sequence.dictionary The letters to use in sequence mutation
 #' (default are all amino acids)
 #' 
-#' @importFrom keras predict layer_dense layer_concatenate layer_lambda keras_model compile fit
-#' 
+#' @importFrom keras predict layer_dense layer_concatenate layer_lambda 
+#' keras_model compile fit %>% decoded_sequences epsilon.std k_sum latent.dim layer_input
+#' loss_binary_crossentropy method.to.use optimizer_adadelta
+#' optimizer_adagrad optimizer_adam optimizer_adamax optimizer_ftrl
+#' optimizer_nadam optimizer_rmsprop optimizer_sgd padding.symbol
+#' predict
+#' @importFrom dplyr %>%
 #' @export 
 #' @return A vector of mutated sequences
 
@@ -108,7 +115,7 @@ variationalSequences <-function(input.sequences,
       stop(paste0("Please select one of the following for aa.method.to.use: ", paste(sort(names(apex_AA.data)), collapse = ", ")))
     }
     sequence.matrix <- propertyEncoder(input.sequences, 
-                                       sequence.dictionary = aa.method.to.use,
+                                       aa.method.to.use = aa.method.to.use,
                                        convert.to.matrix = TRUE)
   }
   
@@ -219,7 +226,7 @@ variationalSequences <-function(input.sequences,
   k_mean(loss_binary_crossentropy(y_true, y_pred), axis = c(-1))
 }
 
-#' @importFrom keras k_square k_exp
+#' @importFrom keras k_square k_exp k_zum
 .kl_loss <- function(y_true, y_pred) {
   -0.5 * k_sum(1 + z_log_var - k_square(z_mean) - k_exp(z_log_var), axis = -1)
 }

@@ -307,7 +307,7 @@ In order to extract sequences from the one-hot or property encoded matrices or a
 * **sequence.matrix** The encoded sequences to decode in an array opr matrix
 * **encoder** The method to prepare the sequencing information - "onehotEncoder" or "propertyEncoder"
 * **aa.method.to.use** The method or approach to use for the conversion corresponding to the input to ```propertyEncoder()```. This will be ignored if **encoder** = "onehotEncoder"
-* **call.threshold** The relative strictness of sequence calling with higher values being more
+* **call.threshold** The relative strictness of sequence calling with higher values being more stringent
 
 ```{r}
 property.matrix <- propertyEncoder(input.sequences =  c(sequences, mutated.sequences), 
@@ -435,7 +435,7 @@ class2.sequences <- generateSequences(prefix.motif = "CASF",
 labels <- as.numeric(c(rep(0, 10000), rep(1, 10000)))
 
 classifier.matrix <- onehotEncoder(input.sequences =  c(class1.sequences, class2.sequences), 
-                                     convert.to.matrix = TRUE)
+                                   convert.to.matrix = TRUE)
 ```
 
 Next, we will define and train the Keras classifier model using artificial sequences. We will use a simple convolutional neural network with 2 layers and then a single neuron that will classify the sequences into class 1 or class 2 (here, the labels are 0 and 1).
