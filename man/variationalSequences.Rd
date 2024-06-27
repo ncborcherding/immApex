@@ -61,6 +61,9 @@ The length needs to match the number of layers}
 
 \item{sequence.dictionary}{The letters to use in sequence mutation
 (default are all amino acids)}
+
+\item{call.threshold**}{The relative strictness of sequence calling
+with higher values being more stringent}
 }
 \value{
 A vector of mutated sequences
