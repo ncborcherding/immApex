@@ -36,7 +36,7 @@
 #' @param learning.rate The learning rate to use in VAE training
 #' @param epsilon.std The epsilon to use in VAE training
 #' @param null.threshold The null threshold to use in VAE training
-#' @param call.threshold** The relative strictness of sequence calling
+#' @param call.threshold The relative strictness of sequence calling
 #'  with higher values being more stringent
 #' @param activation.function The activation for the dense connected layers
 #' @param optimizer The optimizer to use in VAE training
@@ -45,10 +45,9 @@
 #' 
 #' @importFrom keras predict layer_dense layer_concatenate layer_lambda 
 #' keras_model compile fit %>% decoded_sequences epsilon.std k_sum latent.dim layer_input
-#' loss_binary_crossentropy method.to.use optimizer_adadelta
-#' optimizer_adagrad optimizer_adam optimizer_adamax optimizer_ftrl
-#' optimizer_nadam optimizer_rmsprop optimizer_sgd padding.symbol
-#' predict
+#' loss_binary_crossentropy optimizer_adadelta optimizer_adagrad optimizer_adam 
+#' optimizer_adamax optimizer_ftrl optimizer_nadam optimizer_rmsprop optimizer_sgd 
+#' padding.symbol predict
 #' @importFrom dplyr %>%
 #' @export 
 #' @return A vector of mutated sequences
@@ -115,7 +114,7 @@ variationalSequences <-function(input.sequences,
       stop(paste0("Please select one of the following for aa.method.to.use: ", paste(sort(names(apex_AA.data)), collapse = ", ")))
     }
     sequence.matrix <- propertyEncoder(input.sequences, 
-                                       aa.method.to.use = aa.method.to.use,
+                                       method.to.use = aa.method.to.use,
                                        convert.to.matrix = TRUE)
   }
   
@@ -128,9 +127,11 @@ variationalSequences <-function(input.sequences,
                             sizes = hidden.dims,
                             activation.function = activation.function,
                             prefix = "E")
-  z_mean <- layer_dense(h, units = latent.dim, 
+  z_mean <- layer_dense(h, 
+                        units = latent.dim, 
                         name = "latent")
-  z_log_var <- layer_dense(h, units = latent.dim, 
+  z_log_var <- layer_dense(h, 
+                           units = latent.dim, 
                            name = "log_var")
   
   z <- layer_concatenate(list(z_mean, z_log_var)) %>% 
@@ -168,9 +169,13 @@ variationalSequences <-function(input.sequences,
                                               activation.function = activation.function,
                                               prefix = "D")
   
-  decoder_output_for_model <- layer_dense(decoder_h_for_model, units = input_shape, activation = 'sigmoid', name = "output")
+  decoder_output_for_model <- layer_dense(decoder_h_for_model, 
+                                          units = input_shape, 
+                                          activation = 'sigmoid', 
+                                          name = "output")
   
-  decoder_model <- keras_model(inputs = decoder_input, outputs = decoder_output_for_model)
+  decoder_model <- keras_model(inputs = decoder_input, 
+                               outputs = decoder_output_for_model)
   
   
   print("Fitting Model....")
@@ -214,11 +219,10 @@ variationalSequences <-function(input.sequences,
                                    aa.method.to.use = aa.method.to.use,
                                    call.threshold = call.theshold,
                                    sequence.dictionary = sequence.dictionary,
-                                   padding.symbol = padding.symbol)
+                                   padding.symbol = ".")
   
   return(new.sequences)
 }
-  
 
 # Loss and Compilation
 #' @importFrom keras k_mean
@@ -227,7 +231,7 @@ variationalSequences <-function(input.sequences,
 }
 
 #' @importFrom keras k_square k_exp k_zum
-.kl_loss <- function(y_true, y_pred) {
+.kl_loss <- function(z_mean, z_log_var) {
   -0.5 * k_sum(1 + z_log_var - k_square(z_mean) - k_exp(z_log_var), axis = -1)
 }
 
@@ -236,7 +240,7 @@ variationalSequences <-function(input.sequences,
 }
 
 #' @importFrom keras k_random_normal k_shape k_exp
-.vae_sampling <- function(arg){
+.vae_sampling <- function(latent.dim, epsilon.std){
   z_mean <- arg[, 1:(latent.dim)]
   z_log_var <- arg[, (latent.dim + 1):(2 * latent.dim)]
   

@@ -8,7 +8,7 @@
 #'                                      sequence.dictionary = amino.acids[1:20],
 #'                                      padding.symbol = ".")
 #' 
-#' @param sequence.matrix The encoded sequences to decode in an array opr matrix
+#' @param sequence.matrix The encoded sequences to decode in an array or matrix
 #' @param encoder The method to prepare the sequencing information - 
 #' "onehotEncoder" or "propertyEncoder"
 #' @param aa.method.to.use The method or approach to use for the conversion:
