@@ -40,6 +40,8 @@
 #'  with higher values being more stringent
 #' @param activation.function The activation for the dense connected layers
 #' @param optimizer The optimizer to use in VAE training
+#' @param disable.eager.execution Disable the eager execution parameter for
+#' tensorflow.
 #' @param sequence.dictionary The letters to use in sequence mutation
 #' (default are all amino acids)
 #' 
@@ -69,6 +71,7 @@ variationalSequences <-function(input.sequences,
                                 call.theshold = 0.5,
                                 activation.function = "relu",
                                 optimizer = "adam",
+                                disable.eager.execution = FALSE,
                                 sequence.dictionary = amino.acids[1:20]){
   
   if(length(input.sequences) > number.of.sequences) {
@@ -77,7 +80,7 @@ variationalSequences <-function(input.sequences,
     step <- 1
   }
   
-  if (tensorflow::tf$executing_eagerly()) {
+  if (disable.eager.execution) {
     tensorflow::tf$compat$v1$disable_eager_execution()
   }
   if(encoder %!in% c("onehotEncoder", "propertyEncoder")) {
@@ -102,7 +105,7 @@ variationalSequences <-function(input.sequences,
                              "rmsprop" = optimizer_rmsprop,
                              "sgd" = optimizer_sgd, 
                              stop("Please select a compatible optimizer function in the Keras R implementation."))
-  K <- keras::backend()
+  #K <- keras::backend()
   
   print("Converting to matrix....")
   if(encoder == "onehotEncoder") {
@@ -134,8 +137,10 @@ variationalSequences <-function(input.sequences,
                            units = latent.dim, 
                            name = "log_var")
   
-  z <- layer_concatenate(list(z_mean, z_log_var)) %>% 
-       layer_lambda(.vae_sampling, name = "lambda")
+  z <- layer_concatenate(list(z_mean, z_log_var)) %>%
+       layer_lambda(.vae_sampling,
+                    arguments = list(latent.dim = latent.dim, epsilon.std = epsilon.std),
+                    name = "lambda")
   
   # Decoder 
   decoder_h <- .create_dense_layers(z, 
@@ -196,6 +201,7 @@ variationalSequences <-function(input.sequences,
   
   #TODO allow for variation/n 
   #TODO call for sepcific number of sequences
+  K <- keras::backend()
   z_mean <- K$cast(sequences_encoded[[1]],  "float64")
   z_log_var <- K$cast(sequences_encoded[[2]], "float64")
   
@@ -214,7 +220,7 @@ variationalSequences <-function(input.sequences,
             steps = step,
             batch_size = batch.size)
   
-  new.sequences <- sequenceDecoder(decoded_sequences,
+  new.sequences <- sequenceDecoder(decoded.sequences,
                                    encoder = encoder,
                                    aa.method.to.use = aa.method.to.use,
                                    call.threshold = call.theshold,
@@ -240,7 +246,7 @@ variationalSequences <-function(input.sequences,
 }
 
 #' @importFrom keras k_random_normal k_shape k_exp
-.vae_sampling <- function(latent.dim, epsilon.std){
+.vae_sampling <- function(arg, latent.dim, epsilon.std){
   z_mean <- arg[, 1:(latent.dim)]
   z_log_var <- arg[, (latent.dim + 1):(2 * latent.dim)]
   
