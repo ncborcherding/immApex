@@ -62,7 +62,7 @@ variationalSequences <-function(input.sequences,
                                 aa.method.to.use = NULL,
                                 layers = 2, 
                                 hidden.dims = c(256, 128),
-                                latent.dim = 16,
+                                latent.dim = 64,
                                 batch.size = 16,
                                 epochs = 30,
                                 learning.rate = 0.001,
@@ -151,7 +151,7 @@ variationalSequences <-function(input.sequences,
   
   decoder_output <- layer_dense(decoder_h, 
                                 units = input_shape, 
-                                activation = 'sigmoid', 
+                                activation = 'softmax', 
                                 name = "output")
   
   
@@ -242,7 +242,9 @@ variationalSequences <-function(input.sequences,
 }
 
 .vae_loss <- function(y_true, y_pred) {
-  .reconstruction_loss(y_true, y_pred) + .kl_loss(y_true, y_pred)
+  reconstruction_loss <- .reconstruction_loss(y_true, y_pred)
+  kl_loss <- .kl_loss(y_true, y_pred)
+  reconstruction_loss + kl_loss
 }
 
 #' @importFrom keras k_random_normal k_shape k_exp
