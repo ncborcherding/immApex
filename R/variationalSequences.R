@@ -243,9 +243,10 @@ variationalSequences <-function(input.sequences,
 #' @importFrom keras k_mean
 .vae_loss <- function(y_true, y_pred) {
   reconstruction_loss <- .reconstruction_loss(y_true, y_pred)
-  kl_loss <- .kl_loss(y_true, y_pred)
+  kl_loss <- .kl_loss(y_true, y_pred) #TODO this needs to be z_mean, z_log_var
   k_mean(reconstruction_loss + kl_loss)
 }
+
 
 #' @importFrom keras k_random_normal k_shape k_exp
 .vae_sampling <- function(arg, latent.dim, epsilon.std){

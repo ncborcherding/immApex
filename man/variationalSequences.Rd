@@ -86,7 +86,7 @@ sequences <- generateSequences(prefix.motif = "CAS",
 variate_sequences <- variationalSequences(sequences, 
                                           encoder = "onehotEncoder",
                                           layers = 2, 
-                                          hidden.dims = c(256, 128)
+                                          hidden.dims = c(256, 128),
                                           latent.dim = 16,
                                           batch.size = 16)
 
