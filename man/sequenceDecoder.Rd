@@ -14,7 +14,7 @@ sequenceDecoder(
 )
 }
 \arguments{
-\item{sequence.matrix}{The encoded sequences to decode in an array opr matrix}
+\item{sequence.matrix}{The encoded sequences to decode in an array or matrix}
 
 \item{encoder}{The method to prepare the sequencing information - 
 "onehotEncoder" or "propertyEncoder"}

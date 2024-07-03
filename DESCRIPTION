@@ -23,7 +23,8 @@ Imports: dplyr,
 	SingleCellExperiment,
 	stats,
 	stringi,
-	stringr
+	stringr,
+	tensorflow
 Suggests: 
 	BiocStyle,
 	knitr,

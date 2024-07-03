@@ -45,12 +45,14 @@
 #' @param sequence.dictionary The letters to use in sequence mutation
 #' (default are all amino acids)
 #' 
-#' @importFrom keras predict layer_dense layer_concatenate layer_lambda 
-#' keras_model compile fit %>% decoded_sequences epsilon.std k_sum latent.dim layer_input
-#' loss_binary_crossentropy optimizer_adadelta optimizer_adagrad optimizer_adam 
-#' optimizer_adamax optimizer_ftrl optimizer_nadam optimizer_rmsprop optimizer_sgd 
-#' padding.symbol predict
+#' @importFrom keras layer_dense layer_concatenate layer_lambda 
+#' keras_model compile fit k_sum layer_input loss_binary_crossentropy 
+#' optimizer_adadelta optimizer_adagrad optimizer_adam optimizer_adamax 
+#' optimizer_ftrl optimizer_nadam optimizer_rmsprop optimizer_sgd 
+#' backend
 #' @importFrom dplyr %>%
+#' @importFrom stats predict
+#' @importFrom tensorflow tf
 #' @export 
 #' @return A vector of mutated sequences
 
@@ -62,14 +64,14 @@ variationalSequences <-function(input.sequences,
                                 aa.method.to.use = NULL,
                                 layers = 2, 
                                 hidden.dims = c(256, 128),
-                                latent.dim = 64,
+                                latent.dim = 16,
                                 batch.size = 16,
                                 epochs = 30,
                                 learning.rate = 0.001,
                                 epsilon.std = 1,
                                 null.threshold = 0.05,
-                                call.theshold = 0.5,
-                                activation.function = "relu",
+                                call.threshold = 0.5,
+                                activation.function = "leaky_relu",
                                 optimizer = "adam",
                                 disable.eager.execution = FALSE,
                                 sequence.dictionary = amino.acids[1:20]){
@@ -105,7 +107,7 @@ variationalSequences <-function(input.sequences,
                              "rmsprop" = optimizer_rmsprop,
                              "sgd" = optimizer_sgd, 
                              stop("Please select a compatible optimizer function in the Keras R implementation."))
-  #K <- keras::backend()
+  K <- keras::backend()
   
   print("Converting to matrix....")
   if(encoder == "onehotEncoder") {
@@ -113,7 +115,7 @@ variationalSequences <-function(input.sequences,
                                      sequence.dictionary = sequence.dictionary,
                                      convert.to.matrix = TRUE)
   } else if (encoder == "propertyEncoder") {
-    if(any(method.to.use %!in% names(apex_AA.data))) {
+    if(any(aa.method.to.use %!in% names(apex_AA.data))) {
       stop(paste0("Please select one of the following for aa.method.to.use: ", paste(sort(names(apex_AA.data)), collapse = ", ")))
     }
     sequence.matrix <- propertyEncoder(input.sequences, 
@@ -151,7 +153,7 @@ variationalSequences <-function(input.sequences,
   
   decoder_output <- layer_dense(decoder_h, 
                                 units = input_shape, 
-                                activation = 'softmax', 
+                                activation = 'sigmoid', 
                                 name = "output")
   
   
@@ -161,6 +163,18 @@ variationalSequences <-function(input.sequences,
   vae %>% keras::compile(optimizer = optimizer.to.use(learning.rate),
                          loss = .vae_loss)
   
+  
+  print("Fitting Model....")
+  # Train the model
+  vae %>% fit(
+    x = sequence.matrix,
+    y = sequence.matrix,
+    validation_split = 0.2,
+    shuffle = TRUE,
+    epochs = epochs,
+    batch_size = batch.size,
+    #verbose = 0
+  )
   
   # Extract Encoder model
   encoder_model <- keras_model(inputs = input_seq, 
@@ -182,26 +196,12 @@ variationalSequences <-function(input.sequences,
   decoder_model <- keras_model(inputs = decoder_input, 
                                outputs = decoder_output_for_model)
   
-  
-  print("Fitting Model....")
-  # Train the model
-  vae %>% fit(
-    x = sequence.matrix,
-    y = sequence.matrix,
-    validation_split = 0.2,
-    shuffle = TRUE,
-    epochs = epochs,
-    batch_size = batch.size,
-    verbose = 0
-  )
-  
   sequences_encoded <- encoder_model %>% 
                           predict(sequence.matrix, 
                                   batch_size = batch.size)
   
   #TODO allow for variation/n 
   #TODO call for sepcific number of sequences
-  K <- keras::backend()
   z_mean <- K$cast(sequences_encoded[[1]],  "float64")
   z_log_var <- K$cast(sequences_encoded[[2]], "float64")
   
@@ -213,7 +213,6 @@ variationalSequences <-function(input.sequences,
   
   # Sample from the latent space
   z_sample <- z_mean + k_exp(z_log_var / 2) * eps
-  z_sample_np <- as.array(z_sample)
   
   decoded.sequences <- decoder_model %>% 
     predict(z_sample, 
@@ -223,7 +222,7 @@ variationalSequences <-function(input.sequences,
   new.sequences <- sequenceDecoder(decoded.sequences,
                                    encoder = encoder,
                                    aa.method.to.use = aa.method.to.use,
-                                   call.threshold = call.theshold,
+                                   call.threshold = call.threshold,
                                    sequence.dictionary = sequence.dictionary,
                                    padding.symbol = ".")
   
@@ -236,15 +235,16 @@ variationalSequences <-function(input.sequences,
   k_mean(loss_binary_crossentropy(y_true, y_pred), axis = c(-1))
 }
 
-#' @importFrom keras k_square k_exp k_zum
+#' @importFrom keras k_square k_exp k_sum
 .kl_loss <- function(z_mean, z_log_var) {
   -0.5 * k_sum(1 + z_log_var - k_square(z_mean) - k_exp(z_log_var), axis = -1)
 }
 
+#' @importFrom keras k_mean
 .vae_loss <- function(y_true, y_pred) {
   reconstruction_loss <- .reconstruction_loss(y_true, y_pred)
   kl_loss <- .kl_loss(y_true, y_pred)
-  reconstruction_loss + kl_loss
+  k_mean(reconstruction_loss + kl_loss)
 }
 
 #' @importFrom keras k_random_normal k_shape k_exp

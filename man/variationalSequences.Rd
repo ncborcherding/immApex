@@ -17,9 +17,10 @@ variationalSequences(
   learning.rate = 0.001,
   epsilon.std = 1,
   null.threshold = 0.05,
-  call.theshold = 0.5,
-  activation.function = "relu",
+  call.threshold = 0.5,
+  activation.function = "leaky_relu",
   optimizer = "adam",
+  disable.eager.execution = FALSE,
   sequence.dictionary = amino.acids[1:20]
 )
 }
@@ -55,15 +56,18 @@ The length needs to match the number of layers}
 
 \item{null.threshold}{The null threshold to use in VAE training}
 
+\item{call.threshold}{The relative strictness of sequence calling
+with higher values being more stringent}
+
 \item{activation.function}{The activation for the dense connected layers}
 
 \item{optimizer}{The optimizer to use in VAE training}
 
+\item{disable.eager.execution}{Disable the eager execution parameter for
+tensorflow.}
+
 \item{sequence.dictionary}{The letters to use in sequence mutation
 (default are all amino acids)}
-
-\item{call.threshold**}{The relative strictness of sequence calling
-with higher values being more stringent}
 }
 \value{
 A vector of mutated sequences
