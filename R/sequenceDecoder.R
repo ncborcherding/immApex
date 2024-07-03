@@ -4,6 +4,15 @@
 #' into amino acid or nucleotide sequences.
 #' 
 #' @examples
+#' new.sequences <- generateSequences(prefix.motif = "CAS",
+#'                                    suffix.motif = "YF",
+#'                                    number.of.sequences = 100,
+#'                                    min.length = 8,
+#'                                    max.length = 16)
+#'                           
+#' sequence.matrix <- onehotEncoder(new.sequences, 
+#'                                  convert.to.matrix = TRUE)
+#'                                  
 #' decoded.sequences <- sequenceDecoder(sequence.matrix,
 #'                                      sequence.dictionary = amino.acids[1:20],
 #'                                      padding.symbol = ".")
