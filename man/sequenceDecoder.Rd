@@ -52,7 +52,6 @@ sequence.matrix <- onehotEncoder(new.sequences,
                                  convert.to.matrix = TRUE)
                                  
 decoded.sequences <- sequenceDecoder(sequence.matrix,
-                                     sequence.dictionary = amino.acids[1:20],
                                      padding.symbol = ".")
 
 }

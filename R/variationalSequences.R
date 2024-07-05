@@ -82,7 +82,7 @@ variationalSequences <-function(input.sequences,
     step <- 1
   }
   
-  es = callback_early_stopping(
+  es = keras::callback_early_stopping(
     monitor = "val_loss",
     min_delta = 0,
     patience = epochs/5,
