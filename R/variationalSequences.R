@@ -49,7 +49,7 @@
 #' keras_model compile fit k_sum layer_input loss_binary_crossentropy 
 #' optimizer_adadelta optimizer_adagrad optimizer_adam optimizer_adamax 
 #' optimizer_ftrl optimizer_nadam optimizer_rmsprop optimizer_sgd 
-#' backend
+#' backend callback_early_stopping
 #' @importFrom dplyr %>%
 #' @importFrom stats predict
 #' @importFrom tensorflow tf
@@ -64,14 +64,14 @@ variationalSequences <-function(input.sequences,
                                 aa.method.to.use = NULL,
                                 layers = 2, 
                                 hidden.dims = c(256, 128),
-                                latent.dim = 16,
+                                latent.dim = 4,
                                 batch.size = 16,
                                 epochs = 30,
                                 learning.rate = 0.001,
                                 epsilon.std = 1,
                                 null.threshold = 0.05,
                                 call.threshold = 0.5,
-                                activation.function = "leaky_relu",
+                                activation.function = "relu",
                                 optimizer = "adam",
                                 disable.eager.execution = FALSE,
                                 sequence.dictionary = amino.acids[1:20]){
@@ -81,6 +81,13 @@ variationalSequences <-function(input.sequences,
   } else {
     step <- 1
   }
+  
+  es = callback_early_stopping(
+    monitor = "val_loss",
+    min_delta = 0,
+    patience = epochs/5,
+    verbose = 0,
+    mode = "min")
   
   if (disable.eager.execution) {
     tensorflow::tf$compat$v1$disable_eager_execution()
@@ -156,12 +163,13 @@ variationalSequences <-function(input.sequences,
                                 activation = 'sigmoid', 
                                 name = "output")
   
-  
   # Autoencoder
   vae <- keras_model(inputs = input_seq, 
                      outputs = decoder_output)
+
+  
   vae %>% keras::compile(optimizer = optimizer.to.use(learning.rate),
-                         loss = .vae_loss)
+                         loss = list(.reconstruction_loss, .kl_loss, .kl_loss)) # Use the custom losses for the outputs
   
   
   print("Fitting Model....")
@@ -173,6 +181,7 @@ variationalSequences <-function(input.sequences,
     shuffle = TRUE,
     epochs = epochs,
     batch_size = batch.size,
+    callbacks = es
     #verbose = 0
   )
   
@@ -199,33 +208,38 @@ variationalSequences <-function(input.sequences,
   sequences_encoded <- encoder_model %>% 
                           predict(sequence.matrix, 
                                   batch_size = batch.size)
+  z_mean <- K$cast(sequences_encoded[[1]][sample(nrow(sequences_encoded[[1]]), number.of.sequences),],  "float32")
+  z_log_var <- K$cast(sequences_encoded[[2]][sample(nrow(sequences_encoded[[2]]), number.of.sequences),], "float32")
   
-  #TODO allow for variation/n 
-  #TODO call for sepcific number of sequences
-  z_mean <- K$cast(sequences_encoded[[1]],  "float64")
-  z_log_var <- K$cast(sequences_encoded[[2]], "float64")
+  # Generate Novel Sequences
+  new.sequences <- character(0)  # Initialize an empty vector
+  pattern <- paste0("^[", paste(c(sequence.dictionary, "."), collapse = ""), "]+$")
   
-  # Generate epsilon with the same dtype as z_mean and z_log_var
-  eps <- k_random_normal(shape = dim(z_mean), 
-                         mean = 0, 
-                         stddev = 1, 
-                         dtype = "float64")
-  
-  # Sample from the latent space
-  z_sample <- z_mean + k_exp(z_log_var / 2) * eps
-  
-  decoded.sequences <- decoder_model %>% 
-    predict(z_sample, 
-            steps = step,
-            batch_size = batch.size)
-  
-  new.sequences <- sequenceDecoder(decoded.sequences,
-                                   encoder = encoder,
-                                   aa.method.to.use = aa.method.to.use,
-                                   call.threshold = call.threshold,
-                                   sequence.dictionary = sequence.dictionary,
-                                   padding.symbol = ".")
-  
+  while (length(new.sequences) < number.of.sequences) {
+    # Sample from the latent space (use z_mean and z_log_var)
+    eps <- k_random_normal(shape = dim(z_mean), 
+                           mean = 0, 
+                           stddev = 1, 
+                           dtype = "float32")
+    z_sample <- z_mean + k_exp(z_log_var / 2) * eps
+    
+    # Decode the samples
+    decoded.sequences <- decoder_model %>% predict(z_sample, batch_size = batch.size)
+    
+    # Convert to amino acid sequences
+    candidate_sequences <- sequenceDecoder(decoded.sequences,
+                                           encoder = encoder,
+                                           aa.method.to.use = aa.method.to.use,
+                                           call.threshold = call.threshold,
+                                           sequence.dictionary = sequence.dictionary,
+                                           padding.symbol = ".")
+    
+    # Filter out duplicates and non-amino acid sequences
+    candidate_sequences <- candidate_sequences[!(candidate_sequences %in% new.sequences) & 
+                                                 grepl(pattern, candidate_sequences)]
+    
+    new.sequences <- c(new.sequences, candidate_sequences)
+  }
   return(new.sequences)
 }
 
@@ -243,7 +257,13 @@ variationalSequences <-function(input.sequences,
 #' @importFrom keras k_mean
 .vae_loss <- function(y_true, y_pred) {
   reconstruction_loss <- .reconstruction_loss(y_true, y_pred)
-  kl_loss <- .kl_loss(y_true, y_pred) #TODO this needs to be z_mean, z_log_var
+  kl_loss <- .kl_loss(input_seq, y_pred) #TODO this needs to be z_mean, z_log_var
+  k_mean(reconstruction_loss + kl_loss)
+}
+
+.vae_loss <- function(y_true, y_pred, z_mean, z_log_var) {
+  reconstruction_loss <- .reconstruction_loss(y_true, y_pred)
+  kl_loss <- .kl_loss(z_mean, z_log_var)  # Pass in z_mean, z_log_var
   k_mean(reconstruction_loss + kl_loss)
 }
 
