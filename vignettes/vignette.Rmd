@@ -1,17 +1,17 @@
 ---
-title: Welcome to Apex
+title: Making Deep Learning Models with Apex
 author: 
 - name: Nick Borcherding
   email: ncborch@gmail.com
   affiliation: Washington University in St. Louis, School of Medicine, St. Louis, MO, USA
-date: "April 26, 2024"
+date: "July 8, 2024"
 output:
   BiocStyle::html_document:
     toc_float: true
-package: Trex
+package: Apex
 vignette: >
   %\VignetteEngine{knitr::knitr}
-  %\VignetteIndexEntry{Running Apex}
+  %\VignetteIndexEntry{Making Deep Learning Models with Apex}
   %\usepackage[UTF-8]{inputenc}
 ---
 
@@ -20,26 +20,33 @@ knitr::opts_chunk$set(error=FALSE, message=FALSE, warning=FALSE)
 library(BiocStyle)
 ```
 
-# Introduction
+# Getting Started 
 
-Apex is meant to serve as an API for deep-learning models based on immune receptor sequencing. These functions extract or generate amino acid or nucleotide sequences and prepare them for deep learning tasks through Keras. Although the tools here are created for immune receptor sequences, they will work more generally for nucleotide or amino acid sequences. 
+**Apex** is meant to serve as an API for deep-learning models based on immune receptor sequencing. These functions extract or generate amino acid or nucleotide sequences and prepare them for deep learning tasks through [Keras](https://tensorflow.rstudio.com/guides/keras/basics). **Apex** is the underlying structure for the BCR models in [Ibex](https://github.com/ncborcherding/Ibex) and TCR models in [Trex](https://github.com/ncborcherding/Trex). It should be noted that the tools here are created for immune receptor sequences, they will work more generally for nucleotide or amino acid sequences. 
 
-## Load Libraries
+More information is available at the [Apex GitHub Repo](https://github.com/ncborcherding/Apex).
 
-```{r tidy = FALSE}
-suppressMessages(library(Apex))
-suppressMessages(library(keras))
-suppressMessages(library(scRepertoire))
-data("apex_example.data")
+## Installation
+
+```{r, eval = FALSE}
+devtools::install_github("ncborcherding/Apex")
 ```
 
-****************
+## Loading Libraries
+
+```{r}
+suppressMessages(library(Apex))
+suppressMessages(library(keras))
+suppressMessages(library(ggplot2))
+suppressMessages(library(viridis))
+suppressMessages(library(dplyr))
+```
 
 # Getting and Manipulating Sequences
 
 ## generateSequences
 
-A quick way to get started testing the model code is to generate synthetic sequences. ```generateSequences()``` can also generate realistic noise for generative adversarial networks. 
+Generating synthetic sequences is a quick way to start testing the model code. ```generateSequences()``` can also generate realistic noise for generative adversarial networks.
 
 Parameters for ```generateSequences()```
 
@@ -71,7 +78,7 @@ head(nucleotide.sequences)
 
 ## mutateSequences
 
-A common approach is to mutate sequences randomly or at specific intervals. This can be particularly helpful if we have fewer sequences or want to test a model for accuracy given new, altered sequences. ```mutateSequences()``` allows us to tune the type of mutation, where along the sequences to introduce the mutation, and the overall number of mutations.
+A common approach is to mutate sequences randomly or at specific intervals. This can be particularly helpful if we have fewer sequences or want to test a model for accuracy given new, altered sequences. mutateSequences() allows us to tune the type of mutation, where along the sequences to introduce the mutation and the overall number of mutations.
 
 Parameters for ```mutateSequences()```
 
@@ -93,7 +100,7 @@ head(mutated.sequences)
 
 ## formatGenes
 
-Across sequencing platforms, immune receptor nomenclature can be highly variable. When preparing data for models, we can use ``formatGenes()``` to universalize the gene formats into IMGT nomenclature. 
+Immune receptor nomenclature can be highly variable across sequencing platforms. When preparing data for models, we can use ```formatGenes() `` to universalize the gene formats into IMGT nomenclature.
 
 Parameters for ```formatGenes()```
 
@@ -116,7 +123,7 @@ head(Adaptive_example[,c("aminoAcid","vGeneName", "v_IMGT", "v_IMGT.check")])
 
 ## getIMGT
 
-Depending on the sequencing technology and the version, we might want to expand the length of our sequence embedding approach. The first step in the process is pulling the reference sequences from the ImMunoGeneTics (IMGT) system using ```getIMGT()```. More information for IMGT can be found at \href{https://www.imgt.org/}{imgt.org}. 
+Depending on the sequencing technology and the version, we might want to expand the length of our sequence embedding approach. The first step in the process is pulling the reference sequences from the ImMunoGeneTics (IMGT) system using ```getIMGT()```. More information for IMGT can be found at [imgt.org](https://www.imgt.org/). 
 
 Parameters for ```getIMGT()```
 
@@ -188,16 +195,16 @@ These properties are largely based on dimensional reduction strategies, but it i
 
 **method.to.use**  
 
-* atchleyFactors - \href{https://pubmed.ncbi.nlm.nih.gov/15851683/}{citation}).
-* crucianiProperties - \href{https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/abs/10.1002/cem.856}{citation}).
-* FASGAI - \href{https://pubmed.ncbi.nlm.nih.gov/18318694/}).
-* kideraFactors - \href{https://link.springer.com/article/10.1007/BF01025492}{citation}).
-* MSWHIM - \href{https://pubs.acs.org/doi/10.1021/ci980211b}{citation}).
-* ProtFP - \href{https://pubmed.ncbi.nlm.nih.gov/24059694/}{citation}).
-* stScales - \href{https://pubmed.ncbi.nlm.nih.gov/19373543/}{citation}).
-* tScales - \href{https://www.sciencedirect.com/science/article/abs/pii/S0022286006006314}{citation}).
-* VHSE - \href{https://pubmed.ncbi.nlm.nih.gov/15895431/}{citation}).
-* zScales - \href{https://pubmed.ncbi.nlm.nih.gov/9651153/}{citation}).
+* atchleyFactors - [citation](https://pubmed.ncbi.nlm.nih.gov/15851683/)
+* crucianiProperties - [citation](https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/abs/10.1002/cem.856)
+* FASGAI - [citation](https://pubmed.ncbi.nlm.nih.gov/18318694/)
+* kideraFactors - [citation](https://link.springer.com/article/10.1007/BF01025492)
+* MSWHIM - [citation](https://pubs.acs.org/doi/10.1021/ci980211b)
+* ProtFP - [citation](https://pubmed.ncbi.nlm.nih.gov/24059694/)
+* stScales - [citation](https://pubmed.ncbi.nlm.nih.gov/19373543/)
+* tScales - [citation](https://www.sciencedirect.com/science/article/abs/pii/S0022286006006314)
+* VHSE - [citation](https://pubmed.ncbi.nlm.nih.gov/15895431/)
+* zScales - [citation](https://pubmed.ncbi.nlm.nih.gov/9651153/)
 
 
 ```{r tidy = FALSE}
@@ -224,11 +231,13 @@ If, instead, we would like to get the set of summarized values across all amino 
 median.property.matrix <- propertyEncoder(input.sequences =  c(sequences, mutated.sequences), 
                                           method.to.use = "crucianiProperties",
                                           summary.function = "median")
+
+head(median.property.matrix[,1:3])
 ```
 
 ## geometricEncoder
 
-One approach to encode amino acid sequences has been through geometric isometry, such as \href{GIANA}{https://pubmed.ncbi.nlm.nih.gov/34349111/}.
+One approach to encode amino acid sequences is geometric isometry, such as [GIANA](https://pubmed.ncbi.nlm.nih.gov/34349111/).
 
 Parameters for ```geometricEncoder()```
 
@@ -300,9 +309,9 @@ adj.matrix
 
 ## sequenceDecoder
 
-In order to extract sequences from the one-hot or property encoded matrices or arrays, we have a function called ```sequenceDecoder()```. This can be applied to any generative approaches to sequence generation.
+We have a function called ```sequenceDecoder()``` that extracts sequences from one-hot or property-encoded matrices or arrays. This function can be applied to any generative approach to sequence generation.
 
-'Parameters for ```sequenceDecoder()```
+Parameters for ```sequenceDecoder()```
 
 * **sequence.matrix** The encoded sequences to decode in an array opr matrix
 * **encoder** The method to prepare the sequencing information - "onehotEncoder" or "propertyEncoder"
@@ -318,7 +327,7 @@ property.sequences <- sequenceDecoder(property.matrix,
                                       encoder = "propertyEncoder",
                                       aa.method.to.use = "FASGAI",
                                       call.threshold = 1)
-
+head(sequences)
 head(property.sequences)
 ```
 
@@ -333,7 +342,6 @@ OHE.sequences <- sequenceDecoder(sequence.matrix,
 
 head(OHE.sequences)
 ```
-
 
 # Training a Model
 
@@ -408,16 +416,20 @@ history <- autoencoder %>% fit(x = x_train,
                                epochs = epochs,
                                batch_size = batch_size,
                                shuffle = TRUE,
-                               callbacks = es)
+                               callbacks = es, 
+                               verbose = 0)
 
-plot(history)
+plot(history) + 
+  scale_color_viridis(option = "B", discrete = TRUE) + 
+  scale_fill_manual(values = c("black","black")) + 
+  theme_classic()
 ```
 
 ## Classifier
 
-We can also build classifiers directly using deep or shallow neural networks. Building deep classifiers generally requires a lot more data than classical machine learning methods, like random forests, so the vignette might not be ideal. 
+We can also build classifiers directly using deep or shallow neural networks. Building deep classifiers requires more data than classical machine learning methods, like random forests, so the vignette may not be ideal.
 
-The first step is to generate distinct types of sequences using ```generateSequences()``` and ```onehotEncoder()``` to prepare the data for the model. 
+The first step is to generate distinct types of sequences using ```generateSequences()``` and ```onehotEncoder()``` to prepare the data for the model.
 
 ```{r tidy = FALSE}
 class1.sequences <- generateSequences(prefix.motif = "CAS",
@@ -471,10 +483,14 @@ history <- classifier.model %>% fit(x_train,
                                     train_labels, 
                                     epochs = 20, 
                                     batch_size = 32, 
-                                    validation_data = list(x_val, val_labels)
+                                    validation_data = list(x_val, val_labels),
+                                    verbose = 0
 )
 
-plot(history)
+plot(history) + 
+  scale_color_viridis(option = "B", discrete = TRUE) + 
+  scale_fill_manual(values = c("black","black")) + 
+  theme_classic()
 ```
 
 Here, we can achieve a validation accuracy of 98.25%, which is impressive. But to contextualize, we used ```generateSequences()``` and distinct motifs - "CAS" vs "CASF" to create our 2 classes of sequences. Using sequences from experimental data will likely result in lower accuracy or require greater model complexity.
