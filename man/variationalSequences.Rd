@@ -11,12 +11,11 @@ variationalSequences(
   aa.method.to.use = NULL,
   layers = 2,
   hidden.dims = c(256, 128),
-  latent.dim = 4,
+  latent.dim = 16,
   batch.size = 16,
-  epochs = 30,
+  epochs = 50,
   learning.rate = 0.001,
   epsilon.std = 1,
-  null.threshold = 0.05,
   call.threshold = 0.5,
   activation.function = "relu",
   optimizer = "adam",
@@ -53,8 +52,6 @@ The length needs to match the number of layers}
 \item{learning.rate}{The learning rate to use in VAE training}
 
 \item{epsilon.std}{The epsilon to use in VAE training}
-
-\item{null.threshold}{The null threshold to use in VAE training}
 
 \item{call.threshold}{The relative strictness of sequence calling
 with higher values being more stringent}

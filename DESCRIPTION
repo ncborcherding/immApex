@@ -27,12 +27,14 @@ Imports: dplyr,
 	tensorflow
 Suggests: 
 	BiocStyle,
+	ggplot2,
 	knitr,
 	markdown,
 	rmarkdown, 
 	scRepertoire,
 	spelling,
-        testthat
+        testthat,
+	viridis
 VignetteBuilder: knitr
 Language: en-US
 URL: https://github.com/ncborcherding/Apex/
