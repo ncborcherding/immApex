@@ -4,6 +4,7 @@
 #' autoencoder (VAE) and perturbation of the probability distributions.
 #' 
 #' @examples
+#' \dontrun{
 #' sequences <- generateSequences(prefix.motif = "CAS",
 #'                                suffix.motif = "YF",
 #'                                number.of.sequences = 100,
@@ -16,6 +17,7 @@
 #'                                           hidden.dims = c(256, 128),
 #'                                           latent.dim = 16,
 #'                                           batch.size = 16)
+#' }
 #' 
 #' @param input.sequences The amino acid or nucleotide sequences to use
 #' @param encoder The method to prepare the sequencing information - 
@@ -35,7 +37,6 @@
 #' @param epochs The number of epochs to use in VAE training
 #' @param learning.rate The learning rate to use in VAE training
 #' @param epsilon.std The epsilon to use in VAE training
-#' @param null.threshold The null threshold to use in VAE training
 #' @param call.threshold The relative strictness of sequence calling
 #'  with higher values being more stringent
 #' @param activation.function The activation for the dense connected layers
@@ -49,7 +50,7 @@
 #' keras_model compile fit k_sum layer_input loss_binary_crossentropy 
 #' optimizer_adadelta optimizer_adagrad optimizer_adam optimizer_adamax 
 #' optimizer_ftrl optimizer_nadam optimizer_rmsprop optimizer_sgd 
-#' backend callback_early_stopping
+#' backend callback_early_stopping layer_normalization
 #' @importFrom dplyr %>%
 #' @importFrom stats predict
 #' @importFrom tensorflow tf
@@ -64,17 +65,24 @@ variationalSequences <-function(input.sequences,
                                 aa.method.to.use = NULL,
                                 layers = 2, 
                                 hidden.dims = c(256, 128),
-                                latent.dim = 4,
+                                latent.dim = 16,
                                 batch.size = 16,
-                                epochs = 30,
+                                epochs = 50,
                                 learning.rate = 0.001,
                                 epsilon.std = 1,
-                                null.threshold = 0.05,
                                 call.threshold = 0.5,
                                 activation.function = "relu",
                                 optimizer = "adam",
                                 disable.eager.execution = FALSE,
                                 sequence.dictionary = amino.acids[1:20]){
+  
+  # Input validation
+  if(length(input.sequences) < 1) stop("input.sequences must have at least one sequence.")
+  if(length(hidden.dims) != layers) stop("Number of hidden.dims must match the number of layers.")
+  
+  if (disable.eager.execution) {
+    tensorflow::tf$compat$v1$disable_eager_execution()
+  }
   
   if(length(input.sequences) > number.of.sequences) {
     step <- round(length(input.sequences)/number.of.sequences)
@@ -89,21 +97,6 @@ variationalSequences <-function(input.sequences,
     verbose = 0,
     mode = "min")
   
-  if (disable.eager.execution) {
-    tensorflow::tf$compat$v1$disable_eager_execution()
-  }
-  if(encoder %!in% c("onehotEncoder", "propertyEncoder")) {
-    stop("Invalid encoder provided, please select either 'onehotEncoder' or 'propertyEncoder'.")
-  }
-  
-  if(encoder == "propertyEncoder" & !all(sequence.dictionary %in% amino.acids[1:20])){ 
-    stop("propertyEncoder method is only available for amino acids, please check the sequence.dictionary.")
-  }
-  
-  if(layers != length(hidden.dims)) {
-    stop("Ensure the number of layers matches the vector length of hidden.dims provided.")
-  }
-  
   optimizer.to.use <- switch(optimizer,
                              "adadelta" = optimizer_adadelta,
                              "adagrad" = optimizer_adagrad,
@@ -117,21 +110,19 @@ variationalSequences <-function(input.sequences,
   K <- keras::backend()
   
   print("Converting to matrix....")
-  if(encoder == "onehotEncoder") {
-    sequence.matrix <- onehotEncoder(input.sequences, 
-                                     sequence.dictionary = sequence.dictionary,
-                                     convert.to.matrix = TRUE)
-  } else if (encoder == "propertyEncoder") {
-    if(any(aa.method.to.use %!in% names(apex_AA.data))) {
-      stop(paste0("Please select one of the following for aa.method.to.use: ", paste(sort(names(apex_AA.data)), collapse = ", ")))
-    }
-    sequence.matrix <- propertyEncoder(input.sequences, 
-                                       method.to.use = aa.method.to.use,
-                                       convert.to.matrix = TRUE)
-  }
+  # Prepare the sequences matrix
+  sequence.matrix <- switch(encoder,
+                            "onehotEncoder" = onehotEncoder(input.sequences, 
+                                                            sequence.dictionary = sequence.dictionary,
+                                                            convert.to.matrix = TRUE),
+                            "propertyEncoder" = propertyEncoder(input.sequences, 
+                                                                method.to.use = aa.method.to.use,
+                                                                convert.to.matrix = TRUE),
+                            stop("Invalid encoder provided."))
   
   input_shape <- dim(sequence.matrix)[2]
   input_seq <- layer_input(shape = c(input_shape))
+  
   
   # Encoder
   h <- .create_dense_layers(input_seq, 
@@ -163,14 +154,22 @@ variationalSequences <-function(input.sequences,
                                 activation = 'sigmoid', 
                                 name = "output")
   
-  # Autoencoder
-  vae <- keras_model(inputs = input_seq, 
-                     outputs = decoder_output)
-
+# vae <- keras_model(inputs = input_seq, 
+#                    outputs = decoder_output)
+ 
+ vae <- keras_model(
+   inputs = input_seq,
+   outputs = list(decoder_output, z_mean, z_log_var)  # Include z_mean and z_log_var in the outputs
+ )
+ 
+ vae %>% compile(
+   optimizer = optimizer.to.use(learning.rate),
+   loss = .vae_loss
+ )
   
-  vae %>% keras::compile(optimizer = optimizer.to.use(learning.rate),
-                         loss = list(.reconstruction_loss, .kl_loss, .kl_loss)) # Use the custom losses for the outputs
   
+# vae %>% keras::compile(optimizer = optimizer.to.use(learning.rate),
+#                        loss = list(.reconstruction_loss, .kl_loss, .kl_loss)) 
   
   print("Fitting Model....")
   # Train the model
@@ -254,12 +253,6 @@ variationalSequences <-function(input.sequences,
   -0.5 * k_sum(1 + z_log_var - k_square(z_mean) - k_exp(z_log_var), axis = -1)
 }
 
-#' @importFrom keras k_mean
-.vae_loss <- function(y_true, y_pred) {
-  reconstruction_loss <- .reconstruction_loss(y_true, y_pred)
-  kl_loss <- .kl_loss(input_seq, y_pred) #TODO this needs to be z_mean, z_log_var
-  k_mean(reconstruction_loss + kl_loss)
-}
 
 .vae_loss <- function(y_true, y_pred, z_mean, z_log_var) {
   reconstruction_loss <- .reconstruction_loss(y_true, y_pred)
@@ -290,7 +283,14 @@ variationalSequences <-function(input.sequences,
                                  prefix) {
   h <- input
   for (i in seq_len(number.of.layers)) {
-    h <- layer_dense(h, units = sizes[i], activation = activation.function, name = paste(prefix, i, sep = "."))
+    h <- layer_dense(h, 
+                     units = sizes[i], 
+                     activation = activation.function, 
+                     name = paste(prefix, i, sep = "."))
+    h <- layer_normalization(h)
   }
   return(h)
 }
+
+
+
