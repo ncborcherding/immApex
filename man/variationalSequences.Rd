@@ -13,6 +13,7 @@ variationalSequences(
   decoder.hidden.dim = NULL,
   latent.dim = 16,
   batch.size = 16,
+  epochs = 50,
   learning.rate = 0.001,
   epsilon.std = 1,
   call.threshold = 0.2,
@@ -44,6 +45,8 @@ for the decoder portion of the model. If NULL assumes symmetric autoencoder}
 
 \item{batch.size}{The batch size to use for VAE training}
 
+\item{epochs}{The number of epochs to use in VAE training}
+
 \item{learning.rate}{The learning rate to use in VAE training}
 
 \item{epsilon.std}{The epsilon to use in VAE training}
@@ -62,8 +65,6 @@ tensorflow.}
 (default are all amino acids)}
 
 \item{layers}{The number of hidden layers to employ within the VAE}
-
-\item{epochs}{The number of epochs to use in VAE training}
 }
 \value{
 A vector of mutated sequences
