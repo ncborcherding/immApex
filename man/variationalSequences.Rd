@@ -6,17 +6,16 @@
 \usage{
 variationalSequences(
   input.sequences,
-  number.of.sequences = 100,
-  encoder = "onehotEncoder",
+  encoder.function = "onehotEncoder",
   aa.method.to.use = NULL,
-  layers = 2,
-  hidden.dims = c(256, 128),
+  number.of.sequences = 100,
+  encoder.hidden.dim = c(128, 64),
+  decoder.hidden.dim = NULL,
   latent.dim = 16,
   batch.size = 16,
-  epochs = 50,
   learning.rate = 0.001,
   epsilon.std = 1,
-  call.threshold = 0.5,
+  call.threshold = 0.2,
   activation.function = "relu",
   optimizer = "adam",
   disable.eager.execution = FALSE,
@@ -26,9 +25,7 @@ variationalSequences(
 \arguments{
 \item{input.sequences}{The amino acid or nucleotide sequences to use}
 
-\item{number.of.sequences}{Number of sequences to generate}
-
-\item{encoder}{The method to prepare the sequencing information - 
+\item{encoder.function}{The method to prepare the sequencing information - 
 "onehotEncoder" or "propertyEncoder"}
 
 \item{aa.method.to.use}{The method or approach to use for the conversion:
@@ -38,16 +35,14 @@ variationalSequences(
   \item{Multiple Sets: c("atchleyFactors", "VHSE") }
 }}
 
-\item{layers}{The number of hidden layers to employ within the VAE}
+\item{number.of.sequences}{Number of sequences to generate}
 
-\item{hidden.dims}{A vector of the neurons to use in the hidden layers, 
-The length needs to match the number of layers}
+\item{encoder.hidden.dim}{A vector of the neurons to use in the hidden layers 
+for the decoder portion of the model. If NULL assumes symmetric autoencoder}
 
 \item{latent.dim}{The size of the latent dimensions}
 
 \item{batch.size}{The batch size to use for VAE training}
-
-\item{epochs}{The number of epochs to use in VAE training}
 
 \item{learning.rate}{The learning rate to use in VAE training}
 
@@ -65,6 +60,10 @@ tensorflow.}
 
 \item{sequence.dictionary}{The letters to use in sequence mutation
 (default are all amino acids)}
+
+\item{layers}{The number of hidden layers to employ within the VAE}
+
+\item{epochs}{The number of epochs to use in VAE training}
 }
 \value{
 A vector of mutated sequences
@@ -83,8 +82,7 @@ sequences <- generateSequences(prefix.motif = "CAS",
                                 
 variate_sequences <- variationalSequences(sequences, 
                                           encoder = "onehotEncoder",
-                                          layers = 2, 
-                                          hidden.dims = c(256, 128),
+                                          encoder.hidden.dim = c(256, 128),
                                           latent.dim = 16,
                                           batch.size = 16)
 }

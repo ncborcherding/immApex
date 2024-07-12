@@ -13,14 +13,13 @@
 #'                                 
 #' variate_sequences <- variationalSequences(sequences, 
 #'                                           encoder = "onehotEncoder",
-#'                                           layers = 2, 
-#'                                           hidden.dims = c(256, 128),
+#'                                           encoder.hidden.dim = c(256, 128),
 #'                                           latent.dim = 16,
 #'                                           batch.size = 16)
 #' }
 #' 
 #' @param input.sequences The amino acid or nucleotide sequences to use
-#' @param encoder The method to prepare the sequencing information - 
+#' @param encoder.function The method to prepare the sequencing information - 
 #' "onehotEncoder" or "propertyEncoder"
 #' @param aa.method.to.use The method or approach to use for the conversion:
 #' \itemize{
@@ -30,8 +29,10 @@
 #' } 
 #' @param layers The number of hidden layers to employ within the VAE
 #' @param number.of.sequences Number of sequences to generate
-#' @param hidden.dims A vector of the neurons to use in the hidden layers, 
-#' The length needs to match the number of layers
+#' @param encoder.hidden.dim A vector of the neurons to use in the hidden layers
+#' for the encoder portion of the model
+#' @param encoder.hidden.dim A vector of the neurons to use in the hidden layers 
+#' for the decoder portion of the model. If NULL assumes symmetric autoencoder
 #' @param latent.dim The size of the latent dimensions
 #' @param batch.size The batch size to use for VAE training
 #' @param epochs The number of epochs to use in VAE training
@@ -57,28 +58,28 @@
 #' @export 
 #' @return A vector of mutated sequences
 
-
-
-variationalSequences <-function(input.sequences,
-                                number.of.sequences = 100,
-                                encoder = "onehotEncoder",
-                                aa.method.to.use = NULL,
-                                layers = 2, 
-                                hidden.dims = c(256, 128),
-                                latent.dim = 16,
-                                batch.size = 16,
-                                epochs = 50,
-                                learning.rate = 0.001,
-                                epsilon.std = 1,
-                                call.threshold = 0.5,
-                                activation.function = "relu",
-                                optimizer = "adam",
-                                disable.eager.execution = FALSE,
-                                sequence.dictionary = amino.acids[1:20]){
+variationalSequences <- function(input.sequences,
+                                 encoder.function = "onehotEncoder",
+                                 aa.method.to.use = NULL,
+                                 number.of.sequences = 100,
+                                 encoder.hidden.dim = c(128,64),
+                                 decoder.hidden.dim = NULL,
+                                 latent.dim = 16,
+                                 batch.size = 16,
+                                 epochs = 50,
+                                 learning.rate = 0.001,
+                                 epsilon.std = 1,
+                                 call.threshold = 0.2,
+                                 activation.function = "relu",
+                                 optimizer = "adam",
+                                 disable.eager.execution = FALSE,
+                                 sequence.dictionary = amino.acids[1:20]) {
+  
+  n_train <- floor(length(sequences) * 0.8)  # Default to 80% for training
   
   # Input validation
   if(length(input.sequences) < 1) stop("input.sequences must have at least one sequence.")
-  if(length(hidden.dims) != layers) stop("Number of hidden.dims must match the number of layers.")
+
   
   if (disable.eager.execution) {
     tensorflow::tf$compat$v1$disable_eager_execution()
@@ -111,7 +112,7 @@ variationalSequences <-function(input.sequences,
   
   print("Converting to matrix....")
   # Prepare the sequences matrix
-  sequence.matrix <- switch(encoder,
+  sequence.matrix <- switch(encoder.function,
                             "onehotEncoder" = onehotEncoder(input.sequences, 
                                                             sequence.dictionary = sequence.dictionary,
                                                             convert.to.matrix = TRUE),
@@ -120,177 +121,99 @@ variationalSequences <-function(input.sequences,
                                                                 convert.to.matrix = TRUE),
                             stop("Invalid encoder provided."))
   
-  input_shape <- dim(sequence.matrix)[2]
-  input_seq <- layer_input(shape = c(input_shape))
+  # Custom VAE Loss Layer
+  vae_loss_layer <- function(original_dim) {
+        layer_lambda(f = function(x) {
+          x_decoded_mean <- x[[1]]
+          x_input <- x[[2]]
+          z_mean <- x[[3]]
+          z_log_var <- x[[4]]
+          xent_loss <- loss_binary_crossentropy(x_input, x_decoded_mean) * original_dim
+          kl_loss <- -0.5 * k_mean(1 + z_log_var - k_square(z_mean) - k_exp(z_log_var), axis = -1L)
+          k_mean(xent_loss + kl_loss)
+        })
+  }
+  original_dim <- ncol(sequence.matrix)
+  
+  # Data splitting
+  set.seed(42)  # For reproducibility
+  train_indices <- sample(1:nrow(sequence.matrix), n_train)
+  x_train <- sequence.matrix[train_indices, ]
+  x_test <- sequence.matrix[-train_indices, ]
   
   
   # Encoder
-  h <- .create_dense_layers(input_seq, 
-                            number.of.layers = layers,
-                            sizes = hidden.dims,
-                            activation.function = activation.function,
-                            prefix = "E")
-  z_mean <- layer_dense(h, 
-                        units = latent.dim, 
-                        name = "latent")
-  z_log_var <- layer_dense(h, 
-                           units = latent.dim, 
-                           name = "log_var")
-  
-  z <- layer_concatenate(list(z_mean, z_log_var)) %>%
-       layer_lambda(.vae_sampling,
-                    arguments = list(latent.dim = latent.dim, epsilon.std = epsilon.std),
-                    name = "lambda")
-  
-  # Decoder 
-  decoder_h <- .create_dense_layers(z, 
-                                    number.of.layers = layers,
-                                    sizes = rev(hidden.dims),
-                                    activation.function = activation.function,
-                                    prefix = "D")
-  
-  decoder_output <- layer_dense(decoder_h, 
-                                units = input_shape, 
-                                activation = 'sigmoid', 
-                                name = "output")
-  
-# vae <- keras_model(inputs = input_seq, 
-#                    outputs = decoder_output)
- 
- vae <- keras_model(
-   inputs = input_seq,
-   outputs = list(decoder_output, z_mean, z_log_var)  # Include z_mean and z_log_var in the outputs
- )
- 
- vae %>% compile(
-   optimizer = optimizer.to.use(learning.rate),
-   loss = .vae_loss
- )
-  
-  
-# vae %>% keras::compile(optimizer = optimizer.to.use(learning.rate),
-#                        loss = list(.reconstruction_loss, .kl_loss, .kl_loss)) 
-  
+  encoder_input <- layer_input(shape = original_dim)
+  h <- encoder_input
+  for (dim in encoder.hidden.dim) {
+       h <- layer_dense(h, units = dim, activation = activation.function)
+  }
+  z_mean <- layer_dense(h, units = latent.dim, name = "z_mean")
+  z_log_var <- layer_dense(h, units = latent.dim, name = "z_log_var")
+      
+  # Sampling Layer
+  z <- layer_lambda(f = function(args) {
+        z_mean <- args[[1]]
+        z_log_var <- args[[2]]
+        batch <- k_shape(z_mean)[1]
+        dim <- k_int_shape(z_mean)[2]
+        epsilon <- k_random_normal(shape = c(batch, dim), mean = 0., stddev = epsilon_std)
+        z_mean + k_exp(z_log_var / 2) * epsilon
+      }, output_shape = c(latent.dim))(list(z_mean, z_log_var))
+      
+  # Decoder
+  decoder_input <- layer_input(shape = latent.dim)
+  d <- decoder_input
+  if (is.null(decoder.hidden.dim)) {
+    decoder.hidden.dim <- rev(encoder.hidden.dim)  # Default to mirroring the encoder layers
+  }
+  for (dim in decoder.hidden.dim) {
+    d <- layer_dense(d, units = dim, activation = "relu")
+  }
+  decoder_output <- layer_dense(d, units = original_dim, activation = "sigmoid")
+      
+  # Encoder and Decoder Models
+  encoder <- keras_model(encoder_input, z_mean)
+  decoder <- keras_model(decoder_input, decoder_output)
+      
+  # VAE Model
+  decoder_output <- decoder(z)
+  vae <- keras_model(encoder_input, decoder_output)
+      
+  # Add custom loss layer
+  loss_layer <- vae_loss_layer(original_dim)(list(decoder_output, encoder_input, z_mean, z_log_var))
+  vae_with_loss <- keras_model(encoder_input, loss_layer)
+      
+  # Dummy loss function
+  dummy_loss <- function(y_true, y_pred) {
+    k_mean(y_pred)
+  }
+      
+  # Compile the model
+  vae_with_loss %>% compile(optimizer = optimizer_adam(learning_rate = learning.rate), loss = dummy_loss)
+      
   print("Fitting Model....")
-  # Train the model
-  vae %>% fit(
-    x = sequence.matrix,
-    y = sequence.matrix,
-    validation_split = 0.2,
-    shuffle = TRUE,
-    epochs = epochs,
-    batch_size = batch.size,
-    callbacks = es
-    #verbose = 0
+  vae_with_loss %>% fit(
+        x_train, x_train, 
+        shuffle = TRUE,
+        epochs = epochs,
+        batch_size = batch.size,
+        validation_data = list(x_test, x_test),
+        verbose = 0,
+        callbacks = es
   )
+      
+
+  print("Generating New Sequences....")
+  z_sample <- matrix(rnorm(number.of.sequences* latent.dim), ncol = latent.dim)
+  generated_matrix <- predict(decoder, z_sample)
+        
+  candidate.sequences <- sequenceDecoder(generated_matrix,
+                                         encoder = encoder.function,
+                                         aa.method.to.use = aa.method.to.use,
+                                         call.threshold = call.threshold,
+                                         sequence.dictionary = sequence.dictionary,
+                                         padding.symbol = ".")
+  return(candidate.sequences)
   
-  # Extract Encoder model
-  encoder_model <- keras_model(inputs = input_seq, 
-                               outputs = list(z_mean, z_log_var))
-  
-  # Extract Decoder model
-  decoder_input <- layer_input(shape = c(latent.dim), name = "decoder_input")
-  decoder_h_for_model <- .create_dense_layers(decoder_input, 
-                                              number.of.layers = layers,
-                                              sizes = rev(hidden.dims),
-                                              activation.function = activation.function,
-                                              prefix = "D")
-  
-  decoder_output_for_model <- layer_dense(decoder_h_for_model, 
-                                          units = input_shape, 
-                                          activation = 'sigmoid', 
-                                          name = "output")
-  
-  decoder_model <- keras_model(inputs = decoder_input, 
-                               outputs = decoder_output_for_model)
-  
-  sequences_encoded <- encoder_model %>% 
-                          predict(sequence.matrix, 
-                                  batch_size = batch.size)
-  z_mean <- K$cast(sequences_encoded[[1]][sample(nrow(sequences_encoded[[1]]), number.of.sequences),],  "float32")
-  z_log_var <- K$cast(sequences_encoded[[2]][sample(nrow(sequences_encoded[[2]]), number.of.sequences),], "float32")
-  
-  # Generate Novel Sequences
-  new.sequences <- character(0)  # Initialize an empty vector
-  pattern <- paste0("^[", paste(c(sequence.dictionary, "."), collapse = ""), "]+$")
-  
-  while (length(new.sequences) < number.of.sequences) {
-    # Sample from the latent space (use z_mean and z_log_var)
-    eps <- k_random_normal(shape = dim(z_mean), 
-                           mean = 0, 
-                           stddev = 1, 
-                           dtype = "float32")
-    z_sample <- z_mean + k_exp(z_log_var / 2) * eps
-    
-    # Decode the samples
-    decoded.sequences <- decoder_model %>% predict(z_sample, batch_size = batch.size)
-    
-    # Convert to amino acid sequences
-    candidate_sequences <- sequenceDecoder(decoded.sequences,
-                                           encoder = encoder,
-                                           aa.method.to.use = aa.method.to.use,
-                                           call.threshold = call.threshold,
-                                           sequence.dictionary = sequence.dictionary,
-                                           padding.symbol = ".")
-    
-    # Filter out duplicates and non-amino acid sequences
-    candidate_sequences <- candidate_sequences[!(candidate_sequences %in% new.sequences) & 
-                                                 grepl(pattern, candidate_sequences)]
-    
-    new.sequences <- c(new.sequences, candidate_sequences)
-  }
-  return(new.sequences)
 }
-
-# Loss and Compilation
-#' @importFrom keras k_mean
-.reconstruction_loss <- function(y_true, y_pred) {
-  k_mean(loss_binary_crossentropy(y_true, y_pred), axis = c(-1))
-}
-
-#' @importFrom keras k_square k_exp k_sum
-.kl_loss <- function(z_mean, z_log_var) {
-  -0.5 * k_sum(1 + z_log_var - k_square(z_mean) - k_exp(z_log_var), axis = -1)
-}
-
-
-.vae_loss <- function(y_true, y_pred, z_mean, z_log_var) {
-  reconstruction_loss <- .reconstruction_loss(y_true, y_pred)
-  kl_loss <- .kl_loss(z_mean, z_log_var)  # Pass in z_mean, z_log_var
-  k_mean(reconstruction_loss + kl_loss)
-}
-
-
-#' @importFrom keras k_random_normal k_shape k_exp
-.vae_sampling <- function(arg, latent.dim, epsilon.std){
-  z_mean <- arg[, 1:(latent.dim)]
-  z_log_var <- arg[, (latent.dim + 1):(2 * latent.dim)]
-  
-  epsilon <- keras::k_random_normal(
-    shape = c(keras::k_shape(z_mean)[[1]]),
-    mean=0.,
-    stddev=epsilon.std
-  )
-  
-  z_mean + keras::k_exp(z_log_var/2)*epsilon
-}
-
-#' @importFrom keras layer_dense
-.create_dense_layers <- function(input, 
-                                 number.of.layers,
-                                 sizes,
-                                 activation.function,
-                                 prefix) {
-  h <- input
-  for (i in seq_len(number.of.layers)) {
-    h <- layer_dense(h, 
-                     units = sizes[i], 
-                     activation = activation.function, 
-                     name = paste(prefix, i, sep = "."))
-    h <- layer_normalization(h)
-  }
-  return(h)
-}
-
-
-
