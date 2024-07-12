@@ -4,6 +4,7 @@
 #' autoencoder (VAE) and perturbation of the probability distributions.
 #' 
 #' @examples
+#' \dontrun{
 #' sequences <- generateSequences(prefix.motif = "CAS",
 #'                                suffix.motif = "YF",
 #'                                number.of.sequences = 100,
@@ -15,6 +16,7 @@
 #'                                           encoder.hidden.dim = c(256, 128),
 #'                                           latent.dim = 16,
 #'                                           batch.size = 16)
+#' }
 #' 
 #' @param input.sequences The amino acid or nucleotide sequences to use
 #' @param encoder.function The method to prepare the sequencing information - 
@@ -149,7 +151,7 @@ variationalSequences <- function(input.sequences,
         z_log_var <- args[[2]]
         batch <- k_shape(z_mean)[1]
         dim <- k_int_shape(z_mean)[2]
-        epsilon <- k_random_normal(shape = c(batch, dim), mean = 0., stddev = epsilon_std)
+        epsilon <- k_random_normal(shape = c(batch, dim), mean = 0., stddev = epsilon.std)
         z_mean + k_exp(z_log_var / 2) * epsilon
       }, output_shape = c(latent.dim))(list(z_mean, z_log_var))
       

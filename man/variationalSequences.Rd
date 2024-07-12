@@ -75,6 +75,7 @@ Use this to simulate sequences using a variational
 autoencoder (VAE) and perturbation of the probability distributions.
 }
 \examples{
+\dontrun{
 sequences <- generateSequences(prefix.motif = "CAS",
                                suffix.motif = "YF",
                                number.of.sequences = 100,
@@ -86,5 +87,6 @@ variate_sequences <- variationalSequences(sequences,
                                           encoder.hidden.dim = c(256, 128),
                                           latent.dim = 16,
                                           batch.size = 16)
+}
 
 }
