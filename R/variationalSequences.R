@@ -4,7 +4,6 @@
 #' autoencoder (VAE) and perturbation of the probability distributions.
 #' 
 #' @examples
-#' \dontrun{
 #' sequences <- generateSequences(prefix.motif = "CAS",
 #'                                suffix.motif = "YF",
 #'                                number.of.sequences = 100,
@@ -16,7 +15,6 @@
 #'                                           encoder.hidden.dim = c(256, 128),
 #'                                           latent.dim = 16,
 #'                                           batch.size = 16)
-#' }
 #' 
 #' @param input.sequences The amino acid or nucleotide sequences to use
 #' @param encoder.function The method to prepare the sequencing information - 
@@ -27,11 +25,10 @@
 #'   ProtFP, stScales, tScales, VHSE, zScales"}
 #'   \item{Multiple Sets: c("atchleyFactors", "VHSE") }
 #' } 
-#' @param layers The number of hidden layers to employ within the VAE
 #' @param number.of.sequences Number of sequences to generate
 #' @param encoder.hidden.dim A vector of the neurons to use in the hidden layers
 #' for the encoder portion of the model
-#' @param encoder.hidden.dim A vector of the neurons to use in the hidden layers 
+#' @param decoder.hidden.dim A vector of the neurons to use in the hidden layers 
 #' for the decoder portion of the model. If NULL assumes symmetric autoencoder
 #' @param latent.dim The size of the latent dimensions
 #' @param batch.size The batch size to use for VAE training
@@ -47,13 +44,14 @@
 #' @param sequence.dictionary The letters to use in sequence mutation
 #' (default are all amino acids)
 #' 
-#' @importFrom keras layer_dense layer_concatenate layer_lambda 
-#' keras_model compile fit k_sum layer_input loss_binary_crossentropy 
-#' optimizer_adadelta optimizer_adagrad optimizer_adam optimizer_adamax 
-#' optimizer_ftrl optimizer_nadam optimizer_rmsprop optimizer_sgd 
-#' backend callback_early_stopping layer_normalization
+#' @importFrom keras layer_dense layer_lambda  keras_model compile 
+#' fit k_sum layer_input loss_binary_crossentropy optimizer_adadelta 
+#' optimizer_adagrad optimizer_adam optimizer_adamax optimizer_ftrl 
+#' optimizer_nadam optimizer_rmsprop optimizer_sgd backend 
+#' callback_early_stopping layer_normalization k_exp k_int_shape 
+#' k_mean k_random_normal k_shape k_square
 #' @importFrom dplyr %>%
-#' @importFrom stats predict
+#' @importFrom stats predict rnorm
 #' @importFrom tensorflow tf
 #' @export 
 #' @return A vector of mutated sequences
@@ -75,7 +73,7 @@ variationalSequences <- function(input.sequences,
                                  disable.eager.execution = FALSE,
                                  sequence.dictionary = amino.acids[1:20]) {
   
-  n_train <- floor(length(sequences) * 0.8)  # Default to 80% for training
+  n_train <- floor(length(input.sequences) * 0.8)  # Default to 80% for training
   
   # Input validation
   if(length(input.sequences) < 1) stop("input.sequences must have at least one sequence.")
@@ -83,12 +81,6 @@ variationalSequences <- function(input.sequences,
   
   if (disable.eager.execution) {
     tensorflow::tf$compat$v1$disable_eager_execution()
-  }
-  
-  if(length(input.sequences) > number.of.sequences) {
-    step <- round(length(input.sequences)/number.of.sequences)
-  } else {
-    step <- 1
   }
   
   es = keras::callback_early_stopping(

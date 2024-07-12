@@ -38,7 +38,10 @@ variationalSequences(
 
 \item{number.of.sequences}{Number of sequences to generate}
 
-\item{encoder.hidden.dim}{A vector of the neurons to use in the hidden layers 
+\item{encoder.hidden.dim}{A vector of the neurons to use in the hidden layers
+for the encoder portion of the model}
+
+\item{decoder.hidden.dim}{A vector of the neurons to use in the hidden layers 
 for the decoder portion of the model. If NULL assumes symmetric autoencoder}
 
 \item{latent.dim}{The size of the latent dimensions}
@@ -63,8 +66,6 @@ tensorflow.}
 
 \item{sequence.dictionary}{The letters to use in sequence mutation
 (default are all amino acids)}
-
-\item{layers}{The number of hidden layers to employ within the VAE}
 }
 \value{
 A vector of mutated sequences
@@ -74,7 +75,6 @@ Use this to simulate sequences using a variational
 autoencoder (VAE) and perturbation of the probability distributions.
 }
 \examples{
-\dontrun{
 sequences <- generateSequences(prefix.motif = "CAS",
                                suffix.motif = "YF",
                                number.of.sequences = 100,
@@ -86,6 +86,5 @@ variate_sequences <- variationalSequences(sequences,
                                           encoder.hidden.dim = c(256, 128),
                                           latent.dim = 16,
                                           batch.size = 16)
-}
 
 }
