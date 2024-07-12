@@ -27,7 +27,7 @@ test_that("sequenceDecoder works", {
   decoded.KF <- sequenceDecoder(sequence.array,
                                 encoder = "propertyEncoder",
                                 aa.method.to.use = "kideraFactors",
-                                call.threshold = 1)
+                                call.threshold =1)
   
   expect_equal(
     decoded.KF,

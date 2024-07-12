@@ -30,6 +30,7 @@
 #' @param sequence.dictionary The letters to use in sequence generation 
 #' (default are all amino acids)
 #' @param padding.symbol Symbol to use for padding at the end of sequences
+#' @param remove.padding Remove the additional symbol from the end of decoded sequences
 #' 
 #' @export
 #' @return Decoded amino acid or nucleotide sequences
@@ -38,7 +39,8 @@ sequenceDecoder <- function(sequence.matrix,
                             aa.method.to.use = NULL,
                             call.threshold = 0.5,
                             sequence.dictionary = amino.acids[1:20],
-                            padding.symbol = ".") {
+                            padding.symbol = ".", 
+                            remove.padding = TRUE) {
   if(call.threshold <= 0) {
     stop("Please select number > 0 for call.threshold")
   }
@@ -60,6 +62,13 @@ sequenceDecoder <- function(sequence.matrix,
                                           aa.method.to.use,
                                           padding.symbol,
                                           call.threshold)
+  }
+  if(remove.padding) {
+    remove_repetitive_end <- function(x) {
+      gsub(paste0("(\\", padding.symbol, "*)$"), "", x)
+    }
+    decoded_sequences <- sapply(decoded_sequences, remove_repetitive_end, USE.NAMES = FALSE)
+    
   }
   
   return(decoded_sequences)

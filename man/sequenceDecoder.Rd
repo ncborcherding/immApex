@@ -10,7 +10,8 @@ sequenceDecoder(
   aa.method.to.use = NULL,
   call.threshold = 0.5,
   sequence.dictionary = amino.acids[1:20],
-  padding.symbol = "."
+  padding.symbol = ".",
+  remove.padding = TRUE
 )
 }
 \arguments{
@@ -33,6 +34,8 @@ stringent}
 (default are all amino acids)}
 
 \item{padding.symbol}{Symbol to use for padding at the end of sequences}
+
+\item{remove.padding}{Remove the additional symbol from the end of decoded sequences}
 }
 \value{
 Decoded amino acid or nucleotide sequences
