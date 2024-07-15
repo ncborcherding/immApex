@@ -91,6 +91,7 @@ sequenceDecoder <- function(sequence.matrix,
   names(vectors) <- vector.names
   vectors <- lapply(vectors, .min.max.normalize)
   
+  
   if (inherits(sequence.matrix, "matrix")) {
     num_sequences <- nrow(sequence.matrix)
     sequence_length <- ncol(sequence.matrix) / length(vectors)
@@ -101,6 +102,8 @@ sequenceDecoder <- function(sequence.matrix,
     sequence_length <- dim(sequence.matrix)[2]
   }
   vectors <- do.call(rbind, vectors)
+  vectors <- cbind(vectors, c(rep(0, nrow(vectors))))
+  colnames(vectors)[21] <- padding.symbol
   decoded_sequences <- character(num_sequences)
   
   for (i in seq_len(num_sequences)) {

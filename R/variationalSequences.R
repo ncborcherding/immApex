@@ -11,11 +11,11 @@
 #'                                min.length = 8,
 #'                                max.length = 16)
 #'                                 
-#' variate_sequences <- variationalSequences(sequences, 
-#'                                           encoder = "onehotEncoder",
-#'                                           encoder.hidden.dim = c(256, 128),
-#'                                           latent.dim = 16,
-#'                                           batch.size = 16)
+#' new.sequences <- variationalSequences(sequences, 
+#'                                       encoder = "onehotEncoder",
+#'                                       encoder.hidden.dim = c(256, 128),
+#'                                       latent.dim = 16,
+#'                                       batch.size = 16)
 #' }
 #' 
 #' @param input.sequences The amino acid or nucleotide sequences to use
@@ -53,7 +53,7 @@
 #' callback_early_stopping layer_normalization k_exp k_int_shape 
 #' k_mean k_random_normal k_shape k_square
 #' @importFrom dplyr %>%
-#' @importFrom stats predict rnorm
+#' @importFrom stats predict runif
 #' @importFrom tensorflow tf
 #' @export 
 #' @return A vector of mutated sequences
@@ -196,10 +196,16 @@ variationalSequences <- function(input.sequences,
         verbose = 0,
         callbacks = es
   )
-      
 
   print("Generating New Sequences....")
-  z_sample <- matrix(rnorm(number.of.sequences* latent.dim), ncol = latent.dim)
+  encoded_sequences <- as.matrix(encoder(x_train))
+  
+  #Using the vectors/ranges of training sequences to form a new matrix
+  lapply(seq_len(ncol(encoded_sequences)), function(x) {
+    runif(number.of.sequences, min = min(encoded_sequences[,x]), max = max(encoded_sequences[,x]))
+  }) -> z_sample
+  
+  z_sample <- do.call(cbind, z_sample)
   generated_matrix <- predict(decoder, z_sample)
         
   candidate.sequences <- sequenceDecoder(generated_matrix,
@@ -209,5 +215,4 @@ variationalSequences <- function(input.sequences,
                                          sequence.dictionary = sequence.dictionary,
                                          padding.symbol = ".")
   return(candidate.sequences)
-  
 }
