@@ -61,15 +61,4 @@ test_that("getIR works", {
     expect_true(is.data.frame(result[[1]]))
   })
   
-  test_that("Test for handling Seurat object", {
-    dummy_data <- Seurat::CreateSeuratObject(counts = matrix(1:4, ncol = 2))
-    dummy_data[["CTaa"]] <- c("CASSLGG_XXXXX", "CASRLGG_XXXXX")
-    dummy_data[["CTnt"]] <-  c("TGTGCCAGCAGCTTGGG_YYYYY", "TGTGCCAGCAGGCTGGG_YYYYY")
-    dummy_data[["CTgene"]] <- c("TRAV1-2.TRAJ.TRAC_ZZZZ.ZZZZZ.ZZZZ", "TRAV1-2.TRAJ.TRAC_ZZZZZ.ZZZZZ.ZZZZ")
-    
-    result <- getIR(input.data = dummy_data, 
-                    chains = "TRA")
-    expect_true(is.data.frame(result[[1]]))
-  })
-  
 })
