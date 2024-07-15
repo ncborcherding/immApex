@@ -15,7 +15,8 @@ test_that("sequenceDecoder works", {
  
   decoded.AF <- sequenceDecoder(sequence.matrix,
                                 encoder = "propertyEncoder",
-                                aa.method.to.use = "atchleyFactors")
+                                aa.method.to.use = "atchleyFactors", 
+                                call.threshold = 2)
   
   expect_equal(
     decoded.AF,
