@@ -40,10 +40,10 @@ propertyEncoder <- function(input.sequences,
                             convert.to.matrix = TRUE,
                             summary.function = NULL,
                             padding.symbol = ".") {
-  if(any(method.to.use %!in% names(apex_AA.data))) {
-    stop(paste0("Please select one of the following for method.to.use: ", paste(sort(names(apex_AA.data)), collapse = ", ")))
+  if(any(method.to.use %!in% names(immapex_AA.data))) {
+    stop(paste0("Please select one of the following for method.to.use: ", paste(sort(names(immapex_AA.data)), collapse = ", ")))
   }
-  vectors <- apex_AA.data[method.to.use]
+  vectors <- immapex_AA.data[method.to.use]
   vector.names <- as.vector(unlist(lapply(vectors, names)))
   vectors <- do.call(c, vectors)
   names(vectors) <- vector.names

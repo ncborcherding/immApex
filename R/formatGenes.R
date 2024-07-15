@@ -16,7 +16,7 @@
 #' retain all information (\strong{FALSE})
 #' 
 #' @examples
-#' formatGenes(apex_example.data[["TenX"]],
+#' formatGenes(immapex_example.data[["TenX"]],
 #'             region = "v",
 #'             technology = "TenX")
 #' 
@@ -64,7 +64,7 @@ formatGenes <- function(input.data,
   }
  
   
-  gene.list <- apex_gene.list[tolower(region)]
+  gene.list <- immapex_gene.list[tolower(region)]
   lapply(gene.list, function(x) {
     lapply(x, function(y) {
       reference <- y[[tolower(species)]]

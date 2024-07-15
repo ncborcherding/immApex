@@ -37,7 +37,7 @@ This function will format the genes into a clean
 nomenclature using the IMGT conventions.
 }
 \examples{
-formatGenes(apex_example.data[["TenX"]],
+formatGenes(immapex_example.data[["TenX"]],
             region = "v",
             technology = "TenX")
 

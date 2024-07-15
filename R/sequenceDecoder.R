@@ -55,8 +55,8 @@ sequenceDecoder <- function(sequence.matrix,
                                         call.threshold)
     
   } else if (encoder == "propertyEncoder") {
-    if(any(aa.method.to.use %!in% names(apex_AA.data))) {
-      stop(paste0("Please select one of the following for aa.method.to.use: ", paste(sort(names(apex_AA.data)), collapse = ", ")))
+    if(any(aa.method.to.use %!in% names(immapex_AA.data))) {
+      stop(paste0("Please select one of the following for aa.method.to.use: ", paste(sort(names(immapex_AA.data)), collapse = ", ")))
     }
     decoded_sequences <- .propertyDecoder(sequence.matrix,
                                           aa.method.to.use,
@@ -85,7 +85,7 @@ sequenceDecoder <- function(sequence.matrix,
                              call.threshold) {
   
   call.threshold = 1/call.threshold
-  vectors <- apex_AA.data[aa.method.to.use]
+  vectors <- immapex_AA.data[aa.method.to.use]
   vector.names <- as.vector(unlist(lapply(vectors, names)))
   vectors <- do.call(c, vectors)
   names(vectors) <- vector.names

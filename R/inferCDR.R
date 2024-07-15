@@ -14,7 +14,7 @@
 #'                    sequence.type = "aa") 
 #'                     
 #' # Ensuring sequences are formatted to IMGT                   
-#' TenX_formatted <- formatGenes(apex_example.data[["TenX"]],
+#' TenX_formatted <- formatGenes(immapex_example.data[["TenX"]],
 #'                               region = "v",
 #'                               technology = "TenX")
 #'              

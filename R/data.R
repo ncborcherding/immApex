@@ -4,7 +4,7 @@
 #' used for \code{\link{propertyEncoder}} function.
 #'  
 #' @docType data
-#' @name apex_AA.data
+#' @name immapex_AA.data
 #' 
 NULL
 
@@ -15,7 +15,7 @@ NULL
 #'  Data pulled from IMGT.org 09/05/2024.
 #'  
 #' @docType data
-#' @name apex_gene.list
+#' @name immapex_gene.list
 #' 
 NULL
 
@@ -31,7 +31,7 @@ NULL
 #' }
 #'  
 #' @docType data
-#' @name apex_example.data
+#' @name immapex_example.data
 #' 
 NULL
 
@@ -53,6 +53,6 @@ NULL
 #'  }   
 #' 
 #' @docType data
-#' @name apex_blosum.pam.matrices
+#' @name immapex_blosum.pam.matrices
 #' 
 NULL

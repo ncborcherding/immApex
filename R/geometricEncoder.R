@@ -74,7 +74,7 @@ geometricEncoder <- function(input.sequences,
                              method) {
  
   aa_indices <- match(strsplit(as.character(sequence), '')[[1]], amino.acids[1:20])
-  return(apex_blosum.pam.matrices[[method]][aa_indices, ])
+  return(immapex_blosum.pam.matrices[[method]][aa_indices, ])
 }
 
 # Main function to encode each sequence
