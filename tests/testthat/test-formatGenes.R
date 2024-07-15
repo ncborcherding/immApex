@@ -2,20 +2,20 @@
 
 test_that("formatGenes works", {
   data(apex_example.data)
-  formatGenes_TenX <- formatGenes(apex_example.data[["TenX"]],
+  formatGenes_TenX <- formatGenes(immapex_example.data[["TenX"]],
                                     region = "v",
                                     technology = "TenX") 
   
-  formatGenes_AIRR <- formatGenes(apex_example.data[["AIRR"]],
+  formatGenes_AIRR <- formatGenes(immapex_example.data[["AIRR"]],
                                     region = "v",
                                     technology = "AIRR", 
                                     simplify.format = FALSE) 
   
-  formatGenes_OS <- formatGenes(apex_example.data[["Omniscope"]],
+  formatGenes_OS <- formatGenes(immapex_example.data[["Omniscope"]],
                                   region = c("v", "j"),
                                   technology = "Omniscope") 
 
-  formatGenes_Adaptive <- formatGenes(apex_example.data[["Adaptive"]],
+  formatGenes_Adaptive <- formatGenes(immapex_example.data[["Adaptive"]],
                                         region = "v",
                                         technology = "Adaptive") 
   

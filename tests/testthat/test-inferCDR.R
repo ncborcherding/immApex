@@ -5,7 +5,7 @@ test_that("inferCDR works", {
   data(apex_example.data)
   reference <- getdata("getIMGT", "getIMGT_TRBV_human_inframe_aa")
   
-  TenX_formatted <- formatGenes(apex_example.data[["TenX"]],
+  TenX_formatted <- formatGenes(immapex_example.data[["TenX"]],
                                 region = "v",
                                 technology = "TenX")
   
@@ -21,7 +21,7 @@ test_that("inferCDR works", {
     getdata("inferCDR", "inferCDR_Tenx")
   )
   
-  AIRR_formatted <- formatGenes(apex_example.data[["AIRR"]],
+  AIRR_formatted <- formatGenes(immapex_example.data[["AIRR"]],
                                 region = "v",
                                 technology = "AIRR")
   

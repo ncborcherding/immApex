@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/reference/test_package.html#special-files
 
 library(testthat)
-library(Apex)
+library(immApex)
 
-test_check("Apex")
+test_check("immApex")
