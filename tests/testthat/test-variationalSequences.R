@@ -22,14 +22,14 @@ test_that("variationalSequences works", {
   })
   
   test_that("Test for correct output type", {
-    sequences <- getData("generateSequences", "generateSequences_T1")[1:100]
+    sequences <- getdata("generateSequences", "generateSequences_T1")[1:100]
     result <- variationalSequences(input.sequences = sequences, 
                                    sequence.dictionary = amino.acids[1:20])
     expect_true(is.vector(result))
   })
   
   test_that("Test for correct sequence generation", {
-    sequences <- getData("generateSequences", "generateSequences_T1")[1:100]
+    sequences <- getdata("generateSequences", "generateSequences_T1")[1:100]
     number_of_sequences <- 5
     result <- variationalSequences(input.sequences = sequences, 
                                    number.of.sequences = number_of_sequences)
