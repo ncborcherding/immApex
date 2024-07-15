@@ -28,7 +28,11 @@ getIR <- function(input.data,
   if (inherits(x=input.data, what ="Seurat") | inherits(x=input.data, what ="SingleCellExperiment")) {
     meta <- .grabMeta(input.data)
   } else {
-    meta <- do.call(rbind,input.data)
+    if(!inherits(input.data, "list")) {
+      meta <- as.data.frame(input.data)
+    } else {
+      meta <- do.call(rbind,input.data)
+    }
     rownames(meta) <- meta[,"barcode"]
   }
   if(chains %!in% c("TRA", "TRB", "TRG", "TRD", "Heavy", "Light")) {
