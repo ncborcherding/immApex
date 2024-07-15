@@ -1,5 +1,5 @@
 ---
-title: Making Deep Learning Models with Apex
+title: Making Deep Learning Models with immApex
 author: 
 - name: Nick Borcherding
   email: ncborch@gmail.com
@@ -8,10 +8,10 @@ date: "July 8, 2024"
 output:
   BiocStyle::html_document:
     toc_float: true
-package: Apex
+package: immApex
 vignette: >
   %\VignetteEngine{knitr::knitr}
-  %\VignetteIndexEntry{Making Deep Learning Models with Apex}
+  %\VignetteIndexEntry{Making Deep Learning Models with immApex}
   %\usepackage[UTF-8]{inputenc}
 ---
 
@@ -22,20 +22,20 @@ library(BiocStyle)
 
 # Getting Started 
 
-**Apex** is meant to serve as an API for deep-learning models based on immune receptor sequencing. These functions extract or generate amino acid or nucleotide sequences and prepare them for deep learning tasks through [Keras](https://tensorflow.rstudio.com/guides/keras/basics). **Apex** is the underlying structure for the BCR models in [Ibex](https://github.com/ncborcherding/Ibex) and TCR models in [Trex](https://github.com/ncborcherding/Trex). It should be noted that the tools here are created for immune receptor sequences, they will work more generally for nucleotide or amino acid sequences. 
+**immApex** is meant to serve as an API for deep-learning models based on immune receptor sequencing. These functions extract or generate amino acid or nucleotide sequences and prepare them for deep learning tasks through [Keras](https://tensorflow.rstudio.com/guides/keras/basics). **immApex** is the underlying structure for the BCR models in [Ibex](https://github.com/ncborcherding/Ibex) and TCR models in [Trex](https://github.com/ncborcherding/Trex). It should be noted that the tools here are created for immune receptor sequences, they will work more generally for nucleotide or amino acid sequences. 
 
-More information is available at the [Apex GitHub Repo](https://github.com/ncborcherding/Apex).
+More information is available at the [immApex GitHub Repo](https://github.com/ncborcherding/immApex).
 
 ## Installation
 
 ```{r, eval = FALSE}
-devtools::install_github("ncborcherding/Apex")
+devtools::install_github("ncborcherding/immApex")
 ```
 
 ## Loading Libraries
 
 ```{r}
-suppressMessages(library(Apex))
+suppressMessages(library(immApex))
 suppressMessages(library(keras))
 suppressMessages(library(ggplot2))
 suppressMessages(library(viridis))
@@ -149,7 +149,7 @@ Parameters for ```formatGenes()```
 Here, we will use the built-in example from Adaptive Biotechnologies and reformat and simplify the **v** region. ```formatGenes()``` will add 2 columns to the end of the data frame per region selected - 1) **v_IMGT** will be the formatted gene calls and 2) **v_IMGT.check** is a binary for if the formatted region appears in the IMGT database. In the example below, "TRBV2-1" is not recognized as a designation within IMGT.
 
 ```{r tidy = FALSE}
-Adaptive_example <- formatGenes(apex_example.data[["Adaptive"]],
+Adaptive_example <- formatGenes(immApex_example.data[["Adaptive"]],
                                 region = "v",
                                 technology = "Adaptive", 
                                 simplify.format = TRUE) 
@@ -534,7 +534,7 @@ Here, we can achieve a validation accuracy of 98.25%, which is impressive. But t
 ***
 # Conclusion
 
-This has been a general overview of the capabilities of Apex for processing immune receptor sequences and making deep learning models. If you have any questions, comments, or suggestions, feel free to visit the [GitHub repository](https://github.com/ncborcherding/Apex).
+This has been a general overview of the capabilities of immApex for processing immune receptor sequences and making deep learning models. If you have any questions, comments, or suggestions, feel free to visit the [GitHub repository](https://github.com/ncborcherding/immApex).
 
 ## Session Info
 
