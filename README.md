@@ -31,6 +31,14 @@ library(tensorflow)
 install_tensorflow()
 ```
 
+# Usage/Demos
+
+immApex should be able to be run in popular R-based single-cell workflows, including Seurat and Bioconductor/Single-Cell Experiment formats.
+
+## Quick Start 
+
+Check out this [vignette](https://www.borch.dev/uploads/screpertoire/articles/immapex) for a quick start tutorial. 
+
 ## Bug Reports/New Features
 
 #### If you run into any issues or bugs please submit a [GitHub issue](https://github.com/ncborcherding/immApex/issues) with details of the issue.
