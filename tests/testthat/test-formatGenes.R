@@ -11,7 +11,7 @@ test_that("formatGenes works", {
                                     technology = "AIRR", 
                                     simplify.format = FALSE) 
   
-  formatGenes_OS <- formatGenes(immapex_example.data[["Omniscope"]],
+  formatGenes_OS <- formatGenes(immapex_example.data[["Omniscope"]][1:1000,],
                                   region = c("v", "j"),
                                   technology = "Omniscope") 
 
