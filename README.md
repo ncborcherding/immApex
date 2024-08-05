@@ -9,11 +9,12 @@ API for single-cell immune repertoire deep learning models
 <!-- badges: end -->
 
 ## Introduction
+
 Single-cell sequencing is now a integral tool in the field of immunology and oncology that allows researchers to couple RNA quantification and other modalities, 
 like immune cell receptor profiling at the level of an individual cell. Towards this end, we developed the [scRepertoire](https://github.com/ncborcherding/scRepertoire) 
 R package to assist in the interaction of immune receptor and gene expression sequencing. Further we developed models for embedding single-cell TCR sequences ([Trex](https://github.com/ncborcherding/Trex)) and BCR sequences ([Ibex](https://github.com/ncborcherding/Ibex)) using convolutional neural networks. immApex is the API for preparing the sequence data for the current and future models in the scRepertoire ecosystem. 
 
-# System requirements 
+## System requirements 
 
 immApex has been tested on R versions >= 4.0. Please consult the DESCRIPTION file for more details on required R packages - it is specifically designed to work with single-cell objects that have 
 had BCR/TCRs added using [scRepertoire](https://github.com/ncborcherding/scRepertoire). immApex has been tested on OS X and Linux platforms.
@@ -31,7 +32,11 @@ library(tensorflow)
 install_tensorflow()
 ```
 
-# Usage/Demos
+### IMGT usage
+
+IMGT is used as a reference for gene names and sequence information can be accessed via ```getIMGT()```. Data from IMGT is under a CC BY-NC-ND 4.0 license. Please be aware that attribution is required for usage and it is the intent of IMGT to not allow derivative or commercial usage. 
+
+## Usage/Demos
 
 immApex should be able to be run in popular R-based single-cell workflows, including Seurat and Bioconductor/Single-Cell Experiment formats.
 
