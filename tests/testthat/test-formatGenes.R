@@ -1,7 +1,7 @@
 # test script for formatGenes.R - testcases are NOT comprehensive!
 
 test_that("formatGenes works", {
-  data(apex_example.data)
+  data(immapex_example.data)
   formatGenes_TenX <- formatGenes(immapex_example.data[["TenX"]],
                                     region = "v",
                                     technology = "TenX") 

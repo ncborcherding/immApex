@@ -2,7 +2,7 @@
 
 test_that("inferCDR works", {
   
-  data(apex_example.data)
+  data(immapex_example.data)
   reference <- getdata("getIMGT", "getIMGT_TRBV_human_inframe_aa")
   
   TenX_formatted <- formatGenes(immapex_example.data[["TenX"]],
