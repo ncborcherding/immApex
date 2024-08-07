@@ -32,7 +32,7 @@ library(tensorflow)
 install_tensorflow()
 ```
 
-# Installation
+## Installation
 
 To run immApex, open R and install immApex from github: 
 
