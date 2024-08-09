@@ -54,12 +54,12 @@ getIR <- function(input.data,
     sub <- as.data.frame(tmp[,c(1,pos[[i]])])
     
     colnames(sub) <- c("barcode", "cdr3_aa", "genes")
-    if(chains %in% c("TRA", "TRG", "Heavy")) {
+    if(chains %in% c("TRA", "TRG", "Light")) {
       sub$v <- str_split(sub$genes, "[.]", simplify = TRUE)[,1]
       sub$d <- NA
       sub$j <- str_split(sub$genes, "[.]", simplify = TRUE)[,2]
       sub$c <- str_split(sub$genes, "[.]", simplify = TRUE)[,3]
-    } else if (chains %in% c("TRB", "TRD", "Light")) {
+    } else if (chains %in% c("TRB", "TRD", "Heavy")) {
       sub$v <- str_split(sub$genes, "[.]", simplify = TRUE)[,1]
       sub$d <- str_split(sub$genes, "[.]", simplify = TRUE)[,2]
       sub$j <- str_split(sub$genes, "[.]", simplify = TRUE)[,3]
