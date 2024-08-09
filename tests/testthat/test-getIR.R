@@ -21,7 +21,7 @@ test_that("getIR works", {
     
     expect_error(getIR(input.data = dummy_data, 
                        chains = "invalidChain"),
-                 "Please select one of the following chains: 'TRA', 'TRB', 'Heavy', 'Light'")
+                 "Please select one of the following chains: 'TRA', 'TRB', 'TRG', 'TRD', 'Heavy', 'Light'")
   })
   
   test_that("Test for correct output type", {

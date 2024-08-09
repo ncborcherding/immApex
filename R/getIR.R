@@ -36,7 +36,7 @@ getIR <- function(input.data,
     rownames(meta) <- meta[,"barcode"]
   }
   if(chains %!in% c("TRA", "TRB", "TRG", "TRD", "Heavy", "Light")) {
-    stop("Please select one of the following chains: 'TRA', 'TRB', 'TRG', 'TRD' 'Heavy', 'Light'")
+    stop("Please select one of the following chains: 'TRA', 'TRB', 'TRG', 'TRD', 'Heavy', 'Light'")
   }
   tmp <- data.frame(barcode = rownames(meta), 
                     str_split(meta[,"CTaa"], "_", simplify = TRUE), 
