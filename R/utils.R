@@ -3,7 +3,11 @@ amino.acids <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M"
 "%!in%" <- Negate("%in%")
 
 .check.sequences <- function(sequences, sequence.dictionary) {
-  any(unlist(strsplit(sequences[1:10], "")) %!in% sequence.dictionary)
+  if(length(sequences) >= 10) {
+    any(unlist(strsplit(sequences[1:10], "")) %!in% sequence.dictionary)
+  } else {
+    any(unlist(strsplit(sequences[1:length(sequences)], "")) %!in% sequence.dictionary)
+  }
 }
   
 
