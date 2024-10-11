@@ -411,11 +411,11 @@ encoding_dim <- 40
 hidden_dim1 <- 256 # Hidden layer 1 size
 hidden_dim2 <- 128  # Hidden layer 2 size
     
-es = callback_early_stopping(monitor = "val_loss",
-                             min_delta = 0,
-                             patience = 4,
-                             verbose = 1,
-                             mode = "min")
+es <- callback_early_stopping(monitor = "val_loss",
+                              min_delta = 0,
+                              patience = 4,
+                              verbose = 1,
+                              mode = "min")
                     
 # Define the Model
 input_seq <- layer_input(shape = c(input_shape))

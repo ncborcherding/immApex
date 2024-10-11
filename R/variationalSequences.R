@@ -52,7 +52,7 @@
 #' optimizer_nadam optimizer_rmsprop optimizer_sgd backend 
 #' callback_early_stopping layer_normalization k_exp k_int_shape 
 #' k_mean k_random_normal k_shape k_square
-#' @importFrom dplyr %>%
+#' @importFrom magrittr %>%
 #' @importFrom stats predict runif
 #' @importFrom tensorflow tf
 #' @export 
