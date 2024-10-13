@@ -4,7 +4,7 @@ author:
 - name: Nick Borcherding
   email: ncborch@gmail.com
   affiliation: Washington University in St. Louis, School of Medicine, St. Louis, MO, USA
-date: "July 8, 2024"
+date: "October 13, 2024"
 output:
   BiocStyle::html_document:
     toc_float: true
@@ -18,19 +18,16 @@ vignette: >
 ```{r, echo=FALSE, results="hide", message=FALSE}
 knitr::opts_chunk$set(error=FALSE, message=FALSE, warning=FALSE)
 library(BiocStyle)
+set.seed(42)
 ```
 
-# Getting Started 
+# Introduction
+
+Single-cell sequencing is an emerging technology in the field of immunology and oncology that allows researchers to couple RNA quantification and other modalities, like immune cell receptor profiling at the level of an individual cell. A number of workflows and software packages have been created to process and analyze single-cell transcriptomic data. These packages allow users to take the vast dimensionality of the data generated in single-cell-based experiments and distill the data into novel insights. Unlike the transcriptomic field, there is a lack of options for software that allow for single-cell immune receptor profiling. Enabling users to easily combine RNA and immune profiling, the scRepertoire framework supports use of 10x, AIRR, BD, MiXCR, Omniscope, TRUST4, and WAT3R single-cell clonal formats and interaction with popular R-based single-cell data pipelines. 
 
 **immApex** is meant to serve as an API for deep-learning models based on immune receptor sequencing. These functions extract or generate amino acid or nucleotide sequences and prepare them for deep learning tasks through [Keras](https://tensorflow.rstudio.com/guides/keras/basics). **immApex** is the underlying structure for the BCR models in [Ibex](https://github.com/ncborcherding/Ibex) and TCR models in [Trex](https://github.com/ncborcherding/Trex). It should be noted that the tools here are created for immune receptor sequences, they will work more generally for nucleotide or amino acid sequences. 
 
 More information is available at the [immApex GitHub Repo](https://github.com/ncborcherding/immApex).
-
-## Installation
-
-```{r, eval = FALSE}
-devtools::install_github("ncborcherding/immApex")
-```
 
 ## Loading Libraries
 

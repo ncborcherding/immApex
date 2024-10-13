@@ -6,3 +6,6 @@
 * Added example to ```positionalEncoder()```
 * Replaced discrete calling of "es =" in vignette
 * Update readme to include keras based installation
+* added set.seed() to vignette
+* added introduction section to vignette
+* removed installation section from vignette (can't add BioC instructions until accepted)
