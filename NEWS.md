@@ -1,6 +1,7 @@
 # immApex VERSION 0.99.1
 
 ## UNDERLYING CHANGES
+* Added warning to ```getIMGT()``` to mention IMGT license on first use
 * import magrittr instead of dplyr
 * Fixed issue with license error
 * Added example to ```positionalEncoder()```

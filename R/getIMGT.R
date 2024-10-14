@@ -31,7 +31,17 @@ getIMGT <- function(species = "human",
                     sequence.type = "aa",
                     frame = "inframe",
                     region = "v") {
-
+  
+  if (is.null(getOption("getIMGT_first_run"))) {
+    # Show the message only on the first run
+    message("Data from IMGT is under a CC BY-NC-ND 4.0 license. Please be aware that attribution is 
+            required for usage and it is the intent of IMGT to not allow derivative or commercial 
+            usage.")
+    
+    # Set the option to indicate the function has been run
+    options(getIMGT_first_run = TRUE)
+  }
+  
   if(tolower(region) %!in% c("v", "d", "j", "c")) {
     stop("Please select a region in the following category: 'v', 'd', 'j', 'c'")
   }
@@ -139,4 +149,3 @@ getIMGT <- function(species = "human",
     stop(paste0("Please select one of the following species: ", paste(species, collapse = ", ")))
   }
 }
-
