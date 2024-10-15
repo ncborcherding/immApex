@@ -10,3 +10,4 @@
 * added set.seed() to vignette
 * added introduction section to vignette
 * removed installation section from vignette (can't add BioC instructions until accepted)
+* Fixed rendering issue with the vignette

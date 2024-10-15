@@ -10,9 +10,9 @@ output:
     toc_float: true
 package: immApex
 vignette: >
-  %\VignetteEngine{knitr::knitr}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{Making Deep Learning Models with immApex}
-  %\usepackage[UTF-8]{inputenc}
+  %\VignetteEncoding{UTF-8} 
 ---
 
 ```{r, echo=FALSE, results="hide", message=FALSE}
