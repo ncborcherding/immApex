@@ -5,7 +5,10 @@
 \alias{immapex_blosum.pam.matrices}
 \title{List of amino acid substitution matrices}
 \description{
-A list of amino acid substitution matrices, including:
+A list of amino acid substitution matrices, using the Point 
+Accepted Matrix (PAM) and BLOck SUbstitution Matrix (BLOSUM) approaches. 
+A discussion and comparison of these matrices are available at
+\href{https://pubmed.ncbi.nlm.nih.gov/21356840/}{PMID: 21356840}.
 
 \itemize{
  \item{BLOSUM45}

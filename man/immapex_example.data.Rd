@@ -5,7 +5,8 @@
 \alias{immapex_example.data}
 \title{Example contig data for Apex}
 \description{
-A list of example contigs from the following sources:
+Contains a collection of bulk or paired TCR sequences in the respective formats in the form of a 
+list from the following sources:
 
 \itemize{
   \item{TenX: 10k_Human_DTC_Melanoma_5p_nextgem_Multiplex from 10x Website}
