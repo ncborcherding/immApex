@@ -85,7 +85,7 @@ variationalSequences <- function(input.sequences,
     tensorflow::tf$compat$v1$disable_eager_execution()
   }
   
-  es = keras::callback_early_stopping(
+  es <- keras::callback_early_stopping(
     monitor = "val_loss",
     min_delta = 0,
     patience = epochs/5,

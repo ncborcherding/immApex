@@ -46,10 +46,10 @@ geometricEncoder <- function(input.sequences,
   rotation_matrix <- diag(dim)
   
   # Generate ten 2D rotation matrices and insert them into the 20D rotation matrix
-  rotation_2d = matrix(c(cos(theta), -sin(theta), sin(theta), cos(theta)), ncol=2)
+  rotation_2d <- matrix(c(cos(theta), -sin(theta), sin(theta), cos(theta)), ncol=2)
   
   for (i in seq(1, dim, by=2)) {
-    rotation_matrix[i:(i+1), i:(i+1)] = rotation_2d
+    rotation_matrix[i:(i+1), i:(i+1)] <- rotation_2d
   }
   
   print("Performing geometric transformation...")
