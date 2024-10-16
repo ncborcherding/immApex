@@ -22,6 +22,7 @@
 #' @param sequence.dictionary The letters to use in sequence generation 
 #' (default are all amino acids)
 #' @param padding.symbol Symbol to use for padding at the end of sequences
+#' @param verbose Print messages corresponding to the processing step
 #' 
 #' @importFrom stats median
 #' 
@@ -31,8 +32,9 @@ probabilityMatrix <- function(input.sequences,
                               max.length = NULL,
                               convert.PWM = FALSE,
                               background.frequencies = NULL,
-                              sequence.dictionary = amino.acids[1:20],
-                              padding.symbol = ".") {
+                              sequence.dictionary = amino.acids,
+                              padding.symbol = ".", 
+                              verbose = TRUE) {
   sequence.dictionary <- c(sequence.dictionary, padding.symbol)
   if(!is.null(background.frequencies)) {
     if(length(background.frequencies) != length(sequence.dictionary)-1) {
@@ -47,14 +49,16 @@ probabilityMatrix <- function(input.sequences,
   if(is.null(max.length)) {
     max.length <- max(nchar(input.sequences))
   }
-  
-  print("Padding sequences...")
+  if(verbose){
+    message("Padding sequences...")
+  }
   padded_sequences <- .padded.strings(strings = input.sequences, 
                                       max.length = max.length,
                                       padded.token = padding.symbol,
                                       concatenate = TRUE)
-  
-  print("Calculating Positional Probabilites for sequences...")
+  if(verbose) {
+    message("Calculating Positional Probabilites for sequences...")
+  }
   # Initialize the PSSM matrix with zeros
   position_matrix <- matrix(0, nrow = length(sequence.dictionary), ncol = max.length)
   rownames(position_matrix) <- sequence.dictionary
@@ -78,7 +82,9 @@ probabilityMatrix <- function(input.sequences,
   colnames(position_matrix) <- paste0("Pos.", seq_len(max.length))
   
   if(convert.PWM) {
-    print("Converting to Liklihoods for a PWM...")
+    if(verbose) {
+      message("Converting to Liklihoods for a PWM...")
+    }
     # Calculate log-likelihood PSSM
     if (is.null(background.frequencies)) {
       # If no background frequencies provided, assume uniform distribution

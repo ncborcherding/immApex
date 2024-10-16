@@ -23,6 +23,7 @@
 #' @param max.length Additional length to pad, NULL will pad sequences 
 #' to the max length of input.sequences
 #' @param convert.to.matrix Return a matrix (TRUE) or a vector (FALSE)
+#' @param verbose Print messages corresponding to the processing step
 #' 
 #' @export
 #' @return Tokenize sequences in a matrix or vector
@@ -31,12 +32,15 @@ tokenizeSequences <- function(input.sequences,
                               start.token = "!",
                               stop.token = "^", 
                               max.length = NULL,
-                              convert.to.matrix = TRUE) {
+                              convert.to.matrix = TRUE,
+                              verbose = TRUE) {
   
   if(add.startstop) {
     char_set <- c(start.token,amino.acids, stop.token)
-    print("Adding start and stop tokens...")
-    sequences_updated <- sapply(input.sequences, function(x) paste(start.token, x, stop.token, sep = ""))
+    message("Adding start and stop tokens...")
+    sequences_updated <- vapply(input.sequences, 
+                                function(x) paste(start.token, x, stop.token, sep = ""), 
+                                FUN.VALUE = character(1))
   } else {
     char_set <- c(amino.acids)
     sequences_updated <- input.sequences
@@ -45,7 +49,9 @@ tokenizeSequences <- function(input.sequences,
   # Create a mapping of amino acids to integers
   char_to_int <- setNames(seq_along(char_set), char_set)
   
-  print("Tokenizing sequences...")
+  if(verbose) {
+    message("Tokenizing sequences...")
+  }
   sequences_tokenized <- lapply(sequences_updated, function(seq) {
     as.vector(char_to_int[strsplit(seq, "")[[1]]])
   })
@@ -53,15 +59,19 @@ tokenizeSequences <- function(input.sequences,
     max.length <- max(nchar(sequences_updated))
   }
   
-  print("Padding sequences...")
+  if(verbose){
+    message("Padding sequences...")
+  }
   sequences_tokenized <- .padded.strings(sequences_tokenized, 
                                          max.length,
                                          padded.token = length(char_to_int) + 1,
                                          concatenate = FALSE)
   
   if(convert.to.matrix) {
-    print("Preparing a tokenized matrix...")
-    sequences_matrix <- t(sapply(sequences_tokenized, function(x) x))
+    if(verbose) {
+      message("Preparing a tokenized matrix...")
+    }
+    sequences_matrix <- do.call(rbind, sequences_tokenized)
     return(sequences_matrix)
   } else {
     return(sequences_tokenized)

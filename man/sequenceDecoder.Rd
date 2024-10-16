@@ -9,7 +9,7 @@ sequenceDecoder(
   encoder = "onehotEncoder",
   aa.method.to.use = NULL,
   call.threshold = 0.5,
-  sequence.dictionary = amino.acids[1:20],
+  sequence.dictionary = amino.acids,
   padding.symbol = ".",
   remove.padding = TRUE
 )

@@ -9,8 +9,9 @@ probabilityMatrix(
   max.length = NULL,
   convert.PWM = FALSE,
   background.frequencies = NULL,
-  sequence.dictionary = amino.acids[1:20],
-  padding.symbol = "."
+  sequence.dictionary = amino.acids,
+  padding.symbol = ".",
+  verbose = TRUE
 )
 }
 \arguments{
@@ -29,6 +30,8 @@ for the positional weight matrix. If NULL, assumes uniform likelihood.}
 (default are all amino acids)}
 
 \item{padding.symbol}{Symbol to use for padding at the end of sequences}
+
+\item{verbose}{Print messages corresponding to the processing step}
 }
 \value{
 A matrix with position specific probabilities or weights

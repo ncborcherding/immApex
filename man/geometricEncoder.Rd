@@ -4,7 +4,12 @@
 \alias{geometricEncoder}
 \title{Geometric Encoder from Amino Acid Strings}
 \usage{
-geometricEncoder(input.sequences, method.to.use = "BLOSUM62", theta = pi/3)
+geometricEncoder(
+  input.sequences,
+  method.to.use = "BLOSUM62",
+  theta = pi/3,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{input.sequences}{The set of amino acid sequences}
@@ -16,6 +21,8 @@ geometricEncoder(input.sequences, method.to.use = "BLOSUM62", theta = pi/3)
 }}
 
 \item{theta}{The angle for geometric transformation}
+
+\item{verbose}{Print messages corresponding to the processing step}
 }
 \value{
 Geometric encoded amino acid sequences in a matrix

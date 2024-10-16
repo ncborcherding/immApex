@@ -21,6 +21,7 @@
 #'   \item{Point Accepted Mutation Matrices: PAM30, PAM40, PAM70, PAM120, PAM250}
 #' } 
 #' @param theta The angle for geometric transformation
+#' @param verbose Print messages corresponding to the processing step
 #' 
 #' @export
 #' @return Geometric encoded amino acid sequences in a matrix
@@ -28,7 +29,8 @@
 
 geometricEncoder <- function(input.sequences, 
                              method.to.use = "BLOSUM62",
-                             theta = pi/3) {
+                             theta = pi/3, 
+                             verbose = TRUE) {
   
   possible.methods <- c("BLOSUM45", "BLOSUM50", "BLOSUM62", "BLOSUM80", 
                         "BLOSUM100", "PAM30","PAM40", "PAM70", "PAM120", "PAM250")
@@ -38,7 +40,7 @@ geometricEncoder <- function(input.sequences,
                 paste(possible.methods, collapse = ", ")))
   }
   
-  if(.check.sequences(input.sequences, amino.acids[1:20])) {
+  if(.check.sequences(input.sequences, amino.acids)) {
     stop("geometric.encoder() works only on the sequences with the conventional 20 amino acids")
   }
   
@@ -52,7 +54,9 @@ geometricEncoder <- function(input.sequences,
     rotation_matrix[i:(i+1), i:(i+1)] <- rotation_2d
   }
   
-  print("Performing geometric transformation...")
+  if(verbose){
+    message("Performing geometric transformation...")
+  }
   geometric_sequences <- lapply(input.sequences, function(x) {
     if(is.na(x)) {
       tmp <- rep(0, 20)
@@ -73,7 +77,7 @@ geometricEncoder <- function(input.sequences,
 .aa_to_submatrix <- function(sequence,
                              method) {
  
-  aa_indices <- match(strsplit(as.character(sequence), '')[[1]], amino.acids[1:20])
+  aa_indices <- match(strsplit(as.character(sequence), '')[[1]], amino.acids)
   return(immapex_blosum.pam.matrices[[method]][aa_indices, ])
 }
 
@@ -91,7 +95,7 @@ geometricEncoder <- function(input.sequences,
   transformed_points <- matrix(nrow=0, ncol=dim)
   
   # Apply the unitary transformation
-  for (i in 1:(dim(blosum_vectors)[1])) {
+  for (i in seq_len(dim(blosum_vectors)[1])) {
     point <- t(blosum_vectors[i, ])
     
     # Apply the rotation matrix

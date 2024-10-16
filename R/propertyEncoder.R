@@ -29,6 +29,7 @@
 #' Available summaries include: "median", "mean", "sum", variance ("vars"), or 
 #' Median Absolute Deviation ("mads")
 #' @param padding.symbol Symbol to use for padding at the end of sequences
+#' @param verbose Print messages corresponding to the processing step
 #' @importFrom keras array_reshape
 #' 
 #' @export
@@ -39,7 +40,8 @@ propertyEncoder <- function(input.sequences,
                             method.to.use = NULL,
                             convert.to.matrix = TRUE,
                             summary.function = NULL,
-                            padding.symbol = ".") {
+                            padding.symbol = ".", 
+                            verbose = TRUE) {
   if(any(method.to.use %!in% names(immapex_AA.data))) {
     stop(paste0("Please select one of the following for method.to.use: ", paste(sort(names(immapex_AA.data)), collapse = ", ")))
   }
@@ -56,13 +58,17 @@ propertyEncoder <- function(input.sequences,
   }
   
   #How to pad motifs
-  print("Padding sequences...")
+  if(verbose) {
+    message("Padding sequences...")
+  }
   padded_sequences <- .padded.strings(strings = input.sequences, 
                                       max.length = max.length,
                                       padded.token = padding.symbol,
                                       concatenate = TRUE)
   
-  print("Property-based Encoding sequences...")
+  if(verbose) {
+    message("Property-based Encoding sequences...")
+  }
   property_sequences <- .convert.property(unlist(padded_sequences),
                                           max.length = max.length,
                                           vectors = vectors)
@@ -71,7 +77,9 @@ propertyEncoder <- function(input.sequences,
     if (tolower(summary.function) %!in% c("median", "mean", "sum", "vars", "mads")) {
       stop("Please select one of the following summary.function options: 'median', 'mean', 'sum', 'vars', or 'mads'")
     }
-    print(paste0("Summarising properties using ", summary.function, "..."))
+    if(verbose) {
+      message(paste0("Summarising properties using ", summary.function, "..."))
+    }
     stat.function <- .get.stat.function(summary.function)
     stat_matrix <- matrix(nrow = dim(property_sequences)[1], ncol = dim(property_sequences)[3])
     
@@ -83,7 +91,9 @@ propertyEncoder <- function(input.sequences,
   }
   
   if(convert.to.matrix) {
-    print("Preparing a matrix...")
+    if(verbose){
+      message("Preparing a matrix...")
+    }
     property_matrix <- array_reshape(property_sequences, c(dim(property_sequences)[1], dim(property_sequences)[2]*dim(property_sequences)[3]))
     colnames(property_matrix) <- array.dimnamer(property_sequences)
     return(property_matrix)
@@ -107,8 +117,8 @@ propertyEncoder <- function(input.sequences,
     property_array[i,,] <- transformed
   }
   
-  dimnames(property_array) <- list(paste0("Seq.", 1:length(sequences)),
-                                  paste0("Pos.", 1:max.length),
+  dimnames(property_array) <- list(paste0("Seq.", seq_len(length(sequences))),
+                                  paste0("Pos.", seq_len(max.length)),
                                   names(vectors))
   return(property_array)
 }

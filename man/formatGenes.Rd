@@ -19,8 +19,8 @@ scRepertoire outputs}
 \item{region}{Sequence gene loci to access - "v", "d", "j", or "c"
 or a combination using c("v", "d", "j")}
 
-\item{technology}{The sequencing technology employed - \strong{'TenX'}, \strong{"Adaptive'}, 
-\strong{'AIRR'}, or \strong{'Omniscope'}.}
+\item{technology}{The sequencing technology employed - \strong{'TenX'}, \strong{"Adaptive'}, or
+\strong{'AIRR'}}
 
 \item{species}{One or two word designation of species. Currently supporting: 
 "human", "mouse", "rat", "rabbit", "rhesus monkey", "sheep", "pig", "platypus",

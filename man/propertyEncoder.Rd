@@ -10,7 +10,8 @@ propertyEncoder(
   method.to.use = NULL,
   convert.to.matrix = TRUE,
   summary.function = NULL,
-  padding.symbol = "."
+  padding.symbol = ".",
+  verbose = TRUE
 )
 }
 \arguments{
@@ -33,6 +34,8 @@ Available summaries include: "median", "mean", "sum", variance ("vars"), or
 Median Absolute Deviation ("mads")}
 
 \item{padding.symbol}{Symbol to use for padding at the end of sequences}
+
+\item{verbose}{Print messages corresponding to the processing step}
 }
 \value{
 Converted amino acid sequences by property in a matrix or 3D array

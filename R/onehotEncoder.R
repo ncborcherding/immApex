@@ -23,6 +23,7 @@
 #' (default are all amino acids). This will be overrode if using a
 #'  motif approach (\strong{motif.length} > 1)
 #' @param padding.symbol Symbol to use for padding at the end of sequences
+#' @param verbose Print messages corresponding to the processing step
 #' 
 #' @importFrom keras array_reshape
 #' @importFrom stats setNames
@@ -33,8 +34,9 @@ onehotEncoder <- function(input.sequences,
                           max.length = NULL,
                           motif.length = 1,
                           convert.to.matrix = TRUE,
-                          sequence.dictionary = amino.acids[1:20],
-                          padding.symbol = ".") {
+                          sequence.dictionary = amino.acids,
+                          padding.symbol = ".",
+                          verbose = TRUE) {
   
   char_set <- c(sequence.dictionary, padding.symbol)
   
@@ -54,21 +56,27 @@ onehotEncoder <- function(input.sequences,
   }
   
   #How to pad motifs
-  print("Padding sequences...")
+  if(verbose) {
+    message("Padding sequences...")
+  }
   padded_sequences <- .padded.strings(strings = input.sequences, 
                                       max.length = max.length,
                                       padded.token = padding.symbol,
                                       concatenate = TRUE)
   
   #How to convert to motifs
-  print("One Hot Encoding sequences...")
+  if(verbose){
+    message("One Hot Encoding sequences...")
+  }
   onehot_sequences <- .convert.one.hot(unlist(padded_sequences),
                                        max.length = max.length,
                                        motif.length = motif.length,
                                        char_set = char_set)
 
   if(convert.to.matrix) {
-    print("Preparing a matrix...")
+    if(verbose){
+      message("Preparing a matrix...")
+    }
     onehot_matrix <- array_reshape(onehot_sequences, c(dim(onehot_sequences)[1], dim(onehot_sequences)[2]*dim(onehot_sequences)[3]))
     colnames(onehot_matrix) <- array.dimnamer(onehot_sequences)
     return(onehot_matrix)
@@ -97,8 +105,8 @@ onehotEncoder <- function(input.sequences,
     }
   }
   
-  dimnames(one_hot_array) <- list(paste0("Seq.", 1:length(sequences)),
-                                  paste0("Pos.", 1:max.length),
+  dimnames(one_hot_array) <- list(paste0("Seq.", seq_len(length(sequences))),
+                                  paste0("Pos.", seq_len(max.length)),
                                   char_set)
   return(one_hot_array)
 }

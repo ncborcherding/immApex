@@ -33,7 +33,7 @@ mutateSequences <- function(input.sequences,
                             mutation.rate = 0.01,
                             position.start = NULL,
                             position.end = NULL,
-                            sequence.dictionary = amino.acids[1:20]) {
+                            sequence.dictionary = amino.acids) {
   
   lapply(input.sequences, function(x) {
     lapply(seq_len(n.sequences), function(y) {

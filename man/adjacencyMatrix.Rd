@@ -7,7 +7,7 @@
 adjacencyMatrix(
   input.sequences = NULL,
   normalize = TRUE,
-  sequence.dictionary = amino.acids[1:20]
+  sequence.dictionary = amino.acids
 )
 }
 \arguments{

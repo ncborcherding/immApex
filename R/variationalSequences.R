@@ -45,6 +45,8 @@
 #' tensorflow.
 #' @param sequence.dictionary The letters to use in sequence mutation
 #' (default are all amino acids)
+#' @param seed Random number generator state for reproducibility
+#' @param verbose Print messages corresponding to the processing step
 #' 
 #' @importFrom keras layer_dense layer_lambda  keras_model compile 
 #' fit k_sum layer_input loss_binary_crossentropy optimizer_adadelta 
@@ -73,7 +75,9 @@ variationalSequences <- function(input.sequences,
                                  activation.function = "relu",
                                  optimizer = "adam",
                                  disable.eager.execution = FALSE,
-                                 sequence.dictionary = amino.acids[1:20]) {
+                                 sequence.dictionary = amino.acids,
+                                 seed = 42, 
+                                 verbose = TRUE) {
   
   n_train <- floor(length(input.sequences) * 0.8)  # Default to 80% for training
   
@@ -104,7 +108,9 @@ variationalSequences <- function(input.sequences,
                              stop("Please select a compatible optimizer function in the Keras R implementation."))
   K <- keras::backend()
   
-  print("Converting to matrix....")
+  if(verbose) {
+    message("Converting to matrix....")
+  }
   # Prepare the sequences matrix
   sequence.matrix <- switch(encoder.function,
                             "onehotEncoder" = onehotEncoder(input.sequences, 
@@ -130,8 +136,8 @@ variationalSequences <- function(input.sequences,
   original_dim <- ncol(sequence.matrix)
   
   # Data splitting
-  set.seed(42)  # For reproducibility
-  train_indices <- sample(1:nrow(sequence.matrix), n_train)
+  set.seed(seed)  # For reproducibility
+  train_indices <- sample(seq_len(nrow(sequence.matrix)), n_train)
   x_train <- sequence.matrix[train_indices, ]
   x_test <- sequence.matrix[-train_indices, ]
   
@@ -185,8 +191,10 @@ variationalSequences <- function(input.sequences,
       
   # Compile the model
   vae_with_loss %>% compile(optimizer = optimizer_adam(learning_rate = learning.rate), loss = dummy_loss)
-      
-  print("Fitting Model....")
+  
+  if(verbose) {    
+    message("Fitting Model....")
+  }
   vae_with_loss %>% fit(
         x_train, x_train, 
         shuffle = TRUE,
@@ -196,8 +204,9 @@ variationalSequences <- function(input.sequences,
         verbose = 0,
         callbacks = es
   )
-
-  print("Generating New Sequences....")
+  if(verbose) {
+    message("Generating New Sequences....")
+  }
   encoded_sequences <- as.matrix(encoder(x_train))
   
   #Using the vectors/ranges of training sequences to form a new matrix
