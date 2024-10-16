@@ -12,6 +12,5 @@ list from the following sources:
   \item{TenX: 10k_Human_DTC_Melanoma_5p_nextgem_Multiplex from \href{https://www.10xgenomics.com/datasets/10k-human-dtc-melanoma-NextGEM-5p}{10x Website}.}
   \item{AIRR: Human_colon_16S8157851 from \href{https://pubmed.ncbi.nlm.nih.gov/37055623/}{PMID: 37055623}.}
   \item{Adaptive: Adaptive_2283_D0 from \href{https://pubmed.ncbi.nlm.nih.gov/36220826/}{PMID: 36220826}.}
-  \item{Omniscope: Internal Data}
 }
 }
