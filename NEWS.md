@@ -1,3 +1,9 @@
+# immApex VERSION 0.99.2
+
+## UNDERLYING CHANGES
+* Added discrete check and install_keras() to vignette
+
+
 # immApex VERSION 0.99.1
 
 ## UNDERLYING CHANGES
