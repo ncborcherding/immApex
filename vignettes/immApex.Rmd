@@ -36,7 +36,7 @@ suppressMessages(library(immApex))
 suppressMessages(library(keras))
 suppressMessages(library(ggplot2))
 suppressMessages(library(viridis))
-suppressMessages(library(dplyr))
+suppressMessages(library(magrittr))
 ```
 
 # Getting and Manipulating Sequences
