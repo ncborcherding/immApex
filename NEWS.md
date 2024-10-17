@@ -8,7 +8,7 @@
 * Replaced discrete calling of "es =" in vignette
 * Update readme to include keras based installation
 * added set.seed() to vignette
-* added introduction section to vignette
+* added introduction section to vignette with mention of other packages
 * removed installation section from vignette (can't add BioC instructions until accepted)
 * Fixed rendering issue with the vignette
 * Subsampled example data and removed Omniscope example
@@ -17,3 +17,4 @@
 * Minimized usage of sapply() and X:Y per BiocCheck suggestions
 * Modified print() messages to messages()
 * Add verbose parameter to turn on/off processing steps
+* Added links for example data formats
