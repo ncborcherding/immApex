@@ -19,7 +19,9 @@ A matrix of values
 Use this calculate positional encoding for recurrent
 neural networks using sin/cos and position information.
 }
-\details{
+\examples{
+                         
 position.info <- positionalEncoder(number.of.sequences = 1000, 
                                    latent.dims = 64)
+                        
 }

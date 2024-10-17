@@ -14,7 +14,7 @@ test_that("inferCDR works", {
                               reference = reference,
                               technology = "TenX", 
                               sequence.type = "aa",
-                              sequences = c("CDR1", "CDR2"))
+                              sequences = c("CDR1", "CDR2"))[,c("CDR1_IMGT","CDR2_IMGT")]
   
   expect_equal(
     TenX_formatted,
@@ -30,7 +30,7 @@ test_that("inferCDR works", {
                               reference = reference,
                               technology = "TenX", 
                               sequence.type = "aa",
-                              sequences = c("CDR1"))
+                              sequences = c("CDR1"))[,"CDR1_IMGT"]
   
   expect_equal(
     AIRR_formatted,

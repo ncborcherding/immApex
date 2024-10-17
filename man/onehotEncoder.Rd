@@ -9,8 +9,9 @@ onehotEncoder(
   max.length = NULL,
   motif.length = 1,
   convert.to.matrix = TRUE,
-  sequence.dictionary = amino.acids[1:20],
-  padding.symbol = "."
+  sequence.dictionary = amino.acids,
+  padding.symbol = ".",
+  verbose = TRUE
 )
 }
 \arguments{
@@ -29,6 +30,8 @@ a motif.length = 1 produces single amino acid encodings}
  motif approach (\strong{motif.length} > 1)}
 
 \item{padding.symbol}{Symbol to use for padding at the end of sequences}
+
+\item{verbose}{Print messages corresponding to the processing step}
 }
 \value{
 One hot encoded sequences in a matrix or 3D array

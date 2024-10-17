@@ -10,7 +10,7 @@ generateSequences(
   number.of.sequences = 100,
   min.length = 1,
   max.length = 10,
-  sequence.dictionary = amino.acids[1:20]
+  sequence.dictionary = amino.acids
 )
 }
 \arguments{

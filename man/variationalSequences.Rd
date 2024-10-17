@@ -20,7 +20,9 @@ variationalSequences(
   activation.function = "relu",
   optimizer = "adam",
   disable.eager.execution = FALSE,
-  sequence.dictionary = amino.acids[1:20]
+  sequence.dictionary = amino.acids,
+  seed = 42,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -66,6 +68,10 @@ tensorflow.}
 
 \item{sequence.dictionary}{The letters to use in sequence mutation
 (default are all amino acids)}
+
+\item{seed}{Random number generator state for reproducibility}
+
+\item{verbose}{Print messages corresponding to the processing step}
 }
 \value{
 A vector of mutated sequences

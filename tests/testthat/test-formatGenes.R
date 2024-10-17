@@ -4,20 +4,17 @@ test_that("formatGenes works", {
   data(immapex_example.data)
   formatGenes_TenX <- formatGenes(immapex_example.data[["TenX"]],
                                     region = "v",
-                                    technology = "TenX") 
+                                    technology = "TenX")[,c("v_IMGT", "v_IMGT.check")]
   
   formatGenes_AIRR <- formatGenes(immapex_example.data[["AIRR"]],
                                     region = "v",
                                     technology = "AIRR", 
-                                    simplify.format = FALSE) 
+                                    simplify.format = FALSE)[,c("v_IMGT", "v_IMGT.check")]
   
-  formatGenes_OS <- formatGenes(immapex_example.data[["Omniscope"]][1:1000,],
-                                  region = c("v", "j"),
-                                  technology = "Omniscope") 
 
   formatGenes_Adaptive <- formatGenes(immapex_example.data[["Adaptive"]],
                                         region = "v",
-                                        technology = "Adaptive") 
+                                        technology = "Adaptive")[,c("v_IMGT", "v_IMGT.check")]
   
   expect_equal(
     formatGenes_Adaptive,
@@ -29,13 +26,6 @@ test_that("formatGenes works", {
     formatGenes_TenX,
     getdata("formatGenes", "formatGenes_TenX")
   )
-  
-  
-  expect_equal(
-    formatGenes_OS,
-    getdata("formatGenes", "formatGenes_OS")
-  )
-  
   
   expect_equal(
     formatGenes_AIRR,

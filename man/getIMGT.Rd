@@ -9,7 +9,8 @@ getIMGT(
   chain = "TRB",
   sequence.type = "aa",
   frame = "inframe",
-  region = "v"
+  region = "v",
+  verbose = TRUE
 )
 }
 \arguments{
@@ -26,6 +27,8 @@ and \strong{ferret}}
 aligned sequences with the IMGT gaps}
 
 \item{region}{Sequence gene loci to access}
+
+\item{verbose}{Print messages corresponding to the processing step}
 }
 \value{
 A list of allele sequences

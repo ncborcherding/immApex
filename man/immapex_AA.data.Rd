@@ -7,4 +7,18 @@
 \description{
 A list of amino acid properties that are
 used for \code{\link{propertyEncoder}} function.
+
+This includes:
+\itemize{
+  \item{atchleyFactors} 
+  \item{crucianiProperties} 
+  \item{FASGAI} 
+  \item{kideraFactors} 
+  \item{MSWHIM}
+  \item{ProtFP} 
+  \item{stScales}
+  \item{tScales}
+  \item{VHSE} 
+  \item{zScales}
+  }
 }

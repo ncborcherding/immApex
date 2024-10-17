@@ -20,7 +20,7 @@ test_that("tokenizeSequences works", {
   )
   
   token.matrix <- tokenizeSequences(sequences,
-                                     convert.to.matrix = TRUE)
+                                     convert.to.matrix = FALSE)
   
   expect_equal(
     token.matrix,

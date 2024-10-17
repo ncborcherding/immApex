@@ -23,7 +23,7 @@
 #' @return Adjacency matrix based on input.sequences.
 adjacencyMatrix <- function(input.sequences = NULL, 
                             normalize = TRUE,
-                            sequence.dictionary = amino.acids[1:20]) {
+                            sequence.dictionary = amino.acids) {
   
   # Initialize the adjacency matrix with zeros
   n <- length(sequence.dictionary)
@@ -40,7 +40,7 @@ adjacencyMatrix <- function(input.sequences = NULL,
     len <- length(seq_chars)
     
     # Count adjacency
-    for (pos in 1:(len - 1)) {
+    for (pos in seq_len(len - 1)) {
       letter1 <- seq_chars[pos]
       letter2 <- seq_chars[pos + 1]
       

@@ -1,12 +1,12 @@
-amino.acids <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V", ".")
+amino.acids <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")
 
 "%!in%" <- Negate("%in%")
 
 .check.sequences <- function(sequences, sequence.dictionary) {
   if(length(sequences) >= 10) {
-    any(unlist(strsplit(sequences[1:10], "")) %!in% sequence.dictionary)
+    any(unlist(strsplit(sequences[seq(1,10)], "")) %!in% sequence.dictionary)
   } else {
-    any(unlist(strsplit(sequences[1:length(sequences)], "")) %!in% sequence.dictionary)
+    any(unlist(strsplit(sequences[seq_len(length(sequences))], "")) %!in% sequence.dictionary)
   }
 }
   
@@ -50,9 +50,9 @@ substring.extractor <- function(strings, motif.length) {
     num_substrings <- string_length - motif.length + 1
     if (num_substrings > 0) {
       # Generate all substrings of the specified length
-      substrings <- sapply(1:num_substrings, function(j) {
-        substring(x, j, j + motif.length - 1)
-      })
+      substrings <- vapply(seq_len(num_substrings), 
+                           function(j) substring(x, j, j + motif.length - 1), 
+                           FUN.VALUE = character(1))
     } else {
       # Return NA if the string is too short
       substrings <- NA

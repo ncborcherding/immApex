@@ -10,7 +10,8 @@ tokenizeSequences(
   start.token = "!",
   stop.token = "^",
   max.length = NULL,
-  convert.to.matrix = TRUE
+  convert.to.matrix = TRUE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -26,6 +27,8 @@ tokenizeSequences(
 to the max length of input.sequences}
 
 \item{convert.to.matrix}{Return a matrix (TRUE) or a vector (FALSE)}
+
+\item{verbose}{Print messages corresponding to the processing step}
 }
 \value{
 Tokenize sequences in a matrix or vector

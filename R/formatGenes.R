@@ -7,8 +7,8 @@
 #' scRepertoire outputs
 #' @param region Sequence gene loci to access - "v", "d", "j", or "c"
 #' or a combination using c("v", "d", "j")
-#' @param technology The sequencing technology employed - \strong{'TenX'}, \strong{"Adaptive'}, 
-#' \strong{'AIRR'}, or \strong{'Omniscope'}.
+#' @param technology The sequencing technology employed - \strong{'TenX'}, \strong{"Adaptive'}, or
+#' \strong{'AIRR'}
 #' @param species One or two word designation of species. Currently supporting: 
 #' "human", "mouse", "rat", "rabbit", "rhesus monkey", "sheep", "pig", "platypus",
 #' "alpaca", "dog", "chicken", and "ferret"
@@ -36,7 +36,7 @@ formatGenes <- function(input.data,
     stop("Please select a region or regions in the following category: 'v', 'd', 'j', 'c'")
   }
   if(!.is_seurat_or_se_object(input.data)) {
-    if(technology %!in% c("TenX", "AIRR", "Adaptive", "Omniscope")) {
+    if(technology %!in% c("TenX", "AIRR", "Adaptive")) {
       stop("Please select a technology in the following category: 'TenX', 'AIRR', 'Adaptive', 'Omniscope'")
     }
   }
@@ -58,7 +58,7 @@ formatGenes <- function(input.data,
         genes.updated <- paste0(region, "GeneName")
         input.data[,genes.updated][is.na(input.data[,genes.updated])] <- str_split(input.data[,"vGeneNameTies"][is.na(input.data[,genes.updated])], "[,]", simplify = TRUE)[,1]
       }
-    } else if (technology %in% c("AIRR", "Omniscope")) {
+    } else if (technology %in% c("AIRR")) {
       genes.updated <- paste0(region, "_call")
     }
   }
@@ -101,11 +101,11 @@ formatGenes <- function(input.data,
     x <- str_replace_all(x, pattern, toupper(gene))
     
     # Split at "-", remove leading zeros from the second part, and paste back
-    sapply(strsplit(x, "-"), function(parts) {
+    vapply(strsplit(x, "-"), function(parts) {
       if (length(parts) == 2) {
         paste0(parts[1], "-", sub("^0+", "", parts[2]))
       } else {
         parts[1]
       }
-    })
+    }, FUN.VALUE = character(1))
 }

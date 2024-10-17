@@ -5,12 +5,16 @@
 \alias{immapex_example.data}
 \title{Example contig data for Apex}
 \description{
-A list of example contigs from the following sources:
+Contains a collection of bulk or paired TCR sequences in the respective formats in the form of a 
+list from the following sources:
 
 \itemize{
-  \item{TenX: 10k_Human_DTC_Melanoma_5p_nextgem_Multiplex from 10x Website}
-  \item{AIRR: Human_colon_16S8157851 from \href{https://pubmed.ncbi.nlm.nih.gov/37055623/}{PMID: 37055623}}
-  \item{Adaptive: Adaptive_2283_D0 from \href{https://pubmed.ncbi.nlm.nih.gov/36220826/}{PMID: 36220826}}
-  \item{Omniscope: Internal Data}
+  \item{TenX: 10k_Human_DTC_Melanoma_5p_nextgem_Multiplex from \href{https://www.10xgenomics.com/datasets/10k-human-dtc-melanoma-NextGEM-5p}{10x Website}.}
+  \item{AIRR: Human_colon_16S8157851 from \href{https://pubmed.ncbi.nlm.nih.gov/37055623/}{PMID: 37055623}.}
+  \item{Adaptive: Adaptive_2283_D0 from \href{https://pubmed.ncbi.nlm.nih.gov/36220826/}{PMID: 36220826}.}
 }
+
+More information on the data formats are available: \href{https://docs.airr-community.org/en/stable/}{AIRR}, 
+\href{https://clients.adaptivebiotech.com/assets/downloads/immunoSEQ_AnalyzerManual.pdf}{Adaptive}, and 
+\href{https://www.10xgenomics.com/support/single-cell-immune-profiling}{TenX}.
 }

@@ -38,7 +38,7 @@ sequenceDecoder <- function(sequence.matrix,
                             encoder = "onehotEncoder",
                             aa.method.to.use = NULL,
                             call.threshold = 0.5,
-                            sequence.dictionary = amino.acids[1:20],
+                            sequence.dictionary = amino.acids,
                             padding.symbol = ".", 
                             remove.padding = TRUE) {
   if(call.threshold <= 0) {
@@ -67,7 +67,10 @@ sequenceDecoder <- function(sequence.matrix,
     remove_repetitive_end <- function(x) {
       gsub(paste0("(\\", padding.symbol, "*)$"), "", x)
     }
-    decoded_sequences <- sapply(decoded_sequences, remove_repetitive_end, USE.NAMES = FALSE)
+    decoded_sequences <- decoded_sequences <- vapply(decoded_sequences, 
+                                                     remove_repetitive_end, 
+                                                     FUN.VALUE = character(1), 
+                                                     USE.NAMES = FALSE)
     
   }
   
@@ -84,7 +87,7 @@ sequenceDecoder <- function(sequence.matrix,
                              padding.symbol,
                              call.threshold) {
   
-  call.threshold = 1/call.threshold
+  call.threshold <- 1/call.threshold
   vectors <- immapex_AA.data[aa.method.to.use]
   vector.names <- as.vector(unlist(lapply(vectors, names)))
   vectors <- do.call(c, vectors)

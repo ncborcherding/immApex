@@ -28,12 +28,12 @@ generateSequences <- function(prefix.motif = NULL,
                               number.of.sequences = 100,
                               min.length = 1,
                               max.length = 10,
-                              sequence.dictionary = amino.acids[1:20]) {
+                              sequence.dictionary = amino.acids) {
   #TODO Add check for prefix/suffix motif with sequence dictionary
   if(!is.null(prefix.motif) | !is.null(suffix.motif)) {
     motif.length <- sum(nchar(c(prefix.motif,suffix.motif)))
     if(min.length < motif.length) {
-      print("New min.length = ", motif.length, " based on the selection of motifs.")
+      message("New min.length = ", motif.length, " based on the selection of motifs.")
       min.length <- 0
     }
     max.length <- max.length-motif.length

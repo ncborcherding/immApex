@@ -20,6 +20,7 @@
 #' aligned sequences with the IMGT gaps
 #' @param region Sequence gene loci to access
 #' @param sequence.type Type of sequence - \strong{aa} for amino acid or \strong{nt} for nucleotide
+#' @param verbose Print messages corresponding to the processing step
 #' 
 #' @importFrom stringr str_extract str_replace_all str_remove_all str_split
 #' @importFrom httr GET content
@@ -30,8 +31,19 @@ getIMGT <- function(species = "human",
                     chain = "TRB",
                     sequence.type = "aa",
                     frame = "inframe",
-                    region = "v") {
-
+                    region = "v", 
+                    verbose = TRUE) {
+  
+  if (is.null(getOption("getIMGT_first_run"))) {
+    # Show the message only on the first run
+    message("Data from IMGT is under a CC BY-NC-ND 4.0 license. Please be aware that attribution is 
+            required for usage and it is the intent of IMGT to not allow derivative or commercial 
+            usage.")
+    
+    # Set the option to indicate the function has been run
+    options(getIMGT_first_run = TRUE)
+  }
+  
   if(tolower(region) %!in% c("v", "d", "j", "c")) {
     stop("Please select a region in the following category: 'v', 'd', 'j', 'c'")
   }
@@ -66,7 +78,9 @@ getIMGT <- function(species = "human",
   base.url <- "https://www.imgt.org/genedb/GENElect?query="
   updated.url <- paste0(base.url, selection, chain.update, "&species=", species.update)
   
-  print("Getting the sequences from IMGT...")
+  if(verbose) {
+    message("Getting the sequences from IMGT...")
+  }
   response <- httr::GET(updated.url)
   webpage <- content(response, as = "text")
   html <- read_html(webpage)
@@ -75,7 +89,9 @@ getIMGT <- function(species = "human",
   sequences <- str_split(pre_text, ">")[[1]]
   sequences <- sequences[nchar(sequences) > 0]  # remove any empty entries
   
-  print("Formatting IMGT sequences...")
+  if(verbose) {
+    message("Formatting IMGT sequences...")
+  }
   fasta_list <- list()
   for (seq in sequences) {
     # Extract the allele name using regex. Allele name generally follows the pattern before the first "|"
@@ -139,4 +155,3 @@ getIMGT <- function(species = "human",
     stop(paste0("Please select one of the following species: ", paste(species, collapse = ", ")))
   }
 }
-
