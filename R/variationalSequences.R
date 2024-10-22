@@ -43,7 +43,6 @@
 #' tensorflow.
 #' @param sequence.dictionary The letters to use in sequence mutation
 #' (default are all amino acids)
-#' @param seed Random number generator state for reproducibility
 #' @param verbose Print messages corresponding to the processing step
 #' 
 #' @importFrom keras layer_dense layer_lambda  keras_model compile 

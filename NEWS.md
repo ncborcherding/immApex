@@ -36,7 +36,7 @@
 * removed installation section from vignette (can't add BioC instructions until accepted)
 * Fixed rendering issue with the vignette
 * Subsampled example data and removed Omniscope example
-* Updated testhat for ```formatGenes()``` and ```inferCDR()``` for new example data
+* Updated testthat for ```formatGenes()``` and ```inferCDR()``` for new example data
 * Reduced size of test data
 * Minimized usage of sapply() and X:Y per BiocCheck suggestions
 * Modified print() messages to messages()

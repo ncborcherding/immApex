@@ -69,8 +69,6 @@ tensorflow.}
 (default are all amino acids)}
 
 \item{verbose}{Print messages corresponding to the processing step}
-
-\item{seed}{Random number generator state for reproducibility}
 }
 \value{
 A vector of mutated sequences

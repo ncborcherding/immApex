@@ -22,7 +22,8 @@ Imports: hash,
 	stats,
 	stringi,
 	stringr,
-	tensorflow
+	tensorflow,
+        utils
 Suggests: 
 	BiocStyle,
 	ggplot2,

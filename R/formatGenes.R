@@ -16,6 +16,7 @@
 #' retain all information (\strong{FALSE})
 #' 
 #' @examples
+#' data(immapex_example.data)
 #' formatGenes(immapex_example.data[["TenX"]],
 #'             region = "v",
 #'             technology = "TenX")
