@@ -4,6 +4,12 @@
 \name{immapex_AA.data}
 \alias{immapex_AA.data}
 \title{A list of amino acid properties}
+\usage{
+data("immapex_AA.data")
+}
+\value{
+List of 10 amino acid properties for 20 amino acids
+}
 \description{
 A list of amino acid properties that are
 used for \code{\link{propertyEncoder}} function.

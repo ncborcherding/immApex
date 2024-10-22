@@ -63,7 +63,7 @@ formatGenes <- function(input.data,
     }
   }
  
-  
+  data("immapex_gene.list", package = "immApex", envir = environment())
   gene.list <- immapex_gene.list[tolower(region)]
   lapply(gene.list, function(x) {
     lapply(x, function(y) {

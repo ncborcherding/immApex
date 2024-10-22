@@ -10,28 +10,27 @@ getIMGT(
   sequence.type = "aa",
   frame = "inframe",
   region = "v",
+  max.retries = 3,
   verbose = TRUE
 )
 }
 \arguments{
-\item{species}{One or two word common designation of species. Currently supporting: 
-\strong{human}, \strong{mouse}, \strong{rat}, \strong{rabbit}, \strong{rhesus monkey}, 
-\strong{sheep}, \strong{pig}, \strong{platypus}, \strong{alpaca}, \strong{dog}, \strong{chicken}, 
-and \strong{ferret}}
+\item{species}{One or two-word common designation of species.}
 
-\item{chain}{Sequence chain to access, like \strong{TRB} or \strong{IGH}}
+\item{chain}{Sequence chain to access, e.g., \strong{TRB} or \strong{IGH}.}
 
-\item{sequence.type}{Type of sequence - \strong{aa} for amino acid or \strong{nt} for nucleotide}
+\item{sequence.type}{Type of sequence - \strong{aa} (amino acid) or \strong{nt} (nucleotide).}
 
-\item{frame}{Designation for \strong{all}, \strong{inframe} or \strong{inframe+gap} that includes
-aligned sequences with the IMGT gaps}
+\item{frame}{Designation for \strong{all}, \strong{inframe}, or \strong{inframe+gap}.}
 
-\item{region}{Sequence gene loci to access}
+\item{region}{Gene loci to access.}
 
-\item{verbose}{Print messages corresponding to the processing step}
+\item{max.retries}{Number of attempts to fetch data in case of failure.}
+
+\item{verbose}{Print messages corresponding to the processing step.}
 }
 \value{
-A list of allele sequences
+A list of allele sequences.
 }
 \description{
 Use this to access the ImMunoGeneTics (IMGT) sequences for a
@@ -43,6 +42,7 @@ TRBV_aa <- getIMGT(species = "human",
                    chain = "TRB",
                    frame = "inframe",
                    region = "v",
-                   sequence.type = "aa") 
-                              
+                   sequence.type = "aa", 
+                   max.retries = 3) 
+
 }

@@ -31,6 +31,7 @@
 #' @param padding.symbol Symbol to use for padding at the end of sequences
 #' @param verbose Print messages corresponding to the processing step
 #' @importFrom keras array_reshape
+#' @importFrom utils data
 #' 
 #' @export
 #' @return Converted amino acid sequences by property in a matrix or 3D array
@@ -42,9 +43,11 @@ propertyEncoder <- function(input.sequences,
                             summary.function = NULL,
                             padding.symbol = ".", 
                             verbose = TRUE) {
+  data("immapex_AA.data", package = "immApex", envir = environment())
   if(any(method.to.use %!in% names(immapex_AA.data))) {
     stop("Please select one of the following for method.to.use: ", paste(sort(names(immapex_AA.data)), collapse = ", "))
   }
+  
   vectors <- immapex_AA.data[method.to.use]
   vector.names <- as.vector(unlist(lapply(vectors, names)))
   vectors <- do.call(c, vectors)

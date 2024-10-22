@@ -18,6 +18,7 @@
 #'   }
 #'  
 #' @docType data
+#' @usage data("immapex_AA.data")
 #' @name immapex_AA.data
 #' @return List of 10 amino acid properties for 20 amino acids
 #' 
@@ -32,7 +33,9 @@ NULL
 #' 
 #'  
 #' @docType data
+#' @usage data("immapex_gene.list")
 #' @name immapex_gene.list
+#' @return List of gene nomenclature by region, loci, and species. 
 #' 
 NULL
 
@@ -52,6 +55,7 @@ NULL
 #' \href{https://www.10xgenomics.com/support/single-cell-immune-profiling}{TenX}.
 #' 
 #' @docType data
+#' @usage data("immapex_example.data")
 #' @name immapex_example.data
 #' @return List of 3 example data sets for 10x, AIRR and Adaptive contigs.
 #' 
@@ -79,6 +83,7 @@ NULL
 #' 
 #' @docType data
 #' @name immapex_blosum.pam.matrices
+#' @usage data("immapex_blosum.pam.matrices")
 #' @return List of 10 substitution matrices
 #' 
 NULL

@@ -4,6 +4,12 @@
 \name{immapex_example.data}
 \alias{immapex_example.data}
 \title{Example contig data for Apex}
+\usage{
+data("immapex_example.data")
+}
+\value{
+List of 3 example data sets for 10x, AIRR and Adaptive contigs.
+}
 \description{
 Contains a collection of bulk or paired TCR sequences in the respective formats in the form of a 
 list from the following sources:

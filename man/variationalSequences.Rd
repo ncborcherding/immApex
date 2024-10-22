@@ -21,7 +21,6 @@ variationalSequences(
   optimizer = "adam",
   disable.eager.execution = FALSE,
   sequence.dictionary = amino.acids,
-  seed = 42,
   verbose = TRUE
 )
 }
@@ -69,9 +68,9 @@ tensorflow.}
 \item{sequence.dictionary}{The letters to use in sequence mutation
 (default are all amino acids)}
 
-\item{seed}{Random number generator state for reproducibility}
-
 \item{verbose}{Print messages corresponding to the processing step}
+
+\item{seed}{Random number generator state for reproducibility}
 }
 \value{
 A vector of mutated sequences
@@ -81,7 +80,6 @@ Use this to simulate sequences using a variational
 autoencoder (VAE) and perturbation of the probability distributions.
 }
 \examples{
-\dontrun{
 sequences <- generateSequences(prefix.motif = "CAS",
                                suffix.motif = "YF",
                                number.of.sequences = 100,
@@ -93,6 +91,5 @@ new.sequences <- variationalSequences(sequences,
                                       encoder.hidden.dim = c(256, 128),
                                       latent.dim = 16,
                                       batch.size = 16)
-}
 
 }

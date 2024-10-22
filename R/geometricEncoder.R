@@ -22,6 +22,7 @@
 #' } 
 #' @param theta The angle for geometric transformation
 #' @param verbose Print messages corresponding to the processing step
+#' @importFrom utils data
 #' 
 #' @export
 #' @return Geometric encoded amino acid sequences in a matrix
@@ -74,9 +75,10 @@ geometricEncoder <- function(input.sequences,
 }
 
 # Create BLOSUM/PAM Matrix
+#' @importFrom utils data
 .aa_to_submatrix <- function(sequence,
                              method) {
- 
+  data("immapex_blosum.pam.matrices", package = "immApex", envir = environment())
   aa_indices <- match(strsplit(as.character(sequence), '')[[1]], amino.acids)
   return(immapex_blosum.pam.matrices[[method]][aa_indices, ])
 }

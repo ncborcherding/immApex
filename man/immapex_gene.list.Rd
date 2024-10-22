@@ -4,6 +4,12 @@
 \name{immapex_gene.list}
 \alias{immapex_gene.list}
 \title{A list of IMGT gene names by genes, loci, and species}
+\usage{
+data("immapex_gene.list")
+}
+\value{
+List of gene nomenclature by region, loci, and species.
+}
 \description{
 A list of regularized gene nomenclature to use for 
 converting for data for uniformity. Data is organize by gene region, 

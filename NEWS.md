@@ -9,6 +9,7 @@
 * Added runnable example for ```variationalSequences()```
 * Added better handling of no connection in ```getIMGT()```
 * Added **max.retries** to ```getIMGT()```
+* Updated testthat for new IMGT version
 
 # immApex VERSION 0.99.3
 

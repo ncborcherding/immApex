@@ -22,6 +22,7 @@
 #'
 #' @importFrom httr GET content user_agent
 #' @importFrom rvest read_html html_text html_nodes
+#' @importFrom stringr str_replace_all
 #' @export
 #' @return A list of allele sequences.
 getIMGT <- function(species = "human",
@@ -53,7 +54,7 @@ getIMGT <- function(species = "human",
   )
   
   chain.update <- toupper(paste0("+", chain, region))
-  species.update <- stringr::str_replace_all(.parseSpecies(species), " ", "+")
+  species.update <- str_replace_all(.parseSpecies(species), " ", "+")
   base.url <- "https://www.imgt.org/genedb/GENElect?query="
   updated.url <- paste0(base.url, selection, chain.update, "&species=", species.update)
   
@@ -107,6 +108,7 @@ validate_input <- function(value, valid_options, parameter_name) {
 }
 
 # Helper function to parse sequences
+#' @importFrom stringr str_split str_remove_all str_extract
 parse_sequences <- function(pre_text, chain, region, sequence.type) {
   sequences <- str_split(str_remove_all(pre_text, "\n"), ">")[[1]]
   fasta_list <- list()
