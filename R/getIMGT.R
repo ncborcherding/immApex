@@ -1,157 +1,159 @@
 #' Get IMGT Sequences for Specific Loci
-#' 
+#'
 #' Use this to access the ImMunoGeneTics (IMGT) sequences for a
 #' specific species and gene loci. More information on 
 #' IMGT can be found at \href{https://www.imgt.org/}{imgt.org}.
-#' 
+#'
 #' @examples
 #' TRBV_aa <- getIMGT(species = "human",
 #'                    chain = "TRB",
 #'                    frame = "inframe",
 #'                    region = "v",
-#'                    sequence.type = "aa") 
-#'                               
-#' @param species One or two word common designation of species. Currently supporting: 
-#' \strong{human}, \strong{mouse}, \strong{rat}, \strong{rabbit}, \strong{rhesus monkey}, 
-#' \strong{sheep}, \strong{pig}, \strong{platypus}, \strong{alpaca}, \strong{dog}, \strong{chicken}, 
-#' and \strong{ferret}
-#' @param chain Sequence chain to access, like \strong{TRB} or \strong{IGH}
-#' @param frame Designation for \strong{all}, \strong{inframe} or \strong{inframe+gap} that includes
-#' aligned sequences with the IMGT gaps
-#' @param region Sequence gene loci to access
-#' @param sequence.type Type of sequence - \strong{aa} for amino acid or \strong{nt} for nucleotide
-#' @param verbose Print messages corresponding to the processing step
-#' 
-#' @importFrom stringr str_extract str_replace_all str_remove_all str_split
-#' @importFrom httr GET content
+#'                    sequence.type = "aa", 
+#'                    max.retries = 3) 
+#'
+#' @param species One or two-word common designation of species. 
+#' @param chain Sequence chain to access, e.g., \strong{TRB} or \strong{IGH}.
+#' @param frame Designation for \strong{all}, \strong{inframe}, or \strong{inframe+gap}.
+#' @param region Gene loci to access.
+#' @param sequence.type Type of sequence - \strong{aa} (amino acid) or \strong{nt} (nucleotide).
+#' @param max.retries Number of attempts to fetch data in case of failure.
+#' @param verbose Print messages corresponding to the processing step.
+#'
+#' @importFrom httr GET content user_agent
 #' @importFrom rvest read_html html_text html_nodes
 #' @export
-#' @return A list of allele sequences
+#' @return A list of allele sequences.
 getIMGT <- function(species = "human",
                     chain = "TRB",
                     sequence.type = "aa",
                     frame = "inframe",
                     region = "v", 
+                    max.retries = 3,
                     verbose = TRUE) {
   
   if (is.null(getOption("getIMGT_first_run"))) {
-    # Show the message only on the first run
-    message("Data from IMGT is under a CC BY-NC-ND 4.0 license. Please be aware that attribution is 
-            required for usage and it is the intent of IMGT to not allow derivative or commercial 
-            usage.")
-    
-    # Set the option to indicate the function has been run
+    message("Data from IMGT is under a CC BY-NC-ND 4.0 license. Attribution is required.")
     options(getIMGT_first_run = TRUE)
   }
   
-  if(tolower(region) %!in% c("v", "d", "j", "c")) {
-    stop("Please select a region in the following category: 'v', 'd', 'j', 'c'")
+  validate_input(region, c("v", "d", "j", "c"), "region")
+  validate_input(sequence.type, c("aa", "nt"), "sequence.type")
+  validate_input(frame, c("all", "inframe", "inframe+gap"), "frame")
+  
+  if (frame == "inframe+gap" & chain %in% c("IGLJ", "IGKJ", "IGHJ", "IGHD")) {
+    stop("IMGT-gapped sequences are not available for 'IGLJ', 'IGKJ', 'IGHJ', or 'IGHD'")
   }
   
-  if(tolower(sequence.type) %!in% c("aa", "nt")) {
-    stop("Please select a sequence.type in the following category: 'aa' or 'nt'")
-  }
+  selection <- switch(
+    paste0(tolower(frame), "_", tolower(sequence.type)), 
+    "all_nt" = 7.2, "inframe_nt" = 7.5, 
+    "inframe_aa" = 7.6, "inframe+gap_nt" = 7.1, 
+    "inframe+gap_aa" = 7.3, stop("Invalid frame and sequence type combination.")
+  )
   
-  if(tolower(frame) %!in% c("all", "inframe", "inframe+gap")) {
-    stop("Please select a frame in the following category: 'all', 'inframe', or 'inframe+gap'")
-  }
-  
-  if(frame == "inframe+gap" & chain %in% c("IGLJ", "IGKJ", "IGHJ", "IGHD")) {
-    stop("IMGT-gapped sequences are not available for 'IGLJ', 'IGKJ', 'IGHJ' or 'IGHD'")
-  }
-  
-  
-  selection <- paste0(tolower(frame), "_", tolower(sequence.type))
-  
-  selection <- switch(selection, 
-                     "all_nt" = 7.2,
-                     "inframe_nt" = 7.5,
-                     "inframe_aa" = 7.6,
-                     "inframe+gap_nt" = 7.1,
-                     "inframe+gap_aa" = 7.3,
-                     "The selection made for sequence.type and frame is not available.")
-  
-  #Formatting selection into URL for IMGT fasta
   chain.update <- toupper(paste0("+", chain, region))
-  species.update <- .parseSpecies(species)
-  species.update <- stringr::str_replace_all(species.update, " ", "+")
+  species.update <- stringr::str_replace_all(.parseSpecies(species), " ", "+")
   base.url <- "https://www.imgt.org/genedb/GENElect?query="
   updated.url <- paste0(base.url, selection, chain.update, "&species=", species.update)
   
-  if(verbose) {
-    message("Getting the sequences from IMGT...")
+  if (verbose) message("Getting sequences from IMGT...")
+  
+  # Attempt to fetch the webpage with retries
+  response <- NULL
+  attempt <- 1
+  success <- FALSE
+  
+  while (attempt <= max.retries && !success) {
+    response <- httr::GET(updated.url)
+    
+    if (!httr::http_error(response)) {
+      success <- TRUE
+    } else {
+      if (verbose) {
+        message(sprintf("Attempt %d failed. Retrying...", attempt))
+      }
+      attempt <- attempt + 1
+      Sys.sleep(2)  # Optional: Add a short delay between attempts
+    }
   }
-  response <- httr::GET(updated.url)
-  webpage <- content(response, as = "text")
+  
+  if (!success) {
+    stop("Failed to retrieve data after ", max.retries, " attempts.")
+  }
+  
+  webpage <- httr::content(response, as = "text")
   html <- read_html(webpage)
   pre_text <- html_text(html_nodes(html, "pre"))[2]
-  pre_text <- str_remove_all(pre_text, "\n")
-  sequences <- str_split(pre_text, ">")[[1]]
-  sequences <- sequences[nchar(sequences) > 0]  # remove any empty entries
+  sequences <- parse_sequences(pre_text, chain, region, sequence.type)
   
-  if(verbose) {
-    message("Formatting IMGT sequences...")
+  if (verbose) message("Formatting IMGT sequences...")
+  
+  list(
+    sequences = sequences,
+    misc = list(
+      species = species.update, chain = chain,
+      sequence.type = sequence.type, frame = frame, region = region
+    )
+  )
+}
+
+# Helper function to validate input parameters
+validate_input <- function(value, valid_options, parameter_name) {
+  if (tolower(value) %!in% valid_options) {
+    stop(sprintf("Invalid %s. Choose one of: %s", 
+                 parameter_name, paste(valid_options, collapse = ", ")))
   }
+}
+
+# Helper function to parse sequences
+parse_sequences <- function(pre_text, chain, region, sequence.type) {
+  sequences <- str_split(str_remove_all(pre_text, "\n"), ">")[[1]]
   fasta_list <- list()
-  for (seq in sequences) {
-    # Extract the allele name using regex. Allele name generally follows the pattern before the first "|"
+  
+  for (seq in sequences[nchar(sequences) > 0]) {
     parts <- str_split(seq, "\\|")[[1]]
-    if (length(parts) >= 2) {
-      allele_name <- parts[2]  # This should correspond to something like 'TRBV1*01'
+    if (length(parts) < 2) next
+    
+    allele_name <- parts[2]
+    if (tolower(sequence.type) == "aa") {
+      sequence <- gsub("[^A-Z]", "", str_extract(seq, "(?<=\\|)[\\s\\S]*$"))
     } else {
-      next  # Skip this sequence if it does not have enough parts
+      sequence <- gsub("[^acgt]", "", str_extract(seq, "[acgt]+$"))
     }
     
-    # Remove any non-sequence characters (like digits, description text, etc.)
-    if(tolower(sequence.type) == "aa") {
-      sequence <- str_extract(seq, "(?<=\\|)[\\s\\S]*$")
-      sequence <- gsub("[^A-Z]", "", sequence)  # Assuming only uppercase letters are valid
-      sequence <- stringr::str_remove_all(sequence, paste0(chain, toupper(region)))
-    } else if(tolower(sequence.type) == "nt") {
-      sequence <- str_extract(seq, "[acgt]+$")
-      sequence <- gsub("[^a-z]", "", sequence)  # Assuming only uppercase letters are valid
-    }
-    
-    # Assign the sequence to the allele name in the list
     fasta_list[[allele_name]] <- sequence
   }
   
-  result.list <- list(sequences = fasta_list,
-                      misc = list(species = species.update,
-                                  chain = chain,
-                                  sequence.type = sequence.type,
-                                  frame = frame,
-                                  region = region))
-  return(result.list)
-
+  return(fasta_list)
 }
 
 #' @importFrom hash hash
 .parseSpecies <- function(x) {
-  
-  species <- c("human", "mouse", "rat", "rabbit",
-               "rhesus monkey", "sheep", "pig", "platypus",
-               "alpaca", "dog", "chicken", "ferret")
+  species <- c("human", "mouse", "rat", "rabbit", "rhesus monkey", 
+               "sheep", "pig", "platypus", "alpaca", "dog", 
+               "chicken", "ferret")
   
   species_dictionary <- hash::hash(
-    "human" = "Homo sapiens",
-    "mouse" = "Mus",
-    "rat" = "Rattus norvegicus",
-    "rabbit" = "Oryctolagus cuniculus",
-    "rhesus monkey" = "Macaca mulatta",
-    "sheep" = "Ovis aries",
-    "pig" = "Sus scrofa",
-    "platypus" = "Ornithorhynchus anatinus",
-    "alpaca" = "Vicugna pacos",
-    "dog" = "Canis lupus familiaris",
-    "chicken" = "Gallus gallus",
+    "human" = "Homo sapiens", 
+    "mouse" = "Mus", 
+    "rat" = "Rattus norvegicus", 
+    "rabbit" = "Oryctolagus cuniculus", 
+    "rhesus monkey" = "Macaca mulatta", 
+    "sheep" = "Ovis aries", 
+    "pig" = "Sus scrofa", 
+    "platypus" = "Ornithorhynchus anatinus", 
+    "alpaca" = "Vicugna pacos", 
+    "dog" = "Canis lupus familiaris", 
+    "chicken" = "Gallus gallus", 
     "ferret" = "Mustela putorius furo"
   )
   
   x <- tolower(x)
-  if(x %in% species) {
+  if (x %in% species) {
     return(species_dictionary[[x]])
   } else {
-    stop(paste0("Please select one of the following species: ", paste(species, collapse = ", ")))
+    stop(sprintf("Invalid species. Choose one of: %s", 
+                 paste(species, collapse = ", ")))
   }
 }

@@ -7,6 +7,8 @@
 * Update stop message for ```propertyEncoder()```
 * Removed set.seed from ```variationalSequences()```
 * Added runnable example for ```variationalSequences()```
+* Added better handling of no connection in ```getIMGT()```
+* Added **max.retries** to ```getIMGT()```
 
 # immApex VERSION 0.99.3
 
