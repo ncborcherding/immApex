@@ -1,3 +1,14 @@
+# immApex VERSION 0.99.3
+
+## UNDERLYING CHANGES
+* Defining python version 3.10 for keras installation
+
+# immApex VERSION 0.99.2
+
+## UNDERLYING CHANGES
+* Added discrete check and install_keras() to vignette
+
+
 # immApex VERSION 0.99.1
 
 ## UNDERLYING CHANGES
