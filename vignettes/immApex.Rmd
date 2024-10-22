@@ -49,7 +49,7 @@ Parameters for ```generateSequences()```
 
 * **prefix.motif** Add a defined sequence to the start of the generated sequences.
 * **suffix.motif** Add a defined sequence to the end of the generated sequences
-number.of.sequences Number of sequences to generate
+* **number.of.sequences** Number of sequences to generate
 * **min.length** Minimum length of the final sequence (will be adjusted if incongruent with prefix.motif/suffix.motif)
 * **max.length** Maximum length of the final sequence
 * **sequence.dictionary** The letters to use in sequence generation (default are all amino acids)
@@ -133,7 +133,7 @@ head(mutated.sequences)
 
 ## formatGenes
 
-Immune receptor nomenclature can be highly variable across sequencing platforms. When preparing data for models, we can use ```formatGenes() `` to universalize the gene formats into IMGT nomenclature.
+Immune receptor nomenclature can be highly variable across sequencing platforms. When preparing data for models, we can use ```formatGenes()``` to universalize the gene formats into IMGT nomenclature.
 
 Parameters for ```formatGenes()```
 
