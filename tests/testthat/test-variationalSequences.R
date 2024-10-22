@@ -2,6 +2,7 @@
 
 test_that("variationalSequences works", {
   
+  set.seed(42)
   test_that("Test for valid input sequence length", {
     expect_error(variationalSequences(input.sequences = character(0)),
                  "input.sequences must have at least one sequence.")

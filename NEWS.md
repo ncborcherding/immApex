@@ -1,3 +1,16 @@
+# immApex VERSION 0.99.5
+
+## UNDERLYING CHANGES
+* Remove keras installation in vignette
+* Removed lazydata loading
+* Added @return to the data manual entries
+* Update stop message for ```propertyEncoder()```
+* Removed set.seed from ```variationalSequences()```
+* Added runnable example for ```variationalSequences()```
+* Added better handling of no connection in ```getIMGT()```
+* Added **max.retries** to ```getIMGT()```
+* Updated testthat for new IMGT version
+
 # immApex VERSION 0.99.3
 
 ## UNDERLYING CHANGES
@@ -23,7 +36,7 @@
 * removed installation section from vignette (can't add BioC instructions until accepted)
 * Fixed rendering issue with the vignette
 * Subsampled example data and removed Omniscope example
-* Updated testhat for ```formatGenes()``` and ```inferCDR()``` for new example data
+* Updated testthat for ```formatGenes()``` and ```inferCDR()``` for new example data
 * Reduced size of test data
 * Minimized usage of sapply() and X:Y per BiocCheck suggestions
 * Modified print() messages to messages()

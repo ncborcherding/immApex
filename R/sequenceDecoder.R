@@ -31,6 +31,7 @@
 #' (default are all amino acids)
 #' @param padding.symbol Symbol to use for padding at the end of sequences
 #' @param remove.padding Remove the additional symbol from the end of decoded sequences
+#' @importFrom utils data
 #' 
 #' @export
 #' @return Decoded amino acid or nucleotide sequences
@@ -55,6 +56,7 @@ sequenceDecoder <- function(sequence.matrix,
                                         call.threshold)
     
   } else if (encoder == "propertyEncoder") {
+    data("immapex_AA.data", package = "immApex", envir = environment())
     if(any(aa.method.to.use %!in% names(immapex_AA.data))) {
       stop(paste0("Please select one of the following for aa.method.to.use: ", paste(sort(names(immapex_AA.data)), collapse = ", ")))
     }
@@ -82,11 +84,13 @@ sequenceDecoder <- function(sequence.matrix,
 }
 
 #' @importFrom keras array_reshape
+#' @importFrom utils data
 .propertyDecoder <- function(sequence.matrix,
                              aa.method.to.use,
                              padding.symbol,
                              call.threshold) {
   
+  data("immapex_AA.data", package = "immApex", envir = environment())
   call.threshold <- 1/call.threshold
   vectors <- immapex_AA.data[aa.method.to.use]
   vector.names <- as.vector(unlist(lapply(vectors, names)))

@@ -4,6 +4,12 @@
 \name{immapex_blosum.pam.matrices}
 \alias{immapex_blosum.pam.matrices}
 \title{List of amino acid substitution matrices}
+\usage{
+data("immapex_blosum.pam.matrices")
+}
+\value{
+List of 10 substitution matrices
+}
 \description{
 A list of amino acid substitution matrices, using the Point 
 Accepted Matrix (PAM) and BLOck SUbstitution Matrix (BLOSUM) approaches. 

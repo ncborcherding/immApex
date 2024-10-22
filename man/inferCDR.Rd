@@ -38,6 +38,7 @@ sequence is used.
 }
 \examples{
 # Getting the Sequence Reference
+data(immapex_example.data)
 TRBV_aa <- getIMGT(species = "human",
                    chain = "TRB",
                    frame = "inframe",

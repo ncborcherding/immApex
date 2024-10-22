@@ -4,7 +4,6 @@
 #' autoencoder (VAE) and perturbation of the probability distributions.
 #' 
 #' @examples
-#' \dontrun{
 #' sequences <- generateSequences(prefix.motif = "CAS",
 #'                                suffix.motif = "YF",
 #'                                number.of.sequences = 100,
@@ -16,7 +15,6 @@
 #'                                       encoder.hidden.dim = c(256, 128),
 #'                                       latent.dim = 16,
 #'                                       batch.size = 16)
-#' }
 #' 
 #' @param input.sequences The amino acid or nucleotide sequences to use
 #' @param encoder.function The method to prepare the sequencing information - 
@@ -45,7 +43,6 @@
 #' tensorflow.
 #' @param sequence.dictionary The letters to use in sequence mutation
 #' (default are all amino acids)
-#' @param seed Random number generator state for reproducibility
 #' @param verbose Print messages corresponding to the processing step
 #' 
 #' @importFrom keras layer_dense layer_lambda  keras_model compile 
@@ -76,7 +73,6 @@ variationalSequences <- function(input.sequences,
                                  optimizer = "adam",
                                  disable.eager.execution = FALSE,
                                  sequence.dictionary = amino.acids,
-                                 seed = 42, 
                                  verbose = TRUE) {
   
   n_train <- floor(length(input.sequences) * 0.8)  # Default to 80% for training
@@ -136,7 +132,6 @@ variationalSequences <- function(input.sequences,
   original_dim <- ncol(sequence.matrix)
   
   # Data splitting
-  set.seed(seed)  # For reproducibility
   train_indices <- sample(seq_len(nrow(sequence.matrix)), n_train)
   x_train <- sequence.matrix[train_indices, ]
   x_test <- sequence.matrix[-train_indices, ]
