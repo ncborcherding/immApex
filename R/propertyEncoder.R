@@ -43,7 +43,7 @@ propertyEncoder <- function(input.sequences,
                             padding.symbol = ".", 
                             verbose = TRUE) {
   if(any(method.to.use %!in% names(immapex_AA.data))) {
-    stop(paste0("Please select one of the following for method.to.use: ", paste(sort(names(immapex_AA.data)), collapse = ", ")))
+    stop("Please select one of the following for method.to.use: ", paste(sort(names(immapex_AA.data)), collapse = ", "))
   }
   vectors <- immapex_AA.data[method.to.use]
   vector.names <- as.vector(unlist(lapply(vectors, names)))

@@ -1,7 +1,12 @@
 # immApex VERSION 0.99.5
 
 ## UNDERLYING CHANGES
-* Remove keras installation in vgnette
+* Remove keras installation in vignette
+* Removed lazydata loading
+* Added @return to the data manual entries
+* Update stop message for ```propertyEncoder()```
+* Removed set.seed from ```variationalSequences()```
+* Added runnable example for ```variationalSequences()```
 
 # immApex VERSION 0.99.3
 
