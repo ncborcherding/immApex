@@ -1,3 +1,8 @@
+# immApex VERSION 0.99.5
+
+## UNDERLYING CHANGES
+* Remove keras installation in vgnette
+
 # immApex VERSION 0.99.3
 
 ## UNDERLYING CHANGES
