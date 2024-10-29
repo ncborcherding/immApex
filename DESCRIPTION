@@ -1,6 +1,6 @@
 Package: immApex
 Title: Tools for Adaptive Immune Receptor Sequence-Based Keras Modeling
-Version: 1.0.0
+Version: 1.1.0
 Date: 2024-10-22
 Authors@R: c(
     person(given = "Nick", family = "Borcherding", role = c("aut", "cre"), email = "ncborch@gmail.com"))
