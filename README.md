@@ -40,6 +40,15 @@ To run immApex, open R and install immApex from github:
 devtools::install_github("ncborcherding/immApex")
 ```
 
+or via Bioconductor with the 3.20 release
+
+```r
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("infinityFlow")
+```
+
 ### IMGT usage
 
 IMGT is used as a reference for gene names and sequence information can be accessed via ```getIMGT()```. Data from IMGT is under a CC BY-NC-ND 4.0 license. Please be aware that attribution is required for usage and it is the intent of IMGT to not allow derivative or commercial usage. 

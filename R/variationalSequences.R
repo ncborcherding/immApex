@@ -100,7 +100,7 @@ variationalSequences <- function(input.sequences,
                              "ftrl" = optimizer_ftrl(learning_rate = learning.rate),
                              "nadam" = optimizer_nadam(learning_rate = learning.rate),
                              "rmsprop" = optimizer_rmsprop(learning_rate = learning.rate),
-                             "sgd" = optimizer_sgd(learning_rate = learning.rate)
+                             "sgd" = optimizer_sgd(learning_rate = learning.rate),
                              stop("Please select a compatible optimizer function in the Keras R implementation."))
   K <- keras::backend()
   
