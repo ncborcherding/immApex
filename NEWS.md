@@ -1,6 +1,12 @@
 # immApex VERSION 0.99.5
 
 ## UNDERLYING CHANGES
+* Fix issue with optimizer call in ```variationalSequences()```
+
+
+# immApex VERSION 0.99.5
+
+## UNDERLYING CHANGES
 * Remove keras installation in vignette
 * Removed lazydata loading
 * Added @return to the data manual entries

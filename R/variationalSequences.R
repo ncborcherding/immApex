@@ -93,14 +93,14 @@ variationalSequences <- function(input.sequences,
     mode = "min")
   
   optimizer.to.use <- switch(optimizer,
-                             "adadelta" = optimizer_adadelta,
-                             "adagrad" = optimizer_adagrad,
-                             "adam" = optimizer_adam,
-                             "adamax" = optimizer_adamax,
-                             "ftrl" = optimizer_ftrl,
-                             "nadam" = optimizer_nadam,
-                             "rmsprop" = optimizer_rmsprop,
-                             "sgd" = optimizer_sgd, 
+                             "adadelta" = optimizer_adadelta(learning_rate = learning.rate),
+                             "adagrad" = optimizer_adagrad(learning_rate = learning.rate),
+                             "adam" = optimizer_adam(learning_rate = learning.rate),
+                             "adamax" = optimizer_adamax(learning_rate = learning.rate),
+                             "ftrl" = optimizer_ftrl(learning_rate = learning.rate),
+                             "nadam" = optimizer_nadam(learning_rate = learning.rate),
+                             "rmsprop" = optimizer_rmsprop(learning_rate = learning.rate),
+                             "sgd" = optimizer_sgd(learning_rate = learning.rate)
                              stop("Please select a compatible optimizer function in the Keras R implementation."))
   K <- keras::backend()
   
@@ -185,7 +185,7 @@ variationalSequences <- function(input.sequences,
   }
       
   # Compile the model
-  vae_with_loss %>% compile(optimizer = optimizer_adam(learning_rate = learning.rate), loss = dummy_loss)
+  vae_with_loss %>% compile(optimizer = optimizer.to.use, loss = dummy_loss)
   
   if(verbose) {    
     message("Fitting Model....")
