@@ -29,7 +29,7 @@ jobs:
           needs: coverage
 
       - name: Install Keras Python dependencies
-        run: R -e 'keras::install_keras3()'  # This runs the install_keras function from R
+        run: R -e 'keras3::install_keras()'  # This runs the install_keras function from R
 
       - name: Test coverage
         run: |
