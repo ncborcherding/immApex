@@ -4,6 +4,7 @@ API for single-cell immune repertoire deep learning models
 <img align="right" src="https://github.com/ncborcherding/immApex/blob/main/www/immApex_hex.png" width="305" height="352">
 
 <!-- badges: start -->
+[![BioC status](http://www.bioconductor.org/shields/build/release/bioc/immApex.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/immApex)
 [![R-CMD-check](https://github.com/ncborcherding/immApex/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ncborcherding/immApex/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/ncborcherding/immApex/branch/main/graph/badge.svg)](https://app.codecov.io/gh/ncborcherding/immApex?branch=main)
 <!-- badges: end -->
