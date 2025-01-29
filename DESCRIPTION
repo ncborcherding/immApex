@@ -36,5 +36,5 @@ Suggests:
 	viridis
 VignetteBuilder: knitr
 Language: en-US
-URL: https://github.com/ncborcherding/immApex/
-BugReports: https://github.com/ncborcherding/immApex/issues
+URL: https://github.com/BorchLab/immApex/
+BugReports: https://github.com/BorchLab/immApex/issues

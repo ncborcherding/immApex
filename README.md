@@ -1,7 +1,7 @@
 # immApex
 API for single-cell immune repertoire deep learning models
 
-<img align="right" src="https://github.com/ncborcherding/immApex/blob/main/www/immApex_hex.png" width="305" height="352">
+<img align="right" src="https://github.com/BorchLab/immApex/blob/main/www/immApex_hex.png" width="305" height="352">
 
 <!-- badges: start -->
 [![BioC status](http://www.bioconductor.org/shields/build/release/bioc/immApex.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/immApex)
@@ -38,7 +38,7 @@ install_keras()
 To run immApex, open R and install immApex from github: 
 
 ```r
-devtools::install_github("ncborcherding/immApex")
+devtools::install_github("BorchLab/immApex")
 ```
 
 or via Bioconductor with the 3.20 release
@@ -64,10 +64,10 @@ Check out this [vignette](https://www.borch.dev/uploads/screpertoire/articles/im
 
 ## Bug Reports/New Features
 
-#### If you run into any issues or bugs please submit a [GitHub issue](https://github.com/ncborcherding/immApex/issues) with details of the issue.
+#### If you run into any issues or bugs please submit a [GitHub issue](https://github.com/BorchLab/immApex/issues) with details of the issue.
 
 - If possible please include a [reproducible example](https://reprex.tidyverse.org/). 
 
-#### Any requests for new features or enhancements can also be submitted as [GitHub issues](https://github.com/ncborcherding/immApex/issues).
+#### Any requests for new features or enhancements can also be submitted as [GitHub issues](https://github.com/BorchLab/immApex/issues).
 
-#### [Pull Requests](https://github.com/ncborcherding/immApex/pulls) are welcome for bug fixes, new features, or enhancements.
+#### [Pull Requests](https://github.com/BorchLab/immApex/pulls) are welcome for bug fixes, new features, or enhancements.
