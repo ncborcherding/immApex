@@ -5,20 +5,20 @@ API for single-cell immune repertoire deep learning models
 
 <!-- badges: start -->
 [![BioC status](http://www.bioconductor.org/shields/build/release/bioc/immApex.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/immApex)
-[![R-CMD-check](https://github.com/ncborcherding/immApex/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ncborcherding/immApex/actions/workflows/R-CMD-check.yaml)
-[![Codecov test coverage](https://codecov.io/gh/ncborcherding/immApex/branch/main/graph/badge.svg)](https://app.codecov.io/gh/ncborcherding/immApex?branch=main)
+[![R-CMD-check](https://github.com/BorchLab/immApex/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/BorchLab/immApex/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/BorchLab/immApex/branch/main/graph/badge.svg)](https://app.codecov.io/gh/BorchLab/immApex?branch=main)
 <!-- badges: end -->
 
 ## Introduction
 
 Single-cell sequencing is now a integral tool in the field of immunology and oncology that allows researchers to couple RNA quantification and other modalities, 
-like immune cell receptor profiling at the level of an individual cell. Towards this end, we developed the [scRepertoire](https://github.com/ncborcherding/scRepertoire) 
-R package to assist in the interaction of immune receptor and gene expression sequencing. Further we developed models for embedding single-cell TCR sequences ([Trex](https://github.com/ncborcherding/Trex)) and BCR sequences ([Ibex](https://github.com/ncborcherding/Ibex)) using convolutional neural networks. **immApex** is the API for preparing the sequence data for the current and future models in the scRepertoire ecosystem. 
+like immune cell receptor profiling at the level of an individual cell. Towards this end, we developed the [scRepertoire](https://github.com/BorchLab/scRepertoire) 
+R package to assist in the interaction of immune receptor and gene expression sequencing. Further we developed models for embedding single-cell TCR sequences ([Trex](https://github.com/BorchLab/Trex)) and BCR sequences ([Ibex](https://github.com/BorchLab/Ibex)) using convolutional neural networks. **immApex** is the API for preparing the sequence data for the current and future models in the scRepertoire ecosystem. 
 
 ## System requirements 
 
 immApex has been tested on R versions >= 4.0. Please consult the DESCRIPTION file for more details on required R packages - it is specifically designed to work with single-cell objects that have 
-had BCR/TCRs added using [scRepertoire](https://github.com/ncborcherding/scRepertoire). immApex has been tested on OS X and Linux platforms.
+had BCR/TCRs added using [scRepertoire](https://github.com/BorchLab/scRepertoire). immApex has been tested on OS X and Linux platforms.
 
 **keras3** is necessary for immApex (this includes the set up of the tensorflow environment in R):
 
