@@ -9,12 +9,14 @@
 #'                                number.of.sequences = 100,
 #'                                min.length = 8,
 #'                                max.length = 16)
-#'                                 
+#' 
+#' if(reticulate::py_module_available("keras")) {                                 
 #' new.sequences <- variationalSequences(sequences, 
 #'                                       encoder = "onehotEncoder",
 #'                                       encoder.hidden.dim = c(256, 128),
 #'                                       latent.dim = 16,
 #'                                       batch.size = 16)
+#'}
 #' 
 #' @param input.sequences The amino acid or nucleotide sequences to use
 #' @param encoder.function The method to prepare the sequencing information - 
@@ -183,7 +185,8 @@ variationalSequences <- function(input.sequences,
   }
       
   # Compile the model
-  vae_with_loss %>% compile(optimizer = optimizer.to.use, loss = dummy_loss)
+  vae_with_loss %>% keras3::compile(optimizer = optimizer.to.use, 
+                                    loss = dummy_loss)
   
   if(verbose) {    
     message("Fitting Model....")
