@@ -1,10 +1,9 @@
 Package: immApex
-Title: Tools for Adaptive Immune Receptor Sequence-Based Keras Modeling
-Version: 0.99.5
-Date: 2024-10-22
+Title: Tools for Adaptive Immune Receptor Sequence-Based Machine and Deep Learning
+Version: 1.1.0
 Authors@R: c(
     person(given = "Nick", family = "Borcherding", role = c("aut", "cre"), email = "ncborch@gmail.com"))
-Description: A set of tools to build tensorflow/keras-based models in R from amino acid and nucleotide sequences focusing on adaptive immune receptors. The package includes pre-processing of sequences, unifying gene nomenclature usage, encoding sequences, and combining models. This package will serve as the basis of future immune receptor sequence functions/packages/models compatible with the scRepertoire ecosystem.
+Description: A set of tools to build tensorflow/keras3-based models in R from amino acid and nucleotide sequences focusing on adaptive immune receptors. The package includes pre-processing of sequences, unifying gene nomenclature usage, encoding sequences, and combining models. This package will serve as the basis of future immune receptor sequence functions/packages/models compatible with the scRepertoire ecosystem.
 License: MIT + file LICENSE 
 Encoding: UTF-8
 RoxygenNote: 7.3.2
@@ -13,34 +12,34 @@ Depends:
 	R (>= 4.3.0)
 Imports: hash,
 	httr,
-	keras,
+	keras3,
 	magrittr,
 	matrixStats,
 	methods,
-        Rcpp (>= 0.12.11),
-        RcppParallel,
+  Rcpp (>= 0.12.11),
+  RcppParallel,
+	reticulate,
 	rvest,
 	SingleCellExperiment,
 	stats,
 	stringi,
 	stringr,
 	tensorflow,
-        utils
+  utils
 Suggests: 
 	BiocStyle,
 	ggplot2,
 	knitr,
 	markdown,
-	reticulate, 
 	rmarkdown, 
 	scRepertoire,
 	spelling,
-        testthat,
+  testthat,
 	viridis
 LinkingTo:
-        Rcpp,
-        RcppParallel
+  Rcpp,
+  RcppParallel
 VignetteBuilder: knitr
 Language: en-US
-URL: https://github.com/ncborcherding/immApex/
-BugReports: https://github.com/ncborcherding/immApex/issues
+URL: https://github.com/BorchLab/immApex/
+BugReports: https://github.com/BorchLab/immApex/issues

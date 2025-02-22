@@ -4,15 +4,15 @@
 \name{immApex-package}
 \alias{immApex}
 \alias{immApex-package}
-\title{immApex: Tools for Adaptive Immune Receptor Sequence-Based Keras Modeling}
+\title{immApex: Tools for Adaptive Immune Receptor Sequence-Based Keras3 Modeling}
 \description{
-A set of tools to build tensorflow/keras-based models in R from amino acid and nucleotide sequences focusing on adaptive immune receptors. The package includes pre-processing of sequences, unifying gene nomenclature usage, encoding sequences, and combining models. This package will serve as the basis of future immune receptor sequence functions/packages/models compatible with the scRepertoire ecosystem.
+A set of tools to build tensorflow/keras3-based models in R from amino acid and nucleotide sequences focusing on adaptive immune receptors. The package includes pre-processing of sequences, unifying gene nomenclature usage, encoding sequences, and combining models. This package will serve as the basis of future immune receptor sequence functions/packages/models compatible with the scRepertoire ecosystem.
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/ncborcherding/immApex/}
-  \item Report bugs at \url{https://github.com/ncborcherding/immApex/issues}
+  \item \url{https://github.com/BorchLab/immApex/}
+  \item Report bugs at \url{https://github.com/BorchLab/immApex/issues}
 }
 
 }

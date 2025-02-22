@@ -9,12 +9,13 @@
 #'                                    number.of.sequences = 100,
 #'                                    min.length = 8,
 #'                                    max.length = 16)
-#'                           
+#' if(reticulate::py_module_available("numpy")) {                         
 #' sequence.matrix <- onehotEncoder(new.sequences, 
 #'                                  convert.to.matrix = TRUE)
 #'                                  
 #' decoded.sequences <- sequenceDecoder(sequence.matrix,
 #'                                      padding.symbol = ".")
+#' }
 #' 
 #' @param sequence.matrix The encoded sequences to decode in an array or matrix
 #' @param encoder The method to prepare the sequencing information - 
@@ -83,7 +84,7 @@ sequenceDecoder <- function(sequence.matrix,
   sqrt(sum((vec1 - vec2)^2))
 }
 
-#' @importFrom keras array_reshape
+#' @importFrom reticulate array_reshape
 #' @importFrom utils data
 .propertyDecoder <- function(sequence.matrix,
                              aa.method.to.use,
@@ -131,7 +132,7 @@ sequenceDecoder <- function(sequence.matrix,
 
 #TODO Add testthat 
 
-#' @importFrom keras array_reshape
+#' @importFrom reticulate array_reshape
 .onehotDecoder <- function(sequence.matrix,
                            sequence.dictionary,
                            padding.symbol,
