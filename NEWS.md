@@ -1,3 +1,32 @@
+# immApex VERSION 1.0.5
+
+## UNDERLYING CHANGES
+* ```getIMGT()``` checks for availability of IMGT website
+* Expanded Unit Tests
+* Unit Tests and Vignette now evaluate for proper python installation overall
+
+# immApex VERSION 1.0.4
+
+## UNDERLYING CHANGES
+* Optional testthat variationalSequences() evaulate presence of Keras
+
+# immApex VERSION 1.0.3
+
+## UNDERLYING CHANGES
+* Drop evaluation of variationalSequences() example
+
+# immApex VERSION 1.0.2
+
+## UNDERLYING CHANGES
+* Vignette includes eval of keras installation for certain chunks
+
+# immApex VERSION 1.0.1
+
+## UNDERLYING CHANGES
+* Fix issue with optimizer call in ```variationalSequences()```
+* Move package to keras3
+* Version Bump to be consistent with Bioconductor release
+
 # immApex VERSION 0.99.5
 
 ## UNDERLYING CHANGES

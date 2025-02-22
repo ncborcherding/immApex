@@ -10,10 +10,12 @@
 #'                                    number.of.sequences = 100,
 #'                                    min.length = 8,
 #'                                    max.length = 16)
-#'                           
+#'                                    
+#' if(reticulate::py_module_available("numpy")) {                            
 #' sequence.matrix <- propertyEncoder(new.sequences, 
 #'                                    method.to.use = "VHSE",
 #'                                    convert.to.matrix = TRUE)
+#' }
 #'                         
 #' @param input.sequences The amino acid sequences to use
 #' @param max.length Additional length to pad, NULL will pad sequences 
@@ -30,7 +32,7 @@
 #' Median Absolute Deviation ("mads")
 #' @param padding.symbol Symbol to use for padding at the end of sequences
 #' @param verbose Print messages corresponding to the processing step
-#' @importFrom keras array_reshape
+#' @importFrom reticulate array_reshape
 #' @importFrom utils data
 #' 
 #' @export

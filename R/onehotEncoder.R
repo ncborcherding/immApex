@@ -9,9 +9,11 @@
 #'                                    number.of.sequences = 100,
 #'                                    min.length = 8,
 #'                                    max.length = 16)
-#'                           
+#'                                    
+#' if(reticulate::py_module_available("numpy")) {                            
 #' sequence.matrix <- onehotEncoder(new.sequences, 
 #'                                  convert.to.matrix = TRUE)
+#' }
 #'                         
 #' @param input.sequences The amino acid or nucleotide sequences to use
 #' @param max.length Additional length to pad, NULL will pad sequences 
@@ -25,7 +27,7 @@
 #' @param padding.symbol Symbol to use for padding at the end of sequences
 #' @param verbose Print messages corresponding to the processing step
 #' 
-#' @importFrom keras array_reshape
+#' @importFrom reticulate array_reshape
 #' @importFrom stats setNames
 #' 
 #' @export
