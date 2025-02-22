@@ -348,6 +348,16 @@ adj.matrix <- adjacencyMatrix(sequences,
 adj.matrix
 ```
 
+## buildNetwork
+
+The function ```buildNetwork()``` constructs a weighted similarity network from nucleotide or amino acid sequences sequences provided either as a character vector or a data frame with gene annotations. It accepts an edit distance threshold and optional logical parameters (**filter.v** and **filter.j**) to restrict comparisons to sequences with matching V or J gene annotations. Internally, it uses a symmetric deletion lookup combined with a banded edit-distance algorithm.
+
+```{r tidy = FALSE}
+g1 <- build_air_network_symdel(sequences, 
+                               threshold = 2)
+```
+
+
 # Extracting Sequences
 
 ## sequenceDecoder
