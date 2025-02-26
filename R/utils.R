@@ -91,3 +91,24 @@ array.dimnamer <- function(array) {
 .is_seurat_or_se_object <- function(obj) {
   .is_seurat_object(obj) || .is_se_object(obj)
 }
+
+.get.genes.updated <- function(input.data, technology, region) {
+  if (.is_seurat_or_se_object(input.data)) {
+    genes.updated <- region
+  } else {
+    if (technology %in% c("TenX", "Adaptive")) {
+      potential_col <- paste0(region, "_gene")
+      if (!(potential_col %in% colnames(input.data))) {
+        genes.updated <- paste0(region, "GeneName")
+      } else {
+        genes.updated <- potential_col
+      }
+    } else if (technology %in% c("AIRR")) {
+      genes.updated <- paste0(region, "_call")
+    } else {
+      genes.updated <- region
+    }
+  }
+  return(genes.updated)
+}
+
