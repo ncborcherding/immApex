@@ -35,9 +35,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// post_filter_candidates
-DataFrame post_filter_candidates(const IntegerMatrix& candidatePairs, const std::vector<std::string>& sequences, const std::vector<std::string>& vGenes, const std::vector<std::string>& jGenes, int threshold, bool filterV, bool filterJ);
-RcppExport SEXP _immApex_post_filter_candidates(SEXP candidatePairsSEXP, SEXP sequencesSEXP, SEXP vGenesSEXP, SEXP jGenesSEXP, SEXP thresholdSEXP, SEXP filterVSEXP, SEXP filterJSEXP) {
+// post_filter_candidates_seq
+DataFrame post_filter_candidates_seq(const IntegerMatrix& candidatePairs, const std::vector<std::string>& sequences, const std::vector<std::string>& vGenes, const std::vector<std::string>& jGenes, int threshold, bool filterV, bool filterJ);
+RcppExport SEXP _immApex_post_filter_candidates_seq(SEXP candidatePairsSEXP, SEXP sequencesSEXP, SEXP vGenesSEXP, SEXP jGenesSEXP, SEXP thresholdSEXP, SEXP filterVSEXP, SEXP filterJSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -48,7 +48,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type threshold(thresholdSEXP);
     Rcpp::traits::input_parameter< bool >::type filterV(filterVSEXP);
     Rcpp::traits::input_parameter< bool >::type filterJ(filterJSEXP);
-    rcpp_result_gen = Rcpp::wrap(post_filter_candidates(candidatePairs, sequences, vGenes, jGenes, threshold, filterV, filterJ));
+    rcpp_result_gen = Rcpp::wrap(post_filter_candidates_seq(candidatePairs, sequences, vGenes, jGenes, threshold, filterV, filterJ));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -56,7 +56,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_immApex_symmetric_deletion_lookup_cpp", (DL_FUNC) &_immApex_symmetric_deletion_lookup_cpp, 2},
     {"_immApex_edit_distance_threshold", (DL_FUNC) &_immApex_edit_distance_threshold, 3},
-    {"_immApex_post_filter_candidates", (DL_FUNC) &_immApex_post_filter_candidates, 7},
+    {"_immApex_post_filter_candidates_seq", (DL_FUNC) &_immApex_post_filter_candidates_seq, 7},
     {NULL, NULL, 0}
 };
 

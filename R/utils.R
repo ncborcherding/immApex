@@ -96,6 +96,7 @@ array.dimnamer <- function(array) {
   if (.is_seurat_or_se_object(input.data)) {
     genes.updated <- region
   } else {
+    if (is.null(technology)) technology <- NA
     if (technology %in% c("TenX", "Adaptive")) {
       potential_col <- paste0(region, "_gene")
       if (!(potential_col %in% colnames(input.data))) {

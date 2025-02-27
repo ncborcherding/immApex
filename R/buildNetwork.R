@@ -62,8 +62,8 @@
 #' # Using a data frame with a custom sequence column:
 #' df <- data.frame(
 #'   mySeqs = c("CASSLGTDTQYF", "CASSPGTDTQYF", "CASSLGNDTQYF", "CASRLGNDTQYF"),
-#'   v.gene = c("TRBV20", "TRBV20", "TRBV12", "TRBV20"),
-#'   j.gene = c("TRBJ2-7", "TRBJ2-7", "TRBJ2-1", "TRBJ2-7")
+#'   v = c("TRBV20", "TRBV20", "TRBV12", "TRBV20"),
+#'   j = c("TRBJ2-7", "TRBJ2-7", "TRBJ2-1", "TRBJ2-7")
 #' )
 #' g_df <- buildNetwork(df, 
 #'                      threshold = 2, 
@@ -74,6 +74,7 @@
 #'
 #' @importFrom igraph graph_from_data_frame make_empty_graph V E `V<-` `E<-`
 #' @importFrom Rcpp evalCpp
+#' @useDynLib immApex, .registration = TRUE
 #' @export
 buildNetwork <- function(input.data, 
                          sequence.column = "sequence",
@@ -149,13 +150,13 @@ buildNetwork <- function(input.data,
   candidate_pairs <- symmetric_deletion_lookup_cpp(sequences, threshold)
   
   # Post-filter candidates to verify edit distances and obtain edge weights.
-  edge_df <- post_filter_candidates(candidate_pairs, 
-                                    sequences, 
-                                    v_genes, 
-                                    j_genes,
-                                    threshold, 
-                                    filter.v, 
-                                    filter.j)
+  edge_df <- post_filter_candidates_seq(candidate_pairs, 
+                                        sequences, 
+                                        v_genes, 
+                                        j_genes,
+                                        threshold, 
+                                        filter.v, 
+                                        filter.j)
   
   # Build a vertices data frame including all sequences.
   vertices_df <- data.frame(name = as.character(seq_len(n)), 

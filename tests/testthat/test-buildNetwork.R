@@ -24,12 +24,12 @@ test_that("Edge weights are computed correctly", {
 test_that("Function works with data frame input and retains gene annotations", {
   df <- data.frame(
     sequence = c("AAA", "AAB", "ABA", "ABB"),
-    `v.gene` = c("V1", "V1", "V2", "V1"),
-    `j.gene` = c("J1", "J1", "J2", "J1"),
+    v = c("V1", "V1", "V2", "V1"),
+    j = c("J1", "J1", "J2", "J1"),
     stringsAsFactors = FALSE
   )
   # With filtering enabled, only pairs with matching v.gene and j.gene should be connected.
-  g <- buildNetwork(df, threshold = 1, filter_v = TRUE, filter_j = TRUE)
+  g <- buildNetwork(df, threshold = 1, filter.v = TRUE, filter.j = TRUE)
   expect_true(inherits(g, "igraph"))
   # Check that vertex attributes match the input.
   expect_equal(V(g)$sequence, df$sequence)
