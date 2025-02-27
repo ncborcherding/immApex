@@ -23,7 +23,7 @@ set.seed(42)
 # Check Python modules once at the start
 keras_installed <- reticulate::py_module_available("keras")
 numpy_installed <- reticulate::py_module_available("numpy")
-keras3_installed <- packageVersion("keras3") < "1.2.0"
+keras3_installed <- packageVersion("keras3") >= "1.2.0"
 
 # If not installed, skip evaluation of all subsequent chunks
 knitr::opts_chunk$set(
@@ -354,8 +354,8 @@ adj.matrix
 The function ```buildNetwork()``` constructs a weighted similarity network from nucleotide or amino acid sequences sequences provided either as a character vector or a data frame with gene annotations. It accepts an edit distance threshold and optional logical parameters (**filter.v** and **filter.j**) to restrict comparisons to sequences with matching V or J gene annotations. Internally, it uses a symmetric deletion lookup combined with a banded edit-distance algorithm.
 
 ```{r tidy = FALSE}
-g1 <- build_air_network_symdel(sequences, 
-                               threshold = 2)
+g1 <- buildNetwork(sequences, 
+                   threshold = 2)
 ```
 
 
