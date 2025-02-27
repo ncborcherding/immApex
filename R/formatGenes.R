@@ -41,7 +41,7 @@ formatGenes <- function(input.data,
       stop("Please select a technology in the following category: 'TenX', 'AIRR', 'Adaptive'")
     }
   }
-  genes.updated <- .get.genes.updated(input, technology, region)
+  genes.updated <- .get.genes.updated(input.data, technology, region)
   if (.is_seurat_or_se_object(input.data)) {
     chain.1 <- getIR(input.data, 
                      chains = "TRA", 

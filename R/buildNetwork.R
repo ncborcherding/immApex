@@ -65,10 +65,14 @@
 #'   v.gene = c("TRBV20", "TRBV20", "TRBV12", "TRBV20"),
 #'   j.gene = c("TRBJ2-7", "TRBJ2-7", "TRBJ2-1", "TRBJ2-7")
 #' )
-#' g_df <- buildNetwork(df, threshold = 2, filter.v = TRUE, filter.j = TRUE, sequence.column = "mySeqs")
+#' g_df <- buildNetwork(df, 
+#'                      threshold = 2, 
+#'                      filter.v = TRUE, 
+#'                      filter.j = TRUE, 
+#'                      sequence.column = "mySeqs")
 #' plot(g_df)
 #'
-#' @importFrom igraph graph_from_data_frame make_empty_graph V E
+#' @importFrom igraph graph_from_data_frame make_empty_graph V E `V<-` `E<-`
 #' @importFrom Rcpp evalCpp
 #' @export
 buildNetwork <- function(input.data, 
@@ -136,7 +140,7 @@ buildNetwork <- function(input.data,
     j_genes <- str_split(j_genes, "[*]", simplify = TRUE)[,1]
   }
   
-  if(simplify.familyt) {
+  if(simplify.families) {
     v_genes <- str_split(v_genes, "[-]", simplify = TRUE)[,1]
     j_genes <- str_split(j_genes, "[-]", simplify = TRUE)[,1]
   }
