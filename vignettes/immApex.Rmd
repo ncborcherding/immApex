@@ -1,17 +1,17 @@
 ---
-title: Making Deep Learning Models with immApex
+title: Machine and Deep Learning Models with immApex
 author: 
 - name: Nick Borcherding
   email: ncborch@gmail.com
   affiliation: Washington University in St. Louis, School of Medicine, St. Louis, MO, USA
-date: "Feburary 25, 2025"
+date: 'Compiled: `r format(Sys.Date(), "%B %d, %Y")`'
 output:
   BiocStyle::html_document:
     toc_float: true
 package: immApex
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Making Deep Learning Models with immApex}
+  %\VignetteIndexEntry{Machine and Deep Learning Models with immApex}
   %\VignetteEncoding{UTF-8} 
 ---
 

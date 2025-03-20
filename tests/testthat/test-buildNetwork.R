@@ -29,12 +29,15 @@ test_that("Function works with data frame input and retains gene annotations", {
     stringsAsFactors = FALSE
   )
   # With filtering enabled, only pairs with matching v.gene and j.gene should be connected.
-  g <- buildNetwork(df, threshold = 1, filter.v = TRUE, filter.j = TRUE)
+  g <- buildNetwork(df, 
+                    threshold = 1, 
+                    filter.v = TRUE, 
+                    filter.j = TRUE)
   expect_true(inherits(g, "igraph"))
   # Check that vertex attributes match the input.
   expect_equal(V(g)$sequence, df$sequence)
-  expect_equal(V(g)$v.gene, df[["v.gene"]])
-  expect_equal(V(g)$j.gene, df[["j.gene"]])
+  expect_equal(V(g)$v.gene, df[["v"]])
+  expect_equal(V(g)$j.gene, df[["j"]])
 })
 
 test_that("buildNetwork returns an empty edge set when no pairs qualify", {
