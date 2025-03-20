@@ -38,10 +38,10 @@ formatGenes <- function(input.data,
   }
   if(!.is_seurat_or_se_object(input.data)) {
     if(technology %!in% c("TenX", "AIRR", "Adaptive")) {
-      stop("Please select a technology in the following category: 'TenX', 'AIRR', 'Adaptive', 'Omniscope'")
+      stop("Please select a technology in the following category: 'TenX', 'AIRR', 'Adaptive'")
     }
   }
-  
+  genes.updated <- .get.genes.updated(input.data, technology, region)
   if (.is_seurat_or_se_object(input.data)) {
     chain.1 <- getIR(input.data, 
                      chains = "TRA", 
@@ -50,17 +50,12 @@ formatGenes <- function(input.data,
                      chains = "TRB", 
                      sequence.type = "aa")[[1]]
     input.data <- rbind(chain.1, chain.2)
-    genes.updated <- region
   } else {
     input.data[input.data == ""] <- NA
     if(technology %in% c("TenX","Adaptive")) {
-      genes.updated <- paste0(region, "_gene")
       if(any(genes.updated %!in% colnames(input.data))) {
-        genes.updated <- paste0(region, "GeneName")
         input.data[,genes.updated][is.na(input.data[,genes.updated])] <- str_split(input.data[,"vGeneNameTies"][is.na(input.data[,genes.updated])], "[,]", simplify = TRUE)[,1]
       }
-    } else if (technology %in% c("AIRR")) {
-      genes.updated <- paste0(region, "_call")
     }
   }
  

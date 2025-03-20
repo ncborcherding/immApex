@@ -10,12 +10,15 @@ RoxygenNote: 7.3.2
 biocViews: Software, ImmunoOncology, SingleCell, Classification, Annotation, Sequencing, MotifAnnotation
 Depends: 
 	R (>= 4.3.0)
-Imports: hash,
+Imports: 
+        hash,
 	httr,
+        igraph,
 	keras3,
 	magrittr,
 	matrixStats,
 	methods,
+        Rcpp (>= 0.12.11),
 	reticulate,
 	rvest,
 	SingleCellExperiment,
@@ -26,14 +29,19 @@ Imports: hash,
         utils
 Suggests: 
 	BiocStyle,
+	ggraph,
 	ggplot2,
 	knitr,
+	graph,
 	markdown,
 	rmarkdown, 
 	scRepertoire,
 	spelling,
         testthat,
+	tidygraph,
 	viridis
+LinkingTo:
+        Rcpp
 VignetteBuilder: knitr
 Language: en-US
 URL: https://github.com/BorchLab/immApex/
