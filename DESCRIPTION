@@ -32,6 +32,7 @@ Suggests:
 	ggraph,
 	ggplot2,
 	knitr,
+	graph,
 	markdown,
 	rmarkdown, 
 	scRepertoire,
