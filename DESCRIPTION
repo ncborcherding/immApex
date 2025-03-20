@@ -29,6 +29,7 @@ Imports:
         utils
 Suggests: 
 	BiocStyle,
+	ggraph,
 	ggplot2,
 	knitr,
 	markdown,
@@ -36,6 +37,7 @@ Suggests:
 	scRepertoire,
 	spelling,
         testthat,
+	tidygraph,
 	viridis
 LinkingTo:
         Rcpp

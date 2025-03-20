@@ -88,8 +88,8 @@ plot(g)
 # Using a data frame with a custom sequence column:
 df <- data.frame(
   mySeqs = c("CASSLGTDTQYF", "CASSPGTDTQYF", "CASSLGNDTQYF", "CASRLGNDTQYF"),
-  v.gene = c("TRBV20", "TRBV20", "TRBV12", "TRBV20"),
-  j.gene = c("TRBJ2-7", "TRBJ2-7", "TRBJ2-1", "TRBJ2-7")
+  v = c("TRBV20", "TRBV20", "TRBV12", "TRBV20"),
+  j = c("TRBJ2-7", "TRBJ2-7", "TRBJ2-1", "TRBJ2-7")
 )
 g_df <- buildNetwork(df, 
                      threshold = 2, 
