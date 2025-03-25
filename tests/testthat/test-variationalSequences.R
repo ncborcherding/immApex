@@ -2,7 +2,7 @@
 # 1. Check module availability once.
 keras_installed <- reticulate::py_module_available("keras")
 numpy_installed <- reticulate::py_module_available("numpy")
-keras3_installed <- packageVersion("keras3") < "1.2.0"
+keras3_installed <- packageVersion("keras3") >= "1.2.0"
 
 # 2. If not installed, skip everything:
 if (!keras_installed || !numpy_installed || !keras3_installed) {
