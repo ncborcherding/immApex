@@ -15,8 +15,6 @@ test_that("getIMGT works when IMGT website is available", {
     skip("IMGT website is not accessible; skipping these tests.")
   }
   
-  # -- The rest of your tests go below here --
-  
   # Default Test
   TRBV_human_inframe_aa <- getIMGT(species = "human",
                                    chain = "TRB",
