@@ -1,6 +1,5 @@
 # immApex VERSION 1.2.0
-
-* Version bump to match Bioconductor release
+* Update version for BioConductor release
 
 # immApex VERSION 1.0.5
 
