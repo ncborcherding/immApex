@@ -48,9 +48,6 @@ suppressMessages(library(ggplot2))
 suppressMessages(library(viridis))
 suppressMessages(library(magrittr))
 suppressMessages(library(tidygraph))
-suppressMessages(library(ggraph))
-suppressMessages(library(igraph))
-
 ```
 
 # Getting and Manipulating Sequences
@@ -357,7 +354,7 @@ adj.matrix
 
 The function ```buildNetwork()``` constructs a weighted similarity network from nucleotide or amino acid sequences sequences provided either as a character vector or a data frame with gene annotations. It accepts an edit distance threshold and optional logical parameters (**filter.v** and **filter.j**) to restrict comparisons to sequences with matching V or J gene annotations. Internally, it uses a symmetric deletion lookup combined with a banded edit-distance algorithm.
 
-```{r tidy = FALSE}
+```{r tidy = FALSE, eval = FALSE}
 # Generating similar sequences
 set.seed(42)
 sequences <- generateSequences(prefix.motif = "CASSRT",
