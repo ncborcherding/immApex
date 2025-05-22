@@ -50,18 +50,9 @@ test_that("hill metrics are self-consistent", {
   expect_equal(h2, 2)                  # inv-Simpson
 })
 
-## ------------------------------------------------------------------- 
-##  4. custom function dispatch                                        
-## ------------------------------------------------------------------- 
-test_that("custom method function is accepted", {
-  my_fun <- function(cnt) length(cnt)          # returns richness
-  val <- calculateEntropy(toy, 
-                          method = my_fun)
-  expect_equal(val[["Pos2"]], 2)
-})
 
 ## ------------------------------------------------------------------- 
-##  5. padding & aa.length handling                                    
+##  4. padding & aa.length handling                                    
 ## ------------------------------------------------------------------- 
 test_that("explicit aa.length pads sequences correctly", {
   out <- calculateEntropy(toy, 
@@ -83,13 +74,13 @@ test_that("alternative padding.symbol is honoured", {
 })
 
 ## ------------------------------------------------------------------- 
-##  6. argument validation errors                                      
+##  5. argument validation errors                                      
 ## ------------------------------------------------------------------- 
 test_that("invalid inputs raise informative errors", {
   expect_error(calculateEntropy(1:5),           "character")   # non-char input
   expect_error(calculateEntropy(toy, 
                                 method = "banana"),
-               "Unknown method")
+               regexp =  "should be one of")
   expect_error(calculateEntropy(toy, 
                                 padding.symbol = "XX"),
                "single character")

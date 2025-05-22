@@ -64,23 +64,6 @@ calculateEntropy <- function(sequences,
     dimnames = list(NULL, paste0("Pos", seq_len(aa.length)))
   )
   
-  # 2. Internal helpers for the three diversity metrics
-  shannon <- function(cnt) {
-    p <- cnt / sum(cnt)
-    -sum(p * log(p))
-  }
-  
-  invsim <- function(cnt) {
-    p <- cnt / sum(cnt)
-    1 / sum(p * p)
-  }
-  
-  norm_H <- function(cnt) {
-    if (length(cnt) == 1L) return(0)        
-    h  <- shannon(cnt)
-    h / log(length(cnt))                    
-  }
-  
   ## pick the scoring function 
   div_fun <- if (is.function(method)) method else {
     if (!(method %in% names(.div.registry)))
@@ -101,15 +84,3 @@ calculateEntropy <- function(sequences,
   names(res) <- colnames(mat)
   res
 }
-
-## Diversity function list for switch
-.div.registry <- list(
-  shannon      = shannon_entropy,
-  inv.simpson  = inv_simpson,
-  gini.simpson = gini_simpson,
-  norm.entropy = norm_entropy,
-  pielou       = pielou_evenness,
-  hill0        = hill_q(0),   # richness
-  hill1        = hill_q(1),   # exp(H)
-  hill2        = hill_q(2)    # 1/Simpson
-)

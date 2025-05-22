@@ -134,4 +134,14 @@ hill_q <- function(q) {
 }
 
 
-
+## Diversity function list for switch
+.div.registry <- list(
+  shannon      = shannon_entropy,
+  inv.simpson  = inv_simpson,
+  gini.simpson = gini_simpson,
+  norm.entropy = norm_entropy,
+  pielou       = pielou_evenness,
+  hill0        = hill_q(0),   # richness
+  hill1        = hill_q(1),   # exp(H)
+  hill2        = hill_q(2)    # 1/Simpson
+)
