@@ -1,3 +1,6 @@
+# immApex VERSION 1.2.1
+* Updated unit tests and vignette check
+
 # immApex VERSION 1.2.0
 * Update version for BioConductor release
 

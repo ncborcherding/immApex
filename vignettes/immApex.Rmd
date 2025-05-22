@@ -20,15 +20,25 @@ knitr::opts_chunk$set(error=FALSE, message=FALSE, warning=FALSE)
 library(BiocStyle)
 set.seed(42)
 
-# Check Python modules once at the start
-keras_installed <- reticulate::py_module_available("keras")
-numpy_installed <- reticulate::py_module_available("numpy")
-keras3_installed <- packageVersion("keras3") >= "1.2.0"
+# Keras3 check function
+check_keras3 <- function() {
+  if (!requireNamespace("keras3", quietly = TRUE)) return(FALSE)
+  if (!reticulate::py_module_available("keras")) return(FALSE)
+  
+  # Try importing keras.ops to catch runtime errors
+  tryCatch({
+    reticulate::import("keras.ops", delay_load = FALSE)
+    TRUE
+  }, error = function(e) {
+    message("Skipping keras3-dependent code due to missing keras.ops.")
+    FALSE
+  })
+}
 
-# If not installed, skip evaluation of all subsequent chunks
-knitr::opts_chunk$set(
-  eval = keras_installed && numpy_installed && keras3_installed
-)
+use_keras3 <- check_keras3()
+
+# Disable evaluation of any code chunk if keras3 isn't usable
+knitr::opts_chunk$set(eval = use_keras3)
 ```
 
 # Introduction
