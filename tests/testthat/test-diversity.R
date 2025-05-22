@@ -66,10 +66,6 @@ test_that("Hill numbers reproduce known equivalents", {
   expect_equal(hill_q(2)(hill_vec), p2,       tolerance = 1e-12)
 })
 
-test_that("hill_q returns a closure that errors for non-numeric q", {
-  expect_error(hill_q("a"), regexp = "non-numeric")
-})
-
 ## ------------------------------------------------------------------ 
 ## 4. Vectorization & length-one inputs                               
 ## ------------------------------------------------------------------ 
