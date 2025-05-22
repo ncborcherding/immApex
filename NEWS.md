@@ -1,3 +1,12 @@
+# immApex VERSION 1.3.1
+
+## NEW FEATURES
+* ```calculateEntropy()``` added to calculate the positional entropy along a biological sequence
+* ```calculateFrequency()``` added to calculate the positional frequency along a biological sequence
+
+# immApex VERSION 1.2.0
+* Update version for BioConductor release
+
 # immApex VERSION 1.0.5
 
 ## UNDERLYING CHANGES
@@ -8,12 +17,12 @@
 # immApex VERSION 1.0.4
 
 ## UNDERLYING CHANGES
-* Optional testthat variationalSequences() evaulate presence of Keras
+* Optional testthat ```variationalSequences()``` evaluate presence of Keras
 
 # immApex VERSION 1.0.3
 
 ## UNDERLYING CHANGES
-* Drop evaluation of variationalSequences() example
+* Drop evaluation of ```variationalSequences()``` example
 
 # immApex VERSION 1.0.2
 
