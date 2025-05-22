@@ -1,0 +1,115 @@
+#' Positional Entropy / Diversity Biological Sequences
+#'
+#' @description
+#' Computes residue-wise diversity for a set of aligned (right-padded)
+#' CDR3 amino-acid sequences using *any* supported diversity estimator
+#' in **immApex**.  The following metrics are recognised:
+#'
+#' * **Shannon entropy:**           \link[=shannon_entropy]{\code{shannon_entropy}}
+#' * **Inverse Simpson:**           \link[=inv_simpson]{\code{inv_simpson}}
+#' * **Gini–Simpson index:**        \link[=gini_simpson]{\code{gini_simpson}}
+#' * **Normalised entropy:**        \link[=norm_entropy]{\code{norm_entropy}}
+#' * **Pielou evenness:**           \link[=pielou_evenness]{\code{pielou_evenness}}
+#' * **Hill numbers** (orders 0, 1, 2):
+#'   \link[=hill_q]{\code{hill_q}}(0), \code{hill_q(1)}, \code{hill_q(2)}
+#'
+#' You may also supply a **custom function** to `method`; it must take a
+#' numeric vector of clone counts and return a single numeric value.
+#'
+#' @param sequences `character()`. Vector of CDR3 AA strings.
+#' @param aa.length `integer(1)`. Target length to align / pad to.
+#' *Default* = `max(nchar(sequences))`.
+#' @param method Either the name of a built-in metric  (`"shannon"`, 
+#' `"inv.simpson"`, `"gini.simpson"`, `"norm.entropy"`, `"pielou"`, `"hill0"`, 
+#' `"hill1"`, `"hill2"`) **or** a custom function as described above.
+#' @param padding.symbol Symbol to use for padding at the end of sequences.
+#'
+#' @return Named `numeric()` vector of diversity scores,
+#'         one value per position (Pos1 … Pos*L*).
+#'         
+#' @examples
+#' seqs <- c("CASSLGQDTQYF", "CASSIRSSYNEQFF", "CASSTGELFF")
+#' calculateEntropy (seqs, method = "shannon")
+#' @export
+calculateEntropy <- function(sequences,
+                             aa.length = NULL,
+                             method    = c("shannon", 
+                                           "inv.simpson", 
+                                           "gini.simpson", 
+                                           "norm.entropy",
+                                           "pielou", 
+                                           "hill0", 
+                                           "hill1", 
+                                           "hill2"),
+                             padding.symbol = ".")
+{
+  stopifnot(is.character(sequences))
+  if (is.null(aa.length))
+    aa.length <- max(nchar(sequences))
+  if (nchar(padding.symbol) != 1L)
+    stop("'padding.symbol' must be a single character")
+  
+  method <- match.arg(method)
+  
+  # 1. Pad sequences to equal length and split into a char matrix
+  pad_seq  <- paste0(
+    sequences,
+    vapply(aa.length - nchar(sequences),
+           function(x) if (x > 0) strrep(padding.symbol, x) else "",
+           character(1))
+  )
+  mat <- matrix(
+    unlist(strsplit(pad_seq, "")),
+    ncol = aa.length, byrow = TRUE,
+    dimnames = list(NULL, paste0("Pos", seq_len(aa.length)))
+  )
+  
+  # 2. Internal helpers for the three diversity metrics
+  shannon <- function(cnt) {
+    p <- cnt / sum(cnt)
+    -sum(p * log(p))
+  }
+  
+  invsim <- function(cnt) {
+    p <- cnt / sum(cnt)
+    1 / sum(p * p)
+  }
+  
+  norm_H <- function(cnt) {
+    if (length(cnt) == 1L) return(0)        
+    h  <- shannon(cnt)
+    h / log(length(cnt))                    
+  }
+  
+  ## pick the scoring function 
+  div_fun <- if (is.function(method)) method else {
+    if (!(method %in% names(.div.registry)))
+      stop("Unknown method; choose one of ",
+           paste(names(.div.registry), collapse = ", "),
+           " or supply a function.")
+    .div.registry[[method]]
+  }
+  
+  ## 3. Vectorised per-column calculation 
+  res <- vapply(seq_len(aa.length), function(i) {
+    cnt <- table(mat[, i])
+    cnt <- cnt[names(cnt) != padding.symbol]             # drop padding
+    if (length(cnt) <= 1L) return(0)          # no variability
+    div_fun(cnt)
+  }, numeric(1L))
+  
+  names(res) <- colnames(mat)
+  res
+}
+
+## Diversity function list for switch
+.div.registry <- list(
+  shannon      = shannon_entropy,
+  inv.simpson  = inv_simpson,
+  gini.simpson = gini_simpson,
+  norm.entropy = norm_entropy,
+  pielou       = pielou_evenness,
+  hill0        = hill_q(0),   # richness
+  hill1        = hill_q(1),   # exp(H)
+  hill2        = hill_q(2)    # 1/Simpson
+)
