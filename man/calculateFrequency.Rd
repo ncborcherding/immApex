@@ -2,7 +2,7 @@
 % Please edit documentation in R/calculateFrequency.R
 \name{calculateFrequency}
 \alias{calculateFrequency}
-\title{Relative residue frequencies at every position}
+\title{Relative Residue Frequencies at Every Position}
 \usage{
 calculateFrequency(
   sequences,

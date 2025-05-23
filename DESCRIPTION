@@ -17,6 +17,7 @@ Imports:
 	magrittr,
 	matrixStats,
 	methods,
+	Rcpp,
 	reticulate,
 	rvest,
 	SingleCellExperiment,
@@ -38,6 +39,8 @@ Suggests:
         testthat,
 	tidygraph,
 	viridis
+LinkingTo:
+	Rcpp
 VignetteBuilder: knitr
 Language: en-US
 URL: https://github.com/BorchLab/immApex/

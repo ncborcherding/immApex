@@ -1,0 +1,14 @@
+## --- src/Makevars ----------------------------------------------------------
+##  Toolchain ---------------------------------------------------------------
+CXX_STD = CXX17               # tell R to compile C++17 code
+
+##  Optimisation & warnings -------------------------------------------------
+CXXFLAGS += -O3 -pipe -Wall -Wno-unused-function -ffast-math
+##  Uncomment the next line *only* if you are distributing source outside CRAN
+# CXXFLAGS += -march=native
+
+##  Optional OpenMP ---------------------------------------------------------
+##  CRAN’s macOS builder ignores these automatically if libomp is absent,
+##  so leaving them in is safe and speeds things up on machines that have it.
+PKG_CXXFLAGS += $(SHLIB_OPENMP_CXXFLAGS)
+PKG_LIBS     += $(SHLIB_OPENMP_CXXFLAGS)

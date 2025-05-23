@@ -102,7 +102,7 @@ positionalPropertySummary <- function(sequences,
               "Kidera"   = protr::extractKideraFactor(),
               "stScales" = protr::extractStScales(),
               "tScales"  = protr::extractTScales(),
-              "VHSE"     = protr::extractVHSEScales()
+              "VHSE"     = protr::extractVHSEScales())
   
   S <- S[ , amino.acids, drop = FALSE]   
   k <- nrow(S)                            
