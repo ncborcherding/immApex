@@ -1,4 +1,4 @@
-#' Relative residue frequencies at every position
+#' Relative Residue Frequencies at Every Position
 #'
 #' Quickly computes the per-position relative frequency of each symbol
 #' (amino-acid or nucleotide) in a set of biological sequences.  Variable-length
