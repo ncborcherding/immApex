@@ -30,10 +30,12 @@
 #' @param input.data Data frame output of \code{\link{formatGenes}}
 #' @param reference IMGT reference sequences from \code{\link{getIMGT}}
 #' @param chain Sequence chain to access, like \strong{TRB} or \strong{IGH}
-#' @param technology The sequencing technology employed - \strong{TenX}, \strong{Adaptive}, 
-#' \strong{AIRR}, or \strong{Omniscope}
-#' @param sequence.type Type of sequence - \strong{aa} for amino acid or \strong{nt} for nucleotide
-#' @param sequences The specific regions of the CDR loop to get from the data, such as \strong{CDR1}. 
+#' @param technology The sequencing technology employed - \strong{TenX}, 
+#' \strong{Adaptive}, or \strong{AIRR}
+#' @param sequence.type Type of sequence - \strong{aa} for amino acid or 
+#' \strong{nt} for nucleotide
+#' @param sequences The specific regions of the CDR loop to get from the data, 
+#' such as \strong{CDR1}. 
 #'                             
 #' @importFrom stringr str_split
 #' 

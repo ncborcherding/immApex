@@ -11,21 +11,25 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // fast_edge_list
-DataFrame fast_edge_list(CharacterVector seqs, int thresh, Nullable<CharacterVector> ids);
-RcppExport SEXP _immApex_fast_edge_list(SEXP seqsSEXP, SEXP threshSEXP, SEXP idsSEXP) {
+DataFrame fast_edge_list(CharacterVector seqs, double thresh, Nullable<CharacterVector> v_gene, Nullable<CharacterVector> j_gene, bool match_v, bool match_j, Nullable<CharacterVector> ids);
+RcppExport SEXP _immApex_fast_edge_list(SEXP seqsSEXP, SEXP threshSEXP, SEXP v_geneSEXP, SEXP j_geneSEXP, SEXP match_vSEXP, SEXP match_jSEXP, SEXP idsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< CharacterVector >::type seqs(seqsSEXP);
-    Rcpp::traits::input_parameter< int >::type thresh(threshSEXP);
+    Rcpp::traits::input_parameter< double >::type thresh(threshSEXP);
+    Rcpp::traits::input_parameter< Nullable<CharacterVector> >::type v_gene(v_geneSEXP);
+    Rcpp::traits::input_parameter< Nullable<CharacterVector> >::type j_gene(j_geneSEXP);
+    Rcpp::traits::input_parameter< bool >::type match_v(match_vSEXP);
+    Rcpp::traits::input_parameter< bool >::type match_j(match_jSEXP);
     Rcpp::traits::input_parameter< Nullable<CharacterVector> >::type ids(idsSEXP);
-    rcpp_result_gen = Rcpp::wrap(fast_edge_list(seqs, thresh, ids));
+    rcpp_result_gen = Rcpp::wrap(fast_edge_list(seqs, thresh, v_gene, j_gene, match_v, match_j, ids));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_immApex_fast_edge_list", (DL_FUNC) &_immApex_fast_edge_list, 3},
+    {"_immApex_fast_edge_list", (DL_FUNC) &_immApex_fast_edge_list, 7},
     {NULL, NULL, 0}
 };
 

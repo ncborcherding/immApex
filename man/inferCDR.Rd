@@ -20,12 +20,14 @@ inferCDR(
 
 \item{chain}{Sequence chain to access, like \strong{TRB} or \strong{IGH}}
 
-\item{technology}{The sequencing technology employed - \strong{TenX}, \strong{Adaptive}, 
-\strong{AIRR}, or \strong{Omniscope}}
+\item{technology}{The sequencing technology employed - \strong{TenX}, 
+\strong{Adaptive}, or \strong{AIRR}}
 
-\item{sequence.type}{Type of sequence - \strong{aa} for amino acid or \strong{nt} for nucleotide}
+\item{sequence.type}{Type of sequence - \strong{aa} for amino acid or 
+\strong{nt} for nucleotide}
 
-\item{sequences}{The specific regions of the CDR loop to get from the data, such as \strong{CDR1}.}
+\item{sequences}{The specific regions of the CDR loop to get from the data, 
+such as \strong{CDR1}.}
 }
 \value{
 A data frame with the new columns of CDR sequences added.
