@@ -14,6 +14,15 @@
 #' `data.frame` **or** a symmetric `Matrix::dgCMatrix` adjacency matrix.
 #' @param weight `"dist"` (store the edit distance) **or** `"binary"`
 #' (all edges get weight 1). Ignored when `output = "edges"`.
+#' 
+#' @examples
+#' data(immapex_example.data)
+#' 
+#' # Build Edge List
+#' edges <- buildNetwork(input.data = immapex_example.data[["AIRR"]],
+#'                       seq_col    = "junction_aa",
+#'                       threshold  = 0.9,     
+#'                       filter.v   = TRUE)
 #'
 #' @return edge-list `data.frame` **or** sparse adjacency `dgCMatrix`
 #' @export
