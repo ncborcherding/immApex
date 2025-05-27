@@ -23,3 +23,5 @@ src/immApex.so
 src/fastEditEdges.o
 src/RcppExports.o
 src/immApex.so
+src/immApex.so
+src/calculateMotif.o

@@ -1,8 +1,12 @@
 # immApex VERSION 1.3.1
 
+## UNDERLYING CHANGES
+* Rebuilt ```buildNetwork()``` via CPP integration
+
 ## NEW FEATURES
 * ```calculateEntropy()``` added to calculate the positional entropy along a biological sequence
 * ```calculateFrequency()``` added to calculate the positional frequency along a biological sequence
+* ```calculateMotif()``` added to get motif quantification of sequences
 
 # immApex VERSION 1.2.0
 * Update version for BioConductor release

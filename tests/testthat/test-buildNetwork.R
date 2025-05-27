@@ -1,4 +1,4 @@
-# test script for buildNetwork.R - testcases are NOT comprehensive!
+# test script for calculateMotif.R - testcases are NOT comprehensive!
 
 
 ## helper: tiny sequence set

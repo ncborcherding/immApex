@@ -47,3 +47,13 @@ edge-list `data.frame` **or** sparse adjacency `dgCMatrix`
 \description{
 Build Edit Distance Network
 }
+\examples{
+data(immapex_example.data)
+
+# Build Edge List
+edges <- buildNetwork(input.data = immapex_example.data[["AIRR"]],
+                      seq_col    = "junction_aa",
+                      threshold  = 0.9,     
+                      filter.v   = TRUE)
+
+}

@@ -10,6 +10,21 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// calculateMotif_cpp
+List calculateMotif_cpp(const CharacterVector& sequences, const IntegerVector& motif_lengths, const bool discontinuous, const char gap_char, const int nthreads_requested);
+RcppExport SEXP _immApex_calculateMotif_cpp(SEXP sequencesSEXP, SEXP motif_lengthsSEXP, SEXP discontinuousSEXP, SEXP gap_charSEXP, SEXP nthreads_requestedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const CharacterVector& >::type sequences(sequencesSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type motif_lengths(motif_lengthsSEXP);
+    Rcpp::traits::input_parameter< const bool >::type discontinuous(discontinuousSEXP);
+    Rcpp::traits::input_parameter< const char >::type gap_char(gap_charSEXP);
+    Rcpp::traits::input_parameter< const int >::type nthreads_requested(nthreads_requestedSEXP);
+    rcpp_result_gen = Rcpp::wrap(calculateMotif_cpp(sequences, motif_lengths, discontinuous, gap_char, nthreads_requested));
+    return rcpp_result_gen;
+END_RCPP
+}
 // fast_edge_list
 DataFrame fast_edge_list(CharacterVector seqs, double thresh, Nullable<CharacterVector> v_gene, Nullable<CharacterVector> j_gene, bool match_v, bool match_j, Nullable<CharacterVector> ids);
 RcppExport SEXP _immApex_fast_edge_list(SEXP seqsSEXP, SEXP threshSEXP, SEXP v_geneSEXP, SEXP j_geneSEXP, SEXP match_vSEXP, SEXP match_jSEXP, SEXP idsSEXP) {
@@ -29,6 +44,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_immApex_calculateMotif_cpp", (DL_FUNC) &_immApex_calculateMotif_cpp, 5},
     {"_immApex_fast_edge_list", (DL_FUNC) &_immApex_fast_edge_list, 7},
     {NULL, NULL, 0}
 };
