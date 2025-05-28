@@ -1,16 +1,5 @@
 # test script for variationalSequences.R - testcases are NOT comprehensive!
-# 1. Check module availability once.
-keras_installed <- reticulate::py_module_available("keras")
-numpy_installed <- reticulate::py_module_available("numpy")
-keras3_installed <- packageVersion("keras3") >= "1.2.0"
-
-# 2. If not installed, skip everything:
-if (!keras_installed || !numpy_installed || !keras3_installed) {
-  test_that("Skipping variationalSequences tests", {
-    skip("Required Python modules (Keras, NumPy) are not available.")
-  })
-} else {
-  test_that("variationalSequences works", {
+test_that("variationalSequences works", {
       set.seed(42)
       test_that("Test for valid input sequence length", {
         expect_error(variationalSequences(input.sequences = character(0)),
@@ -45,5 +34,4 @@ if (!keras_installed || !numpy_installed || !keras3_installed) {
                                        number.of.sequences = number_of_sequences)
         expect_equal(length(result), number_of_sequences)
       })
-  })
-}
+})

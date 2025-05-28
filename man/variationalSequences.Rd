@@ -84,12 +84,10 @@ sequences <- generateSequences(prefix.motif = "CAS",
                                min.length = 8,
                                max.length = 16)
 
-if(reticulate::py_module_available("keras")) {                                 
 new.sequences <- variationalSequences(sequences, 
                                       encoder = "onehotEncoder",
                                       encoder.hidden.dim = c(256, 128),
                                       latent.dim = 16,
                                       batch.size = 16)
-}
 
 }

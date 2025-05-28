@@ -1,20 +1,9 @@
 # test script for propertyEncoder.R - testcases are NOT comprehensive!
 
-# 1. Check module availability once.
-keras_installed <- reticulate::py_module_available("keras")
-numpy_installed <- reticulate::py_module_available("numpy")
 
-# 2. If not installed, skip everything:
-if (!keras_installed || !numpy_installed) {
-  test_that("Skipping propertyEncoder tests", {
-    skip("Required Python modules (Keras, NumPy) are not available.")
-  })
-} else {
-    
-  test_that("propertyEncoder works", {
+test_that("propertyEncoder works", {
     
     sequences <- getdata("generateSequences", "generateSequences_T1")
-      if(reticulate::py_module_available("numpy")) {
       #Return Matrix
       af.matrix <- propertyEncoder(sequences,
                                     method.to.use = "atchleyFactors",
@@ -22,8 +11,7 @@ if (!keras_installed || !numpy_installed) {
       
       expect_equal(
         af.matrix,
-        getdata("propertyEncoder", "propertyEncoder_AtchleyFactors_matrix")
-      )
+        getdata("propertyEncoder", "propertyEncoder_AtchleyFactors_matrix"))
       
       #Return Array
       kf.array <- propertyEncoder(sequences,
@@ -84,6 +72,4 @@ if (!keras_installed || !numpy_installed) {
         multi.array,
         getdata("propertyEncoder", "propertyEncoder_multi_array")
       )
-    }
-  })
-}
+})

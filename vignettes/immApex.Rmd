@@ -19,16 +19,6 @@ vignette: >
 knitr::opts_chunk$set(error=FALSE, message=FALSE, warning=FALSE)
 library(BiocStyle)
 set.seed(42)
-
-# Check Python modules once at the start
-keras_installed <- reticulate::py_module_available("keras")
-numpy_installed <- reticulate::py_module_available("numpy")
-keras3_installed <- packageVersion("keras3") >= "1.2.0"
-
-# If not installed, skip evaluation of all subsequent chunks
-knitr::opts_chunk$set(
-  eval = keras_installed && numpy_installed && keras3_installed
-)
 ```
 
 # Introduction
