@@ -8,6 +8,10 @@
 * ```calculateFrequency()``` added to calculate the positional frequency along a biological sequence
 * ```calculateMotif()``` added to get motif quantification of sequences
 
+# immApex VERSION 1.2.2
+* Updated unit tests and vignette check
+* Converted package to basilisk from reticulate
+
 # immApex VERSION 1.2.0
 * Update version for BioConductor release
 

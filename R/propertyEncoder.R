@@ -11,11 +11,9 @@
 #'                                    min.length = 8,
 #'                                    max.length = 16)
 #'                                    
-#' if(reticulate::py_module_available("numpy")) {                            
 #' sequence.matrix <- propertyEncoder(new.sequences, 
 #'                                    method.to.use = "VHSE",
 #'                                    convert.to.matrix = TRUE)
-#' }
 #'                         
 #' @param input.sequences The amino acid sequences to use
 #' @param max.length Additional length to pad, NULL will pad sequences 
@@ -32,7 +30,6 @@
 #' Median Absolute Deviation ("mads")
 #' @param padding.symbol Symbol to use for padding at the end of sequences
 #' @param verbose Print messages corresponding to the processing step
-#' @importFrom reticulate array_reshape
 #' @importFrom utils data
 #' 
 #' @export
@@ -99,8 +96,10 @@ propertyEncoder <- function(input.sequences,
     if(verbose){
       message("Preparing a matrix...")
     }
-    property_matrix <- array_reshape(property_sequences, c(dim(property_sequences)[1], dim(property_sequences)[2]*dim(property_sequences)[3]))
-    colnames(property_matrix) <- array.dimnamer(property_sequences)
+    property_matrix <- .array.reshape(property_sequences, 
+                                      c(dim(property_sequences)[1], 
+                                        dim(property_sequences)[2]*dim(property_sequences)[3]))
+    colnames(property_matrix) <- .array.dimnamer(property_sequences)
     return(property_matrix)
   } else {
     return(property_sequences)

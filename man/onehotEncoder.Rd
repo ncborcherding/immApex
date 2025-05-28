@@ -47,9 +47,7 @@ new.sequences <- generateSequences(prefix.motif = "CAS",
                                    min.length = 8,
                                    max.length = 16)
                                    
-if(reticulate::py_module_available("numpy")) {                            
 sequence.matrix <- onehotEncoder(new.sequences, 
                                  convert.to.matrix = TRUE)
-}
                         
 }

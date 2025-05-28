@@ -9,13 +9,13 @@
 #'                                    number.of.sequences = 100,
 #'                                    min.length = 8,
 #'                                    max.length = 16)
-#' if(reticulate::py_module_available("numpy")) {                         
+#'                          
 #' sequence.matrix <- onehotEncoder(new.sequences, 
 #'                                  convert.to.matrix = TRUE)
 #'                                  
 #' decoded.sequences <- sequenceDecoder(sequence.matrix,
 #'                                      padding.symbol = ".")
-#' }
+#' 
 #' 
 #' @param sequence.matrix The encoded sequences to decode in an array or matrix
 #' @param encoder The method to prepare the sequencing information - 
@@ -84,7 +84,6 @@ sequenceDecoder <- function(sequence.matrix,
   sqrt(sum((vec1 - vec2)^2))
 }
 
-#' @importFrom reticulate array_reshape
 #' @importFrom utils data
 .propertyDecoder <- function(sequence.matrix,
                              aa.method.to.use,
@@ -103,7 +102,7 @@ sequenceDecoder <- function(sequence.matrix,
   if (inherits(sequence.matrix, "matrix")) {
     num_sequences <- nrow(sequence.matrix)
     sequence_length <- ncol(sequence.matrix) / length(vectors)
-    sequence.matrix <- array_reshape(sequence.matrix, 
+    sequence.matrix <- .array.reshape(sequence.matrix, 
                                      c(num_sequences, sequence_length, length(vectors)))
   } else {
     num_sequences <- dim(sequence.matrix)[1]
@@ -132,7 +131,6 @@ sequenceDecoder <- function(sequence.matrix,
 
 #TODO Add testthat 
 
-#' @importFrom reticulate array_reshape
 .onehotDecoder <- function(sequence.matrix,
                            sequence.dictionary,
                            padding.symbol,
@@ -144,7 +142,7 @@ sequenceDecoder <- function(sequence.matrix,
   if (inherits(sequence.matrix, "matrix")) {
     num_sequences <- nrow(sequence.matrix)
     sequence_length <- ncol(sequence.matrix) / (length(sequence.dictionary) + 1)
-    sequence.matrix <- array_reshape(sequence.matrix, 
+    sequence.matrix <- .array.reshape(sequence.matrix, 
                                      c(num_sequences, sequence_length, (length(sequence.dictionary) + 1)))
   } else {
     num_sequences <- dim(sequence.matrix)[1]

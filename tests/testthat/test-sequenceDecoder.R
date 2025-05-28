@@ -1,16 +1,5 @@
 # test script for sequenceDecoder.R - testcases are NOT comprehensive!
 
-# 1. Check module availability once.
-keras_installed <- reticulate::py_module_available("keras")
-numpy_installed <- reticulate::py_module_available("numpy")
-
-# 2. If not installed, skip everything:
-if (!keras_installed || !numpy_installed) {
-  test_that("Skipping sequenceDecoder tests", {
-    skip("Required Python modules (Keras, NumPy) are not available.")
-  })
-} else {
-  
 test_that("sequenceDecoder works", {
     
     sequence.matrix <- getdata("ohe.encoder", "onehotEncoder_matrix")
@@ -40,5 +29,5 @@ test_that("sequenceDecoder works", {
       
     expect_equal(decoded.KF,
                  getdata("sequenceDecoder", "sequenceDecoder_KF"))
-  })
-}
+})
+
