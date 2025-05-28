@@ -5,7 +5,7 @@ calculateMotif_cpp <- function(sequences, motif_lengths, discontinuous = FALSE, 
     .Call(`_immApex_calculateMotif_cpp`, sequences, motif_lengths, discontinuous, gap_char, nthreads_requested)
 }
 
-fast_edge_list <- function(seqs, thresh = 2.0, v_gene = NULL, j_gene = NULL, match_v = FALSE, match_j = FALSE, ids = NULL) {
+fast_edge_list <- function(seqs, thresh = 1.0, v_gene = NULL, j_gene = NULL, match_v = FALSE, match_j = FALSE, ids = NULL) {
     .Call(`_immApex_fast_edge_list`, seqs, thresh, v_gene, j_gene, match_v, match_j, ids)
 }
 

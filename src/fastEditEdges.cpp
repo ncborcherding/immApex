@@ -1,136 +1,142 @@
-// ── src/fastEditEdges_group.cpp ─────────────────────────────────────────────
+// ── src/fastEditEdges.cpp ───────────────────────────────────────────────────
 #include <Rcpp.h>
 #include <numeric>
-using namespace Rcpp;
+#include <cmath>          // for ceil, lround
+#include <string>
+#include <vector>
+#include <algorithm>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
-/*---------------------------- helper from before ---------------------------*/
-static inline int lv_threshold(const std::string &s,
-                               const std::string &t,
-                               int thresh)
+using namespace Rcpp;     
+
+// ----------------------------------------------------------------------------
+//  Levenshtein with early‐exit (banded DP)
+// ----------------------------------------------------------------------------
+static inline int lv_threshold(const std::string &a,
+                               const std::string &b,
+                               int                thr)
 {
-  const int n = s.size(), m = t.size();
-  if (std::abs(n - m) > thresh) return thresh + 1;
+  int n = a.size(), m = b.size();
+  if (std::abs(n - m) > thr) return thr + 1;
   
-  std::vector<int> prev(m + 1), cur(m + 1);
-  std::iota(prev.begin(), prev.end(), 0);
+  std::vector<int> row(m+1);
+  std::iota(row.begin(), row.end(), 0);
   
   for (int i = 1; i <= n; ++i) {
-    cur[0] = i;
-    int row_min = cur[0];
+    int prev = row[0];
+    row[0]   = i;
+    int row_min = i;
     
     for (int j = 1; j <= m; ++j) {
-      const int cost = (s[i - 1] == t[j - 1]) ? 0 : 1;
-      cur[j] = std::min({ prev[j] + 1,
-                        cur[j - 1] + 1,
-                        prev[j - 1] + cost });
-      row_min = std::min(row_min, cur[j]);
+      int cur = row[j];
+      int cost = (a[i-1] == b[j-1] ? 0 : 1);
+      row[j] = std::min({ row[j-1] + 1,
+                        row[j]   + 1,
+                        prev     + cost });
+      prev = cur;
+      row_min = std::min(row_min, row[j]);
     }
-    if (row_min > thresh) return thresh + 1;
-    std::swap(prev, cur);
+    if (row_min > thr) return thr + 1;
   }
-  return prev.back();
+  return row[m];
 }
 
-/*-------------------------------------------------------------------------*//**
- *  Fast edit-distance edge list with optional V / J matching.
- *
- *  @param seqs     Character vector of sequences.
- *  @param thresh   Integer  ≥1 (“absolute”) **or** 0–1 (“relative”).
- *  @param v_gene   (optional) Character vector; recycled if length 1.
- *  @param j_gene   (optional) Character vector; recycled if length 1.
- *  @param match_v  If TRUE keep only pairs with identical V gene.
- *  @param match_j  If TRUE keep only pairs with identical J gene.
- *  @param ids      (optional) labels; default 1:n
- *
- *  @return data.frame 〈from,to,dist〉
- */
+// ----------------------------------------------------------------------------
+//  Main export
+// ----------------------------------------------------------------------------
 // [[Rcpp::export]]
 DataFrame fast_edge_list(CharacterVector           seqs,
-                         double                    thresh          = 2.0,
-                         Nullable<CharacterVector> v_gene = R_NilValue,
-                         Nullable<CharacterVector> j_gene = R_NilValue,
-                         bool                      match_v         = false,
-                         bool                      match_j         = false,
-                        Nullable<CharacterVector> ids    = R_NilValue)
+                         double                    thresh   = 1.0,
+                         Nullable<CharacterVector> v_gene   = R_NilValue,
+                         Nullable<CharacterVector> j_gene   = R_NilValue,
+                         bool                      match_v  = false,
+                         bool                      match_j  = false,
+                         Nullable<CharacterVector> ids      = R_NilValue)
 {
-  const int n = seqs.size();
-  if (n < 2) stop("Need at least two sequences.");
+  int n = seqs.size();
+  if (n < 2) stop("At least two sequences are required.");
+  if (thresh < 0) stop("`thresh` must be ≥ 0.");
   
-  /* ---------- convert input vectors to std::string for speed ------------ */
+  // 1) Read sequences + lengths
   std::vector<std::string> s(n);
-  for (int i = 0; i < n; ++i) s[i] = as<std::string>(seqs[i]);
+  std::vector<int>         lens(n);
+  for (int i = 0; i < n; ++i) {
+    s[i]    = as<std::string>(seqs[i]);
+    lens[i] = s[i].size();
+  }
   
-  /* ---------- V / J annotation (optional) ------------------------------- */
-  std::vector<std::string> v(n), j(n);
+  // 2) Optional V/J
+  std::vector<std::string> v(n), J(n);
   if (match_v) {
-    if (v_gene.isNull())
-      stop("match_v = TRUE but v_gene is missing");
+    if (v_gene.isNull()) stop("match_v=TRUE but no v_gene provided.");
     CharacterVector vv(v_gene);
-    if (vv.size() == 1) vv = CharacterVector(n, vv[0]);   // recycle scalar
-    if (vv.size() != n) stop("v_gene length must equal length(seqs)");
+    if (vv.size()==1) vv = CharacterVector(n, vv[0]);
+    if ((int)vv.size() != n) stop("Length of v_gene != number of sequences.");
     v = as< std::vector<std::string> >(vv);
   }
   if (match_j) {
-    if (j_gene.isNull())
-      stop("match_j = TRUE but j_gene is missing");
+    if (j_gene.isNull()) stop("match_j=TRUE but no j_gene provided.");
     CharacterVector jj(j_gene);
-    if (jj.size() == 1) jj = CharacterVector(n, jj[0]);
-    if (jj.size() != n) stop("j_gene length must equal length(seqs)");
-    j = as< std::vector<std::string> >(jj);
+    if (jj.size()==1) jj = CharacterVector(n, jj[0]);
+    if ((int)jj.size() != n) stop("Length of j_gene != number of sequences.");
+    J = as< std::vector<std::string> >(jj);
   }
   
-  /* ---------- labels ---------------------------------------------------- */
-  std::vector<std::string> lbl;
+  // 3) IDs / labels
+  std::vector<std::string> lbl(n);
   if (ids.isNull()) {
-    lbl.reserve(n);
-    for (int i = 0; i < n; ++i) lbl.emplace_back(std::to_string(i + 1));
+    for (int i = 0; i < n; ++i) lbl[i] = std::to_string(i+1);
   } else {
-    CharacterVector ids_cv(ids);
-    if (ids_cv.size() != n)
-      stop("ids length must equal length(seqs)");
-    lbl = as< std::vector<std::string> >(ids_cv);
+    CharacterVector ix(ids);
+    if ((int)ix.size() != n) stop("Length of ids != number of sequences.");
+    lbl = as< std::vector<std::string> >(ix);
   }
   
-  /* ---------- output containers (thread-safe aggregation) --------------- */
-  std::vector<std::string> out_from, out_to;
-  std::vector<int>         out_dist;
+  // 4) Reserve output buffers (worst-case n*(n-1)/2 edges)
+  size_t approx = (size_t)n * (n-1) / 2;
+  std::vector<std::string> out_from; out_from.reserve(approx);
+  std::vector<std::string> out_to;   out_to  .reserve(approx);
+  std::vector<int>         out_d;    out_d   .reserve(approx);
+  
+#ifdef _OPENMP
+  int nthread = omp_get_max_threads();
+#else
+  int nthread = 1;
+#endif
   
 #ifdef _OPENMP
 #pragma omp parallel
 #endif
 {
-  std::vector<std::string> local_from, local_to;
-  std::vector<int>         local_dist;
+  std::vector<std::string> loc_from; loc_from.reserve(approx / nthread);
+  std::vector<std::string> loc_to;   loc_to  .reserve(approx / nthread);
+  std::vector<int>         loc_d;    loc_d   .reserve(approx / nthread);
   
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic,32)
 #endif
   for (int i = 0; i < n; ++i) {
-    const int len_i = s[i].size();
-    
-    for (int j2 = i + 1; j2 < n; ++j2) {
+    for (int k = i + 1; k < n; ++k) {
+      if (match_v && v[i] != v[k]) continue;
+      if (match_j && J[i] != J[k]) continue;
       
-      /* ---- V/J filters ---------------------------------------------- */
-      if (match_v && v[i] != v[j2]) continue;
-      if (match_j && j[i] != j[j2]) continue;
+      // compute pairwise maxd
+      int maxd;
+      if (thresh >= 1.0) {
+        maxd = std::lround(thresh);
+      } else {
+        maxd = std::ceil(thresh * std::max(lens[i], lens[k]));
+      }
+      if (std::abs(lens[i] - lens[k]) > maxd) continue;
       
-      /* ---- length-difference pre-filter ----------------------------- */
-      const int len_j = s[j2].size();
-      int max_dist =
-        (thresh <= 1.0)
-        ? static_cast<int>(std::ceil(thresh * std::max(len_i, len_j)))
-        : static_cast<int>(std::round(thresh));
-      
-      if (std::abs(len_i - len_j) > max_dist) continue;
-      
-      /* ---- edit distance ------------------------------------------- */
-      int d = lv_threshold(s[i], s[j2], max_dist);
-      if (d > max_dist) continue;
-      
-      /* ---- store ---------------------------------------------------- */
-      local_from.emplace_back(lbl[i]);
-      local_to  .emplace_back(lbl[j2]);
-      local_dist.emplace_back(d);
+      int d = lv_threshold(s[i], s[k], maxd);
+      if (d <= maxd) {
+        loc_from.push_back(lbl[i]);
+        loc_to  .push_back(lbl[k]);
+        loc_d   .push_back(d);
+      }
     }
   }
   
@@ -138,14 +144,16 @@ DataFrame fast_edge_list(CharacterVector           seqs,
 #pragma omp critical
 #endif
 {
-  out_from.insert(out_from.end(), local_from.begin(), local_from.end());
-  out_to  .insert(out_to  .end(), local_to  .begin(), local_to  .end());
-  out_dist.insert(out_dist.end(),local_dist.begin(),local_dist.end());
+  out_from.insert(out_from.end(), loc_from.begin(), loc_from.end());
+  out_to  .insert(out_to  .end(),   loc_to  .begin(),   loc_to  .end());
+  out_d   .insert(out_d   .end(),   loc_d   .begin(),   loc_d   .end());
 }
-}  // end parallel section
+}
 
-return DataFrame::create(_["from"] = out_from,
-                         _["to"]   = out_to,
-                         _["dist"] = out_dist,
-                         _["stringsAsFactors"] = false);
+return DataFrame::create(
+  _["from"]               = out_from,
+  _["to"]                 = out_to,
+  _["dist"]               = out_d,
+  _["stringsAsFactors"]   = false
+);
 }

@@ -2,7 +2,7 @@
 #'
 #' @param input.data `data.frame`/`tibble` with sequence & metadata  
 #' (optional – omit if you supply `sequences` directly).
-#' @param sequences Character vector of sequences **or** column name
+#' @param input.sequences Character vector of sequences **or** column name
 #' inside `input.data`. Ignored when `NULL` and `seq_col` is non-`NULL`.
 #' @param seq_col,v_col,j_col Column names to use when `input.data` is given. 
 #' By default the function looks for common AIRR names (`junction_aa`, 
@@ -26,17 +26,17 @@
 #'
 #' @return edge-list `data.frame` **or** sparse adjacency `dgCMatrix`
 #' @export
-buildNetwork <- function(input.data  = NULL,
-                         sequences   = NULL,
-                         seq_col     = NULL,
-                         v_col       = NULL,
-                         j_col       = NULL,
-                         threshold   = 2,
-                         filter.v    = FALSE,
-                         filter.j    = FALSE,
-                         ids         = NULL,
-                         output      = c("edges", "sparse"),
-                         weight      = c("dist", "binary")) {
+buildNetwork <- function(input.data        = NULL,
+                         input.sequences   = NULL,
+                         seq_col           = NULL,
+                         v_col             = NULL,
+                         j_col             = NULL,
+                         threshold         = 2,
+                         filter.v          = FALSE,
+                         filter.j          = FALSE,
+                         ids               = NULL,
+                         output            = c("edges", "sparse"),
+                         weight            = c("dist", "binary")) {
   
   output <- match.arg(output)
   weight <- match.arg(weight)
@@ -44,9 +44,9 @@ buildNetwork <- function(input.data  = NULL,
   ## 1. Decide where sequences come from 
   if (is.null(input.data)) {
     # user gave a bare vector
-    if (is.null(sequences))
+    if (is.null(input.sequences))
       stop("Provide either `input.data` *or* a `sequences` vector.")
-    seq_vec <- as.character(sequences)
+    seq_vec <- as.character(input.sequences)
     n       <- length(seq_vec)
     v_vec <- j_vec <- NULL         
   } else {

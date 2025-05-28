@@ -6,7 +6,7 @@
 \usage{
 buildNetwork(
   input.data = NULL,
-  sequences = NULL,
+  input.sequences = NULL,
   seq_col = NULL,
   v_col = NULL,
   j_col = NULL,
@@ -22,7 +22,7 @@ buildNetwork(
 \item{input.data}{`data.frame`/`tibble` with sequence & metadata
 (optional – omit if you supply `sequences` directly).}
 
-\item{sequences}{Character vector of sequences **or** column name
+\item{input.sequences}{Character vector of sequences **or** column name
 inside `input.data`. Ignored when `NULL` and `seq_col` is non-`NULL`.}
 
 \item{seq_col, v_col, j_col}{Column names to use when `input.data` is given. 
