@@ -19,26 +19,6 @@ vignette: >
 knitr::opts_chunk$set(error=FALSE, message=FALSE, warning=FALSE)
 library(BiocStyle)
 set.seed(42)
-
-# Keras3 check function
-check_keras3 <- function() {
-  if (!requireNamespace("keras3", quietly = TRUE)) return(FALSE)
-  if (!reticulate::py_module_available("keras")) return(FALSE)
-  
-  # Try importing keras.ops to catch runtime errors
-  tryCatch({
-    reticulate::import("keras.ops", delay_load = FALSE)
-    TRUE
-  }, error = function(e) {
-    message("Skipping keras3-dependent code due to missing keras.ops.")
-    FALSE
-  })
-}
-
-use_keras3 <- check_keras3()
-
-# Disable evaluation of any code chunk if keras3 isn't usable
-knitr::opts_chunk$set(eval = use_keras3)
 ```
 
 # Introduction
@@ -58,9 +38,6 @@ suppressMessages(library(ggplot2))
 suppressMessages(library(viridis))
 suppressMessages(library(magrittr))
 suppressMessages(library(tidygraph))
-suppressMessages(library(ggraph))
-suppressMessages(library(igraph))
-
 ```
 
 # Getting and Manipulating Sequences
@@ -367,7 +344,7 @@ adj.matrix
 
 The function ```buildNetwork()``` constructs a weighted similarity network from nucleotide or amino acid sequences sequences provided either as a character vector or a data frame with gene annotations. It accepts an edit distance threshold and optional logical parameters (**filter.v** and **filter.j**) to restrict comparisons to sequences with matching V or J gene annotations. Internally, it uses a symmetric deletion lookup combined with a banded edit-distance algorithm.
 
-```{r tidy = FALSE}
+```{r tidy = FALSE, eval = FALSE}
 # Generating similar sequences
 set.seed(42)
 sequences <- generateSequences(prefix.motif = "CASSRT",

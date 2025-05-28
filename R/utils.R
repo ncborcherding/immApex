@@ -65,15 +65,6 @@ substring.extractor <- function(strings, motif.length) {
   (x- min(x)) /(max(x)-min(x))
 }
 
-#' @importFrom stringr str_sort
-array.dimnamer <- function(array) {
-  combinations <- expand.grid(dimnames(array)[[2]], dimnames(array)[[3]], stringsAsFactors = FALSE, KEEP.OUT.ATTRS = FALSE)
-  combinations[,1] <- str_sort(combinations[,1], numeric = TRUE)
-  combinations[,2] <- dimnames(array)[[3]]
-  combined_strings <- apply(combinations, 1, function(x) paste0(x[1], "_", x[2]))
-  return(combined_strings)
-}
-
 #' @importFrom matrixStats colMedians colMeans2 colSums2 colVars colMads
 .get.stat.function <- function(method) {
   statFunc <- switch(method,
@@ -113,3 +104,46 @@ array.dimnamer <- function(array) {
   return(genes.updated)
 }
 
+#' @importFrom stringr str_sort
+.array.dimnamer <- function(array) {
+  combinations <- expand.grid(dimnames(array)[[2]], dimnames(array)[[3]], stringsAsFactors = FALSE, KEEP.OUT.ATTRS = FALSE)
+  combinations[,1] <- str_sort(combinations[,1], numeric = TRUE)
+  combinations[,2] <- dimnames(array)[[3]]
+  combined_strings <- apply(combinations, 1, function(x) paste0(x[1], "_", x[2]))
+  return(combined_strings)
+}
+
+.array.reshape <- function(x, dim, order = c("C", "F")) {
+  
+  order <- match.arg(order)
+  dim   <- as.integer(dim)
+  
+  # Checks 
+  if (!is.atomic(x))
+    stop("`x` must be an atomic vector, matrix, or array.", call. = FALSE)
+  if (any(dim <= 0))
+    stop("All elements of `dim` must be positive.", call. = FALSE)
+  if (length(x) != prod(dim))
+    stop(sprintf("Input of length %d cannot be reshaped to %s (product = %d).",
+                 length(x), paste(dim, collapse = "x"), prod(dim)),
+         call. = FALSE)
+  
+  # row-major flatten 
+  row_flatten <- function(a) {
+    if (is.null(dim(a))) {
+      as.vector(a)                                 # already 1D
+    } else {
+      as.vector(aperm(a, rev(seq_along(dim(a)))))  # reverse dims then flatten
+    }
+  }
+  
+  #  build result 
+  if (order == "F") {
+    array(as.vector(x), dim = dim)
+    
+  } else {  
+    vals_C <- row_flatten(x)
+    tmp    <- array(vals_C, dim = rev(dim))
+    aperm(tmp, rev(seq_along(dim)))
+  }
+}

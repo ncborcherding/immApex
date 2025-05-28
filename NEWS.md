@@ -1,5 +1,6 @@
-# immApex VERSION 1.2.1
+# immApex VERSION 1.2.2
 * Updated unit tests and vignette check
+* Converted package to basilisk from reticulate
 
 # immApex VERSION 1.2.0
 * Update version for BioConductor release
@@ -14,12 +15,12 @@
 # immApex VERSION 1.0.4
 
 ## UNDERLYING CHANGES
-* Optional testthat variationalSequences() evaulate presence of Keras
+* Optional testthat ```variationalSequences()``` evaluate presence of Keras
 
 # immApex VERSION 1.0.3
 
 ## UNDERLYING CHANGES
-* Drop evaluation of variationalSequences() example
+* Drop evaluation of ```variationalSequences()``` example
 
 # immApex VERSION 1.0.2
 

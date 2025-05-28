@@ -10,10 +10,8 @@
 #'                                    min.length = 8,
 #'                                    max.length = 16)
 #'                                    
-#' if(reticulate::py_module_available("numpy")) {                            
 #' sequence.matrix <- onehotEncoder(new.sequences, 
 #'                                  convert.to.matrix = TRUE)
-#' }
 #'                         
 #' @param input.sequences The amino acid or nucleotide sequences to use
 #' @param max.length Additional length to pad, NULL will pad sequences 
@@ -27,7 +25,6 @@
 #' @param padding.symbol Symbol to use for padding at the end of sequences
 #' @param verbose Print messages corresponding to the processing step
 #' 
-#' @importFrom reticulate array_reshape
 #' @importFrom stats setNames
 #' 
 #' @export
@@ -79,8 +76,10 @@ onehotEncoder <- function(input.sequences,
     if(verbose){
       message("Preparing a matrix...")
     }
-    onehot_matrix <- array_reshape(onehot_sequences, c(dim(onehot_sequences)[1], dim(onehot_sequences)[2]*dim(onehot_sequences)[3]))
-    colnames(onehot_matrix) <- array.dimnamer(onehot_sequences)
+    onehot_matrix <- .array.reshape(onehot_sequences, 
+                                    c(dim(onehot_sequences)[1], 
+                                      dim(onehot_sequences)[2]*dim(onehot_sequences)[3]))
+    colnames(onehot_matrix) <- .array.dimnamer(onehot_sequences)
     return(onehot_matrix)
   } else {
     return(onehot_sequences)

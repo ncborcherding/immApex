@@ -1,6 +1,6 @@
 # test script for generateSequences.R - testcases are NOT comprehensive!
 
-  test_that("generateSequences works", {
+test_that("generateSequences works", {
     
     set.seed(42)
     t1.sequences <- generateSequences(prefix.motif = "CAS",
@@ -24,4 +24,6 @@
       t2.sequences,
       getdata("generateSequences", "generateSequences_T2")
     )
-  })
+
+})
+
