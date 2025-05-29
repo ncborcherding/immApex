@@ -1,4 +1,4 @@
-#' Fast motif enumeration and counting 
+#' Motif Enumeration and Counting 
 #'
 #' @description
 #' Rapidly enumerates and quantifies **contiguous** (and, optionally, 
