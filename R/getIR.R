@@ -3,7 +3,7 @@
 #' Use this to extract immune receptor sequences from a Single-Cell 
 #' Object or the output of \link[scRepertoire]{combineTCR} and 
 #' \link[scRepertoire]{combineBCR}.
-
+#' 
 #' @param input.data Single-cell object or the output of 
 #' \link[scRepertoire]{combineTCR} and \link[scRepertoire]{combineBCR} from
 #' scRepertoire
@@ -11,67 +11,75 @@
 #' \strong{TRB}, \strong{IGH}, or \strong{IGL}
 #' @param sequence.type Extract amino acid (\strong{aa}) or 
 #' nucleotide (\strong{nt}) sequences
-#' 
-#' @importFrom stringr str_split
+#' @param group.by Optional metadata column (e.g., \code{"sample.id"}) to 
+#' group and return results as a named list by that variable.
+#' @param as.list Logical; if \code{TRUE}, returns a list split by chain. 
+#' If \code{group.by} is also provided, returns a nested list Default is 
+#' \code{FALSE}.
 #' 
 #' @export
-#' @return A data frame of nucleotide or amino acid sequences 
-getIR <- function(input.data, 
+#' @return A data frame, list of data frames, or nested list of immune 
+#' receptor sequences depending on \code{as.list} and \code{group.by}. Each 
+#' entry includes CDR3 sequence, V(D)J gene segments, and associated barcodes.
+#' 
+getIR <- function(input.data,
                   chains,
-                  sequence.type = "aa") {
+                  sequence.type = c("aa", "nt"),
+                  group.by = NULL,          
+                  as.list  = FALSE) {
   
-  col.pos <- switch(sequence.type,
-                    "aa" = "CTaa",
-                    "nt" = "CTnt",
-                    stop("Please select either 'aa' or 'nt' for sequence.type."))
+  # Preflight checks-----------------------------------------------------------
+  sequence.type <- match.arg(sequence.type)
+  col.pos <- if (sequence.type == "aa") "CTaa" else "CTnt"
   
-  if (inherits(x=input.data, what ="Seurat") | inherits(x=input.data, what ="SingleCellExperiment")) {
-    meta <- .grabMeta(input.data)
+  meta <- if (inherits(input.data, "Seurat") ||
+              inherits(input.data, "SingleCellExperiment")) {
+    .grabMeta(input.data)
+  } else if (is.list(input.data)) {
+    do.call(rbind, input.data)
   } else {
-    if(!inherits(input.data, "list")) {
-      meta <- as.data.frame(input.data)
-    } else {
-      meta <- do.call(rbind,input.data)
-    }
-    rownames(meta) <- meta[,"barcode"]
+    as.data.frame(input.data)
   }
-  if(chains %!in% c("TRA", "TRB", "TRG", "TRD", "Heavy", "Light")) {
-    stop("Please select one of the following chains: 'TRA', 'TRB', 'TRG', 'TRD', 'Heavy', 'Light'")
-  }
-  tmp <- data.frame(barcode = rownames(meta), 
-                    str_split(meta[,"CTaa"], "_", simplify = TRUE), 
-                    str_split(meta[,"CTgene"], "_", simplify = TRUE))
-  if (length(chains) == 1 && chains != "both") {
-    if (chains %in% c("TRA", "TRG", "Heavy")) { #here
-      pos <- list(c(2,4))
-    } else if (chains %in% c("TRB", "TRD", "Light")) { #here
-      pos <- list(c(3,5))
-    }
-  } 
+  rownames(meta) <- meta$barcode %||% rownames(meta)
   
-  IR <- NULL
-  for (i in seq_along(pos)) {
-    sub <- as.data.frame(tmp[,c(1,pos[[i]])])
-    
-    colnames(sub) <- c("barcode", "cdr3_aa", "genes")
-    if(chains %in% c("TRA", "TRG", "Light")) {
-      sub$v <- str_split(sub$genes, "[.]", simplify = TRUE)[,1]
-      sub$d <- NA
-      sub$j <- str_split(sub$genes, "[.]", simplify = TRUE)[,2]
-      sub$c <- str_split(sub$genes, "[.]", simplify = TRUE)[,3]
-    } else if (chains %in% c("TRB", "TRD", "Heavy")) {
-      sub$v <- str_split(sub$genes, "[.]", simplify = TRUE)[,1]
-      sub$d <- str_split(sub$genes, "[.]", simplify = TRUE)[,2]
-      sub$j <- str_split(sub$genes, "[.]", simplify = TRUE)[,3]
-      sub$c <- str_split(sub$genes, "[.]", simplify = TRUE)[,4]
-    }
-    sub[sub == "" | sub == "None"] <- NA
-    IR[[i]] <- sub
-    sub <- NULL
+  ok <- c("TRA","TRB","TRG","TRD","Heavy","Light")
+  if (anyNA(match(chains, ok)))
+    stop("`chains` must be one of: ", paste(ok, collapse = ", "))
+  
+  if (!is.null(group.by)) {
+    if (!group.by %in% names(meta))
+      stop("`group.by` column '", group.by, "' not found in metadata.")
+    grp_vec <- meta[[group.by]]
   }
+  
+  # build IR per chain --------------------------------------------------------
+  IR <- lapply(chains, function(ch) {
+    df <- .get_vdj_matrix(meta[[col.pos]], meta[["CTgene"]], ch)
+    df$barcode <- rownames(meta)
+    df$chain   <- ch
+    if (!is.null(group.by)) df[[group.by]] <- grp_vec
+    df
+  })
+  
   names(IR) <- chains
-  return(IR)
+  
+  # assemble return object ----------------------------------------------------
+  out <- if (length(chains) == 1L && !as.list) {
+    IR[[1L]]
+  } else if (!as.list) {
+    do.call(rbind, IR)
+  } else {             
+    IR
+  }
+  
+  if (!is.null(group.by)) {
+    # split by grouping variable, preserving list/data.frame structure inside
+    split(out, out[[group.by]])
+  } else {
+    out
+  }
 }
+
 
 #' @importFrom SingleCellExperiment colData 
 #' @importFrom methods slot
@@ -94,4 +102,31 @@ getIR <- function(input.data,
     }
   }
   return(meta)
+}
+
+.split_to_matrix <- function(x, pattern = "_") {
+  do.call(rbind, strsplit(x, pattern, fixed = TRUE))
+}
+
+#' @keywords internal
+.get_vdj_matrix <- function(ct_aa, ct_gene, chain) {
+  
+  # Split once, slice columns
+  aa_mat   <- .split_to_matrix(ct_aa)
+  gene_mat <- .split_to_matrix(ct_gene, ".")
+  
+  idx <- switch(chain,
+                TRA = c(2, 4), TRG = c(2, 4), Light = c(2, 4),
+                TRB = c(3, 5), TRD = c(3, 5), Heavy = c(3, 5)
+  )
+  
+  data.frame(
+    cdr3_aa = aa_mat[, idx[1]],
+    genes   = aa_mat[, idx[2]],
+    v = gene_mat[, 1],
+    d = if (chain %in% c("TRB", "TRD", "Heavy")) gene_mat[, 2] else NA,
+    j = gene_mat[, if (chain %in% c("TRB", "TRD", "Heavy")) 3 else 2],
+    c = gene_mat[, if (chain %in% c("TRB", "TRD", "Heavy")) 4 else 3],
+    stringsAsFactors = FALSE
+  )
 }
