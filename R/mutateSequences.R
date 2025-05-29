@@ -1,8 +1,7 @@
 #' Randomly Mutate Sequences of Amino Acids
 #' 
-#' Use this to mutate or mask sequences
-#' for purposes of testing code, training models,
-#' or noise.
+#' Use this to mutate or mask sequences for purposes of testing code, 
+#' training models, or noise.
 #' 
 #' @examples
 #' sequences <- generateSequences(prefix.motif = "CAS",
@@ -35,43 +34,50 @@ mutateSequences <- function(input.sequences,
                             position.end = NULL,
                             sequence.dictionary = amino.acids) {
   
-  lapply(input.sequences, function(x) {
-    lapply(seq_len(n.sequences), function(y) {
-      .mutate.sequence(x, 
-                      mutation.rate = mutation.rate,
-                      position.start = position.start,
-                      position.end = position.end,
-                      sequence.dictionary = sequence.dictionary)
-    }) -> n.mutated.sequences
-    n.mutated.sequences <- unlist(n.mutated.sequences)
-  }) -> output.sequences
-  output.sequences <- unlist(output.sequences)
+  # Preflight checks-----------------------------------------------------------
+  stopifnot(is.character(input.sequences),
+            length(n.sequences) == 1L,
+            n.sequences >= 0L,
+            is.numeric(mutation.rate),
+            mutation.rate >= 0, mutation.rate <= 1)
   
-  return(output.sequences)
+  if (!is.null(seed)) set.seed(seed)
+  
+  dict <- unique(as.character(sequence.dictionary))
+  bad  <- sprintf("[^%s]", paste(dict, collapse = ""))
+  if (any(grepl(bad, input.sequences)))
+    stop("`input.sequences` contain letters not in `sequence.dictionary`.")
+  
+  # Internal helper -----------------------------------------------------------
+  mutate_one <- function(seq) {
+    
+    L <- nchar(seq)
+    if (L == 0 || mutation.rate == 0) return(seq)
+    
+    # mutation window ---------------------------------------------------------
+    p0 <- if (is.null(position.start)) 1L else max(1L, position.start)
+    p1 <- if (is.null(position.end))   L  else min(L, position.end)
+    if (p0 > p1) stop("position.start > position.end")
+    
+    # how many mutations ------------------------------------------------------
+    m <- ceiling((p1 - p0 + 1L) * mutation.rate)
+    if (m == 0) return(seq)  
+    
+    pos <- sample.int(p1 - p0 + 1L, m, replace = FALSE) + (p0 - 1L)
+    
+    # split once, mutate in place ---------------------------------------------
+    aa <- strsplit(seq, "", fixed = TRUE)[[1L]]
+    for (idx in pos) {
+      new <- sample(dict, 1L)
+      while (new == aa[idx]) new <- sample(dict, 1L)
+      aa[idx] <- new
+    }
+    paste0(aa, collapse = "")
+  }
+  
+  ## Generate all mutants -----------------------------------------------------
+  originals <- rep(input.sequences, each = n.sequences)
+  mutated.sequences   <- vapply(originals, mutate_one, FUN.VALUE = character(1))
+  return(mutated.sequences)
 }
   
-
-.mutate.sequence <- function(sequence, 
-                             mutation.rate = mutation.rate,
-                             position.start = position.start,
-                             position.end = position.end,
-                             sequence.dictionary = sequence.dictionary) {
-    amino_acids <- strsplit(sequence, "")[[1]]
-    num_mutations <- ceiling(length(amino_acids) * mutation.rate)
-    if (is.null(position.start) || position.start %!in% seq_len(length(amino_acids))) {
-        position.start <- 1
-    }
-    if (is.null(position.end) || position.end %!in% seq_len(length(amino_acids))) {
-      position.end <- length(amino_acids)
-    }
-    
-    positions_to_mutate <- sample(position.start:position.end, num_mutations)
-    
-    for (pos in positions_to_mutate) {
-      # Select a random amino acid that is different from the current one
-      possible_mutations <- setdiff(sequence.dictionary, amino_acids[pos]) # Assuming Amino acids are represented by first 24 letters
-      amino_acids[pos] <- sample(possible_mutations, 1)
-    }
-    
-    return(paste0(amino_acids, collapse = ""))
-}
