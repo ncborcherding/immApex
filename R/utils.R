@@ -2,79 +2,53 @@ amino.acids <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M"
 
 "%!in%" <- Negate("%in%")
 
-.check.sequences <- function(sequences, sequence.dictionary) {
-  if(length(sequences) >= 10) {
-    any(unlist(strsplit(sequences[seq(1,10)], "")) %!in% sequence.dictionary)
-  } else {
-    any(unlist(strsplit(sequences[seq_len(length(sequences))], "")) %!in% sequence.dictionary)
-  }
+.check.sequences <- function(sequences, dict) {
+  pat <- sprintf("[^%s]", paste(dict, collapse = ""))
+  any(grepl(pat, head(sequences, 20L)))  
 }
-  
-
 
 #Add additional sequence padding to max length
-.padded.strings <- function(strings, 
-                            max.length,
-                            padded.token = NULL,
-                            concatenate = TRUE) {
-  max_length <- max.length
+.padded.strings <- function(strings, max.length, pad = "", collapse = TRUE) {
   
-  #Produce combined padded strings
-  if(concatenate) {
-    x <- lapply(strings, function(str) {
-      str_len <- nchar(str)
-      if (str_len < max_length) {
-        str <- paste(c(str, rep(padded.token, max_length - str_len)), collapse = "")
-      } else {
-        str
-      }
-    })
-  #Produce a list of strings with seperate vectors
+  pad_right  <- sprintf("%%-%ds", max.length)          # e.g. "%-20s"
+  pad_vector <- function(s) c(strsplit(s, "")[[1L]],
+                              rep(pad, max.length - nchar(s)))
+  
+  if (collapse) {
+    sprintf(pad_right, strings)                        # base-R, no loop
   } else {
-    x <- lapply(strings, function(str) {
-      str_len <- length(str)
-      if (str_len < max_length) {
-        str <- c(str, rep(padded.token, max_length - str_len))
-      } else {
-        str
-      }
-    })
+    lapply(strings, function(s) pad_vector(s))
   }
-  return(x)
-  
 }
 
-substring.extractor <- function(strings, motif.length) {
-  lapply(strings, function(x) {
-    string_length <- nchar(x)
-    num_substrings <- string_length - motif.length + 1
-    if (num_substrings > 0) {
-      # Generate all substrings of the specified length
-      substrings <- vapply(seq_len(num_substrings), 
-                           function(j) substring(x, j, j + motif.length - 1), 
-                           FUN.VALUE = character(1))
-    } else {
-      # Return NA if the string is too short
-      substrings <- NA
-    }
-    substrings
-  })
+.substring.extractor <- function(strings, k) {
+  vapply(strings, function(s) {
+    n <- nchar(s)
+    if (n < k) return(NA_character_)
+    starts <- seq_len(n - k + 1L)
+    substring(s, starts, starts + k - 1L)
+  }, FUN.VALUE = character(1), USE.NAMES = FALSE)
 }
 
-.min.max.normalize <- function(x){
-  (x- min(x)) /(max(x)-min(x))
+
+.min.max.normalize <- function(x) {
+  rng <- range(x, na.rm = TRUE)
+  if (diff(rng) == 0) return(rep(0, length(x)))   # avoids div-by-zero
+  (x - rng[1L]) / diff(rng)
 }
+
 
 #' @importFrom matrixStats colMedians colMeans2 colSums2 colVars colMads
 .get.stat.function <- function(method) {
-  statFunc <- switch(method,
-                     "median" = colMedians,
-                     "mean"  = colMeans2,
-                     "sum"      = colSums2,
-                     "vars" = colVars,
-                     "mads"  = colMads, 
-                     stop("Invalid summary.function provided"))
-  return(statFunc) 
+  if (!requireNamespace("matrixStats", quietly = TRUE))
+    stop("matrixStats is required for summary statistics.", call. = FALSE)
+  switch(method,
+         median = matrixStats::colMedians,
+         mean   = matrixStats::colMeans2,
+         sum    = matrixStats::colSums2,
+         vars   = matrixStats::colVars,
+         mads   = matrixStats::colMads,
+         stop("Invalid `method`"))
 }
 
 .is_seurat_object <- function(obj) inherits(obj, "Seurat")
@@ -83,34 +57,24 @@ substring.extractor <- function(strings, motif.length) {
   .is_seurat_object(obj) || .is_se_object(obj)
 }
 
-.get.genes.updated <- function(input.data, technology, region) {
-  if (.is_seurat_or_se_object(input.data)) {
-    genes.updated <- region
-  } else {
-    if (is.null(technology)) technology <- NA
-    if (technology %in% c("TenX", "Adaptive")) {
-      potential_col <- paste0(region, "_gene")
-      if (!(potential_col %in% colnames(input.data))) {
-        genes.updated <- paste0(region, "GeneName")
-      } else {
-        genes.updated <- potential_col
-      }
-    } else if (technology %in% c("AIRR")) {
-      genes.updated <- paste0(region, "_call")
-    } else {
-      genes.updated <- region
-    }
-  }
-  return(genes.updated)
+.get.genes.updated <- function(data, tech, region) {
+  if (is_container(data)) return(region)
+  
+  tech <- tech %||% "other"
+  key  <- list(TenX = paste0(region, "_gene"),
+               Adaptive = paste0(region, "_gene"),
+               AIRR = paste0(region, "_call"))[[tech]]
+  
+  if (is.null(key) || !(key %in% colnames(data)))
+    key <- paste0(region, "GeneName")
+  
+  key
 }
 
-#' @importFrom stringr str_sort
-.array.dimnamer <- function(array) {
-  combinations <- expand.grid(dimnames(array)[[2]], dimnames(array)[[3]], stringsAsFactors = FALSE, KEEP.OUT.ATTRS = FALSE)
-  combinations[,1] <- str_sort(combinations[,1], numeric = TRUE)
-  combinations[,2] <- dimnames(array)[[3]]
-  combined_strings <- apply(combinations, 1, function(x) paste0(x[1], "_", x[2]))
-  return(combined_strings)
+.array.dimnamer <- function(arr) {
+  comb <- expand.grid(dimnames(arr)[2:3], KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE)
+  comb <- comb[order(as.integer(comb[,1])), ]    # numeric-aware sort
+  paste(comb[,1], comb[,2], sep = "_")
 }
 
 .array.reshape <- function(x, dim, order = c("C", "F")) {
@@ -146,4 +110,25 @@ substring.extractor <- function(strings, motif.length) {
     tmp    <- array(vals_C, dim = rev(dim))
     aperm(tmp, rev(seq_along(dim)))
   }
+}
+
+.get_v_column <- function(input.data, technology = c("TenX", "Adaptive", "AIRR")) {
+  stopifnot(is.data.frame(input.data))
+  technology <- match.arg(technology)
+  
+  if ("v_IMGT" %in% names(input.data)) {
+    v.col <- "v_IMGT"
+  } else {
+    v.col <- switch(technology,
+                    TenX     = if ("v_gene" %in% names(input.data)) "v_gene" else "vGeneName",
+                    Adaptive = if ("v_gene" %in% names(input.data)) "v_gene" else "vGeneName",
+                    AIRR     = "v_call")
+    )
+  }
+  
+  if (!v.col %in% names(input.data)) {
+    stop("Cannot find a V-gene column in `input.data` for technology = '", technology, "'.")
+  }
+  
+  v.col
 }
