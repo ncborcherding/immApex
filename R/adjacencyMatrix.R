@@ -1,4 +1,4 @@
-#' Adjacency matrix from amino acid or nucleotide sequences
+#' Adjacency Matrix From Amino Acid or Nucleotide Sequences
 #' 
 #' Calculate frequency of adjacency between residues
 #' along a set of biological sequences.
@@ -18,46 +18,62 @@
 #' residues (\strong{TRUE}) or frequencies (\strong{FALSE})
 #' @param sequence.dictionary The letters to use in sequence generation 
 #' (default are all amino acids)
+#' @param directed Logical; if FALSE (default) the matrix is symmetrised.
 #' 
 #' @export
 #' @return Adjacency matrix based on input.sequences.
-adjacencyMatrix <- function(input.sequences = NULL, 
+adjacencyMatrix <- function(input.sequences,
                             normalize = TRUE,
-                            sequence.dictionary = amino.acids) {
-  
-  # Initialize the adjacency matrix with zeros
-  n <- length(sequence.dictionary)
-  adjacency_matrix <- matrix(0, nrow = n, ncol = n)
-  rownames(adjacency_matrix) <- sequence.dictionary
-  colnames(adjacency_matrix) <- sequence.dictionary
-  
-  # Create a lookup for dictionary positions
-  dict_lookup <- setNames(seq_along(sequence.dictionary), sequence.dictionary)
-  
-  # Iterate through each sequence
-  for (seq in input.sequences) {
-    seq_chars <- strsplit(seq, "")[[1]]
-    len <- length(seq_chars)
-    
-    # Count adjacency
-    for (pos in seq_len(len - 1)) {
-      letter1 <- seq_chars[pos]
-      letter2 <- seq_chars[pos + 1]
-      
-      # Check if both letters are in the dictionary
-      if (!is.null(dict_lookup[[letter1]]) && !is.null(dict_lookup[[letter2]])) {
-        idx1 <- dict_lookup[[letter1]]
-        idx2 <- dict_lookup[[letter2]]
-        adjacency_matrix[idx1, idx2] <- adjacency_matrix[idx1, idx2] + 1
-        adjacency_matrix[idx2, idx1] <- adjacency_matrix[idx2, idx1] + 1
-      }
-    }
+                            sequence.dictionary = amino.acids,
+                            directed  = FALSE) {
+
+  # Preflight checks-----------------------------------------------------------
+  stopifnot(is.character(input.sequences),
+            is.character(sequence.dictionary),
+            length(sequence.dictionary) >= 2L)
+
+  dict <- unique(sequence.dictionary)
+  dict_lookup <- setNames(seq_along(dict), dict)
+
+  if (length(input.sequences) == 0L)
+    return(matrix(0, nrow = length(dict), ncol = length(dict),
+                  dimnames = list(dict, dict)))
+
+  # Flatten all sequences -----------------------------------------------------
+  all_chars <- unlist(strsplit(input.sequences, "", fixed = TRUE), 
+                      use.names = FALSE)
+  bad <- is.na(dict_lookup[all_chars])
+  if (any(bad))
+    stop("Unknown letters found: ", paste(unique(all_chars[bad]), collapse = ", "))
+
+  idx <- dict_lookup[all_chars]  # integer vector
+
+  if (length(idx) < 2L)
+    stop("All sequences have length 1 – no adjacencies to compute.")
+
+  # build 'from' and 'to' vectors ---------------------------------------------
+  from <- idx[-length(idx)]
+  to   <- idx[-1L]
+
+  # Tabulate to sparse COO ----------------------------------------------------
+  M <- length(dict)
+  bins <- (to - 1L) * M + from              # linear index for M×M matrix
+  counts <- tabulate(bins, nbins = M * M)
+  adj_matrix <- matrix(counts, nrow = M, ncol = M, byrow = TRUE,
+                dimnames = list(dict, dict))
+
+  ## Make symmetrical ---------------------------------------------------------
+  if (!directed) {
+    adj_matrix <- adj_matrix + t(adj_matrix)
+    diag(adj_matrix) <- 0L                         
   }
-  
-  # Normalize the adjacency matrix if required
+
+  ## Normalize ----------------------------------------------------------------
   if (normalize) {
-    adjacency_matrix <- adjacency_matrix / sum(adjacency_matrix)
+    total <- sum(adj_matrix)
+    if (total == 0) warning("Adjacency matrix is all zeros.")
+    adj_matrix <- adj_matrix / total
   }
-  
-  return(adjacency_matrix)
+
+  return(adj_matrix)
 }
