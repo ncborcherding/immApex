@@ -2,12 +2,13 @@
 % Please edit documentation in R/adjacencyMatrix.R
 \name{adjacencyMatrix}
 \alias{adjacencyMatrix}
-\title{Adjacency matrix from amino acid or nucleotide sequences}
+\title{Adjacency Matrix From Amino Acid or Nucleotide Sequences}
 \usage{
 adjacencyMatrix(
-  input.sequences = NULL,
+  input.sequences,
   normalize = TRUE,
-  sequence.dictionary = amino.acids
+  sequence.dictionary = amino.acids,
+  directed = FALSE
 )
 }
 \arguments{
@@ -18,6 +19,8 @@ residues (\strong{TRUE}) or frequencies (\strong{FALSE})}
 
 \item{sequence.dictionary}{The letters to use in sequence generation 
 (default are all amino acids)}
+
+\item{directed}{Logical; if FALSE (default) the matrix is symmetrised.}
 }
 \value{
 Adjacency matrix based on input.sequences.

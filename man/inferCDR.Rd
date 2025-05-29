@@ -2,15 +2,16 @@
 % Please edit documentation in R/inferCDR.R
 \name{inferCDR}
 \alias{inferCDR}
-\title{Infer portions of the CDR Loop from Vgene data}
+\title{Infer CDR-loop segments from V-gene calls}
 \usage{
 inferCDR(
   input.data,
-  reference = NULL,
+  reference,
   chain = "TRB",
-  technology = NULL,
-  sequence.type = "aa",
-  sequences = c("CDR1", "CDR2")
+  technology = c("TenX", "AIRR", "Adaptive", "Omniscope"),
+  sequence.type = c("aa", "nt"),
+  sequences = c("CDR1", "CDR2"),
+  verbose = TRUE
 )
 }
 \arguments{

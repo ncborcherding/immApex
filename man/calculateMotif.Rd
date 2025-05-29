@@ -2,7 +2,7 @@
 % Please edit documentation in R/calculateMotif.R
 \name{calculateMotif}
 \alias{calculateMotif}
-\title{Fast motif enumeration and counting}
+\title{Motif Enumeration and Counting}
 \usage{
 calculateMotif(
   sequences,

@@ -25,6 +25,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// encodeSequences_cpp
+Rcpp::List encodeSequences_cpp(const CharacterVector& sequences, std::string mode, const CharacterVector alphabet, Nullable<Rcpp::NumericMatrix> prop_mat_, const char pad_token, std::string summary, int max_len, int nthreads);
+RcppExport SEXP _immApex_encodeSequences_cpp(SEXP sequencesSEXP, SEXP modeSEXP, SEXP alphabetSEXP, SEXP prop_mat_SEXP, SEXP pad_tokenSEXP, SEXP summarySEXP, SEXP max_lenSEXP, SEXP nthreadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const CharacterVector& >::type sequences(sequencesSEXP);
+    Rcpp::traits::input_parameter< std::string >::type mode(modeSEXP);
+    Rcpp::traits::input_parameter< const CharacterVector >::type alphabet(alphabetSEXP);
+    Rcpp::traits::input_parameter< Nullable<Rcpp::NumericMatrix> >::type prop_mat_(prop_mat_SEXP);
+    Rcpp::traits::input_parameter< const char >::type pad_token(pad_tokenSEXP);
+    Rcpp::traits::input_parameter< std::string >::type summary(summarySEXP);
+    Rcpp::traits::input_parameter< int >::type max_len(max_lenSEXP);
+    Rcpp::traits::input_parameter< int >::type nthreads(nthreadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(encodeSequences_cpp(sequences, mode, alphabet, prop_mat_, pad_token, summary, max_len, nthreads));
+    return rcpp_result_gen;
+END_RCPP
+}
 // fast_edge_list
 DataFrame fast_edge_list(CharacterVector seqs, double thresh, Nullable<CharacterVector> v_gene, Nullable<CharacterVector> j_gene, bool match_v, bool match_j, Nullable<CharacterVector> ids);
 RcppExport SEXP _immApex_fast_edge_list(SEXP seqsSEXP, SEXP threshSEXP, SEXP v_geneSEXP, SEXP j_geneSEXP, SEXP match_vSEXP, SEXP match_jSEXP, SEXP idsSEXP) {
@@ -45,6 +63,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_immApex_calculateMotif_cpp", (DL_FUNC) &_immApex_calculateMotif_cpp, 5},
+    {"_immApex_encodeSequences_cpp", (DL_FUNC) &_immApex_encodeSequences_cpp, 8},
     {"_immApex_fast_edge_list", (DL_FUNC) &_immApex_fast_edge_list, 7},
     {NULL, NULL, 0}
 };

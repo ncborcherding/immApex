@@ -33,9 +33,8 @@ mutateSequences(
 A vector of mutated sequences
 }
 \description{
-Use this to mutate or mask sequences
-for purposes of testing code, training models,
-or noise.
+Use this to mutate or mask sequences for purposes of testing code, 
+training models, or noise.
 }
 \examples{
 sequences <- generateSequences(prefix.motif = "CAS",

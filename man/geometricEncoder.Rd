@@ -6,40 +6,62 @@
 \usage{
 geometricEncoder(
   input.sequences,
-  method.to.use = "BLOSUM62",
+  method = "BLOSUM62",
+  substitution = NULL,
   theta = pi/3,
   verbose = TRUE
 )
 }
 \arguments{
-\item{input.sequences}{The set of amino acid sequences}
+\item{input.sequences}{Character vector of AA strings.}
 
-\item{method.to.use}{The method or approach for the conversion: 
-\itemize{
-  \item{BLOcks SUbstitution Matrices: BLOSUM45, BLOSUM50, BLOSUM62, BLOSUM80, BLOSUM100}
-  \item{Point Accepted Mutation Matrices: PAM30, PAM40, PAM70, PAM120, PAM250}
-}}
+\item{method}{Character key into an internal or user list
+(default `"BLOSUM62"`), **or** a 20×20 numeric matrix.}
 
-\item{theta}{The angle for geometric transformation}
+\item{substitution}{Optional 20×20 matrix *or* named list of matrices.
+When supplied, skips the built-in data lookup.}
+
+\item{theta}{Rotation angle in radians for every 2-D block (default `pi/3`).}
 
 \item{verbose}{Print messages corresponding to the processing step}
 }
 \value{
-Geometric encoded amino acid sequences in a matrix
+A numeric matrix with `length(input.sequences)` rows and 20
+columns. Row order follows the input vector.
 }
 \description{
-Use this to transform amino acid sequences into a geometric 
-encoding of the sequence.
+Projects each input sequence into a 20-dimensional numeric space by (i) 
+looking up the rows of a substitution matrix (BLOSUM, PAM, or user-supplied),
+(ii) averaging those vectors, and (iii) applying a block-diagonal 2D 
+rotation (`θ`) across the 20 axes.
 }
+\section{Built-in substitution matrices}{
+
+The package ships with ten canonical 20 × 20 matrices (stored as
+`immapex_blosum_pam`) that can be referenced through the `method`
+argument:
+\itemize{
+  \item{\strong{BLOSUM}: "BLOSUM45", "BLOSUM50", "BLOSUM62",
+        "BLOSUM80", "BLOSUM100"}
+  \item{\strong{PAM}:    "PAM30", "PAM40", "PAM70",
+        "PAM120", "PAM250"}
+}
+}
+
 \examples{
+# Synthetic input
 new.sequences <- generateSequences(prefix.motif = "CAS",
                                    suffix.motif = "YF",
                                    number.of.sequences = 100,
                                    min.length = 8,
                                    max.length = 16)
-                          
-sequence.matrix <- geometricEncoder(new.sequences, 
-                                    method.to.use = "BLOSUM62",
-                                    theta = pi/3)
-                        
+
+# Encode with the default BLOSUM62
+emb <- geometricEncoder(new.sequences)
+
+# Encode with a custom matrix
+myMat <- matrix(runif(400), 20, 20,
+                dimnames = list(amino.acids, NULL))
+emb2  <- geometricEncoder(new.sequences, substitution = myMat)
+
 }

@@ -123,7 +123,6 @@ amino.acids <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M"
                     TenX     = if ("v_gene" %in% names(input.data)) "v_gene" else "vGeneName",
                     Adaptive = if ("v_gene" %in% names(input.data)) "v_gene" else "vGeneName",
                     AIRR     = "v_call")
-    )
   }
   
   if (!v.col %in% names(input.data)) {
