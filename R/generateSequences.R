@@ -20,7 +20,6 @@
 #' @param sequence.dictionary The letters to use in sequence generation (default are all amino acids)
 #' 
 #' @export
-#' @importFrom stringi stri_rand_strings
 #' 
 #' @return A vector of generated sequences
 generateSequences <- function(prefix.motif = NULL,
@@ -29,27 +28,39 @@ generateSequences <- function(prefix.motif = NULL,
                               min.length = 1,
                               max.length = 10,
                               sequence.dictionary = amino.acids) {
-  #TODO Add check for prefix/suffix motif with sequence dictionary
-  if(!is.null(prefix.motif) | !is.null(suffix.motif)) {
-    motif.length <- sum(nchar(c(prefix.motif,suffix.motif)))
-    if(min.length < motif.length) {
-      message("New min.length = ", motif.length, " based on the selection of motifs.")
-      min.length <- 0
-    }
-    max.length <- max.length-motif.length
-  }
-  length.range <- seq(min.length, max.length)
-  seq.length <- sample(length.range, number.of.sequences, replace = TRUE)
+  
+  # Preflight checks-----------------------------------------------------------
+  stopifnot(is.character(prefix.motif), is.character(suffix.motif))
+  stopifnot(length(number.of.sequences) == 1L, number.of.sequences >= 0L)
+  
+  # input sanitization
+  dict <- unique(as.character(sequence.dictionary))
+  bad  <- sprintf("[^%s]", paste(dict, collapse = ""))
+  if (grepl(bad, prefix.motif) || grepl(bad, suffix.motif))
+    stop("Prefix/suffix contain letters not in `sequence.dictionary`.")
+  
+  # handline length of sequences
+  motif.len <- nchar(prefix.motif) + nchar(suffix.motif)
+  if (motif.len > max.length)
+    stop("Motifs longer than `max.length` – adjust your arguments.")
+  
+  min.length <- max(min.length, motif.len)
+  range.len  <- min.length:max.length
+  if (!length(range.len))
+    stop("`min.length` exceeds `max.length` after motif adjustment.")
   
   # Generate the random sequences
-  lapply(seq_len(number.of.sequences), function(x) {
-      sequence <- stri_rand_strings(n = 1, length = seq.length[x], pattern = paste0("[", paste(sequence.dictionary, collapse = ""), "]"))
-      #add prefix and suffix
-      if(!is.null(prefix.motif) | !is.null(suffix.motif)) {
-        sequence <- paste(prefix.motif, sequence, suffix.motif, sep = "")
-      }
-      sequence
-  }) -> sequences
-  sequences <- unlist(sequences)
-  return(sequences)
+  lens  <- sample(range.len, number.of.sequences, replace = TRUE)
+  total <- sum(lens - motif.len)                        # pure random part
+  
+  rand_chars <- sample(dict, total, replace = TRUE)
+  split_idx  <- rep(seq_along(lens), lens - motif.len)
+  pieces     <- split.default(rand_chars, split_idx)
+  
+  sequences <- sprintf("%s%s%s",
+                       prefix.motif,
+                       vapply(pieces, paste0, collapse = "", FUN.VALUE = ""),
+                       suffix.motif)
+  
+  sequences
 }
