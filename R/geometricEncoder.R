@@ -7,7 +7,7 @@
 #' 
 #' @section Built-in substitution matrices:
 #' The package ships with ten canonical 20 × 20 matrices (stored as
-#' `immapex_blosum_pam`) that can be referenced through the `method`
+#' `immapex_blosum.pam.matrices`) that can be referenced through the `method`
 #' argument:
 #' \itemize{
 #'   \item{\strong{BLOSUM}: "BLOSUM45", "BLOSUM50", "BLOSUM62",
@@ -65,8 +65,9 @@ geometricEncoder <- local({
         if (!all(dim(subst) == 20)) stop("`substitution` matrix must be 20×20.")
         return(subst)
       }
+      data(immapex_blosum.pam.matrices)
       
-      src <- if (is.null(subst)) immapex_blosum_pam else subst
+      src <- if (is.null(subst)) immapex_blosum.pam.matrices else subst
       if (is.list(src) && !is.null(src[[method]])) {
         mat <- src[[method]]
         if (!all(dim(mat) == 20)) stop("Substitution matrix for '", method,
