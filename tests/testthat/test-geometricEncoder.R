@@ -13,7 +13,7 @@ test_that("geometricEncoder works", {
   )
   
   geom.BLOSUM45 <- geometricEncoder(sequences, 
-                                     method.to.use = "BLOSUM45",
+                                     method = "BLOSUM45",
                                      theta = pi/3)
   expect_equal(
     geom.BLOSUM45,
@@ -21,7 +21,7 @@ test_that("geometricEncoder works", {
   )
   
   geom.PAM30 <- geometricEncoder(sequences, 
-                                  method.to.use = "PAM30",
+                                  method = "PAM30",
                                   theta = pi/2)
   expect_equal(
     geom.PAM30,

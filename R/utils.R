@@ -8,14 +8,19 @@ amino.acids <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M"
 }
 
 #Add additional sequence padding to max length
-.padded.strings <- function(strings, max.length, pad = "", collapse = TRUE) {
+.padded.strings <- function(strings, max.length, pad = ".", collapse = TRUE) {
   
-  pad_right  <- sprintf("%%-%ds", max.length)          # e.g. "%-20s"
+  #Internal functions
+  pad_right <- function(x, width, pad) {
+    stopifnot(nchar(pad) == 1L)             
+    need <- pmax.int(0L, width - nchar(x))   
+    paste0(x, strrep(pad, need))             
+  }
   pad_vector <- function(s) c(strsplit(s, "")[[1L]],
                               rep(pad, max.length - nchar(s)))
   
   if (collapse) {
-    sprintf(pad_right, strings)                        # base-R, no loop
+    pad_right(strings, max.length, pad)                       # base-R, no loop
   } else {
     lapply(strings, function(s) pad_vector(s))
   }
@@ -58,7 +63,7 @@ amino.acids <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M"
 }
 
 .get.genes.updated <- function(data, tech, region) {
-  if (is_container(data)) return(region)
+  if (.is_seurat_or_se_object(data)) return(region)
   
   tech <- tech %||% "other"
   key  <- list(TenX = paste0(region, "_gene"),
