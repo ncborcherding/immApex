@@ -65,7 +65,6 @@ adjacencyMatrix <- function(input.sequences,
   ## Make symmetrical ---------------------------------------------------------
   if (!directed) {
     adj_matrix <- adj_matrix + t(adj_matrix)
-    diag(adj_matrix) <- 0L                         
   }
 
   ## Normalize ----------------------------------------------------------------

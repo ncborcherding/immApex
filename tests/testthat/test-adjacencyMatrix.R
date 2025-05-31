@@ -12,7 +12,7 @@ test_that("adjacencyMatrix works", {
   )
   
   adjacency.raw <- adjacencyMatrix(sequences,
-                                    normalize = FALSE)
+                                   normalize = FALSE)
   
   expect_equal(
     adjacency.raw,
