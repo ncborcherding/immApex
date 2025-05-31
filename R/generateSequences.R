@@ -30,6 +30,8 @@ generateSequences <- function(prefix.motif = NULL,
                               sequence.dictionary = amino.acids) {
   
   # Preflight checks-----------------------------------------------------------
+  prefix.motif <- if (is.null(prefix.motif)) "" else prefix.motif
+  suffix.motif <- if (is.null(suffix.motif)) "" else suffix.motif
   stopifnot(is.character(prefix.motif), is.character(suffix.motif))
   stopifnot(length(number.of.sequences) == 1L, number.of.sequences >= 0L)
   

@@ -11,7 +11,7 @@ test_that("generateSequences works", {
     
     expect_equal(
       t1.sequences,
-      getdata("generateSequences", "generateSequences_T1")
+      getdata("generateSequences", "new_generateSequences_T1")
     )
     
     set.seed(42)
