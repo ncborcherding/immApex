@@ -38,10 +38,10 @@
 #'
 #' @export
 calculateFrequency <- function(sequences,
-                              max.length = NULL,
-                              sequence.dictionary = amino.acids,
-                              padding.symbol = ".",
-                              tidy = FALSE) {
+                               max.length = NULL,
+                               sequence.dictionary = amino.acids,
+                               padding.symbol = ".",
+                               tidy = FALSE) {
   
   stopifnot(is.character(sequences),
             nchar(padding.symbol) == 1L,
@@ -53,24 +53,22 @@ calculateFrequency <- function(sequences,
   
   padded <- .padded.strings(sequences,
                             max.length = max.length,
-                            padded.token = padding.symbol,
-                            concatenate = TRUE)
+                            pad = padding.symbol,
+                            collapse  = TRUE)
   
   seq_mat <- do.call(rbind, strsplit(unlist(padded), ""))  # nSeq × max.length
-  
-  ## 2. Column-wise totals excluding padding 
-  non_pad_tot <- colSums(seq_mat != padding.symbol)        # length = max.length
+  nSeq <- length(padded)
   
   ## 3.  Fast frequency calculation (one pass per residue) 
   res_mat <- matrix(0,
-                    nrow = length(sequence.dictionary),
+                    nrow = length(sequence.dictionary) + 1,
                     ncol = max.length,
-                    dimnames = list(sequence.dictionary,
+                    dimnames = list(c(sequence.dictionary, padding.symbol),
                                     paste0("Pos.", seq_len(max.length))))
   
-  for (residue in sequence.dictionary) {
+  for (residue in c(sequence.dictionary, padding.symbol)) {
     # logical comparison is vectorised; colSums is C-level
-    res_mat[residue, ] <- colSums(seq_mat == residue) / non_pad_tot
+    res_mat[residue, ] <- colSums(seq_mat == residue) / nSeq
   }
   
   ## 4.  Optional tidy reshaping 

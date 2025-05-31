@@ -15,7 +15,7 @@ test_that("matrix dimensions & names are correct (AA default)", {
   res  <- calculateFrequency(seqs)
   
   expect_true(is.matrix(res))
-  expect_equal(dim(res), c(length(aa_20), max(nchar(seqs))))
+  expect_equal(dim(res), c(length(aa_20)+1, max(nchar(seqs))))
   expect_contains(rownames(res), aa_20)
   expect_true(cols_sum_to_one(res))
 })
@@ -28,8 +28,8 @@ test_that("works with nucleotide alphabet & custom padding", {
                              sequence.dictionary = dna_4,
                              padding.symbol = pad)
   
-  expect_equal(dim(res), c(4, 5))
-  expect_setequal(rownames(res), dna_4)
+  expect_equal(dim(res), c(5, 5))
+  expect_setequal(rownames(res), c(dna_4, pad))
   expect_identical(as.vector(colSums(res)), rep(1, 5))
 })
 
