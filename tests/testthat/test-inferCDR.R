@@ -10,11 +10,11 @@ test_that("inferCDR works", {
                                 technology = "TenX")
   
   TenX_formatted <- inferCDR(TenX_formatted,
-                              chain = "TRB", 
-                              reference = reference,
-                              technology = "TenX", 
-                              sequence.type = "aa",
-                              sequences = c("CDR1", "CDR2"))[,c("CDR1_IMGT","CDR2_IMGT")]
+                             chain = "TRB", 
+                             reference = reference,
+                             technology = "TenX", 
+                             sequence.type = "aa",
+                             sequences = c("CDR1", "CDR2"))[,c("CDR1_IMGT","CDR2_IMGT")]
   
   expect_equal(
     TenX_formatted,

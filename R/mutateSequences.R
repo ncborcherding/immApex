@@ -41,8 +41,6 @@ mutateSequences <- function(input.sequences,
             is.numeric(mutation.rate),
             mutation.rate >= 0, mutation.rate <= 1)
   
-  if (!is.null(seed)) set.seed(seed)
-  
   dict <- unique(as.character(sequence.dictionary))
   bad  <- sprintf("[^%s]", paste(dict, collapse = ""))
   if (any(grepl(bad, input.sequences)))

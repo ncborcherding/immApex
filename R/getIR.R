@@ -32,10 +32,9 @@ getIR <- function(input.data,
   sequence.type <- match.arg(sequence.type)
   col.pos <- if (sequence.type == "aa") "CTaa" else "CTnt"
   
-  meta <- if (inherits(input.data, "Seurat") ||
-              inherits(input.data, "SingleCellExperiment")) {
+  meta <- if (.is_seurat_or_se_object(input.data)) {
     .grabMeta(input.data)
-  } else if (is.list(input.data)) {
+  } else if (inherits(input.data, "list")) {
     do.call(rbind, input.data)
   } else {
     as.data.frame(input.data)
@@ -122,7 +121,6 @@ getIR <- function(input.data,
   
   data.frame(
     cdr3_aa = aa_mat[, idx[1]],
-    genes   = aa_mat[, idx[2]],
     v = gene_mat[, 1],
     d = if (chain %in% c("TRB", "TRD", "Heavy")) gene_mat[, 2] else NA,
     j = gene_mat[, if (chain %in% c("TRB", "TRD", "Heavy")) 3 else 2],

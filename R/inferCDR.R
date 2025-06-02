@@ -95,8 +95,8 @@ inferCDR <- function(input.data,
   names(cdr_df)[-1] <- paste0(sequences, "_IMGT")
   
   # Splice into input.data via match ------------------------------------------
-  key <- match(input.data[[v.col]], cdr_df$v_IMGT)
-  
+  key <- .match.gene(input.data[[v.col]], cdr_df$v_IMGT)
+
   for (j in seq_along(sequences)) {
     new_col <- paste0(sequences[j], "_IMGT")
     input.data[[new_col]] <- cdr_df[[new_col]][key]
