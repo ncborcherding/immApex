@@ -38,7 +38,7 @@ rotation (`θ`) across the 20 axes.
 \section{Built-in substitution matrices}{
 
 The package ships with ten canonical 20 × 20 matrices (stored as
-`immapex_blosum_pam`) that can be referenced through the `method`
+`immapex_blosum.pam.matrices`) that can be referenced through the `method`
 argument:
 \itemize{
   \item{\strong{BLOSUM}: "BLOSUM45", "BLOSUM50", "BLOSUM62",

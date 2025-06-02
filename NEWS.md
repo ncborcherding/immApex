@@ -1,12 +1,21 @@
 # immApex VERSION 1.3.1
 
 ## UNDERLYING CHANGES
-* Rebuilt ```buildNetwork()``` via CPP integration
+* Rebuilt ```propertyEncoder()``` and ```onehotEncoder()``` to use CPP backend with encodeSequences.cpp
+* Rebuilt ```buildNetwork()``` via CPP integration (fastEditEdges.cpp)
+* Motif quantification in ```calculateMotif()``` use CPP (calculateMotif.cpp)
+* Reduce overall dependencies on external packages
+* Improved speed of ```generateSequences()```, ```mutateSequences()```, ```adjacencyMatrix()```, ```tokenizeSequences()```, ```geometricEncoder```
+* Added group.by argument to ```getIR()```
 
 ## NEW FEATURES
 * ```calculateEntropy()``` added to calculate the positional entropy along a biological sequence
+* Added basic diversity metrics (exported) to support ```calculateEntropy()```
 * ```calculateFrequency()``` added to calculate the positional frequency along a biological sequence
 * ```calculateMotif()``` added to get motif quantification of sequences
+* ```calculateGeneUsage()``` added for single/paired gene enumeration
+* Added ```scaleMatrix()``` for comprehensive scale/transformation functions
+* Added ```summaryMatrix()``` for fast summarization of matrix values
 
 # immApex VERSION 1.2.2
 * Updated unit tests and vignette check
