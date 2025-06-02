@@ -49,8 +49,7 @@
 #' fit layer_input loss_binary_crossentropy optimizer_adadelta 
 #' optimizer_adagrad optimizer_adam optimizer_adamax optimizer_ftrl 
 #' optimizer_nadam optimizer_rmsprop optimizer_sgd  
-#' callback_early_stopping layer_normalization 
-#' @importFrom magrittr %>%
+#' callback_early_stopping 
 #' @importFrom stats predict runif
 #' @importFrom tensorflow tf
 #' @export 
@@ -90,17 +89,6 @@ variationalSequences <- function(input.sequences,
     patience = epochs/5,
     verbose = 0,
     mode = "min")
-  
-  optimizer.to.use <- switch(optimizer,
-                             "adadelta" = optimizer_adadelta(learning_rate = learning.rate),
-                             "adagrad" = optimizer_adagrad(learning_rate = learning.rate),
-                             "adam" = optimizer_adam(learning_rate = learning.rate),
-                             "adamax" = optimizer_adamax(learning_rate = learning.rate),
-                             "ftrl" = optimizer_ftrl(learning_rate = learning.rate),
-                             "nadam" = optimizer_nadam(learning_rate = learning.rate),
-                             "rmsprop" = optimizer_rmsprop(learning_rate = learning.rate),
-                             "sgd" = optimizer_sgd(learning_rate = learning.rate),
-                             stop("Please select a compatible optimizer function in the Keras R implementation."))
   
   if(verbose) {
     message("Converting to matrix....")
@@ -183,13 +171,14 @@ variationalSequences <- function(input.sequences,
   }
       
   # Compile the model
-  vae_with_loss %>% keras3::compile(optimizer = optimizer.to.use, 
-                                    loss = dummy_loss)
+  optimizer_fn <- get(paste0("keras3::optimizer_", optimizer))
+  vae_model |> keras3::compile(optimizer = optimizer_fn(learning_rate = learning.rate))
+  
   
   if(verbose) {    
     message("Fitting Model....")
   }
-  vae_with_loss %>% fit(
+  vae_with_loss |> fit(
         x_train, x_train, 
         shuffle = TRUE,
         epochs = epochs,
@@ -198,20 +187,15 @@ variationalSequences <- function(input.sequences,
         verbose = 0,
         callbacks = es
   )
-  if(verbose) {
-    message("Generating New Sequences....")
-  }
-  encoded_sequences <- as.matrix(encoder(x_train))
+  if (verbose) message("Sampling and decoding new sequences...")
+  latent_bounds <- apply(predict(keras3::keras_model(input_layer, z_mean), x_train), 2, range)
+  z_samples <- sapply(seq_len(latent.dim), function(i) {
+    runif(number.of.sequences, min = latent_bounds[1, i], max = latent_bounds[2, i])
+  })
+  z_samples <- matrix(z_samples, ncol = latent.dim)
   
-  #Using the vectors/ranges of training sequences to form a new matrix
-  lapply(seq_len(ncol(encoded_sequences)), function(x) {
-    runif(number.of.sequences, min = min(encoded_sequences[,x]), max = max(encoded_sequences[,x]))
-  }) -> z_sample
-  
-  z_sample <- do.call(cbind, z_sample)
-  generated_matrix <- predict(decoder, z_sample)
-        
-  candidate.sequences <- sequenceDecoder(generated_matrix,
+  generated_matrix <- decoder_model |> predict(z_samples)
+  candidate.sequences <- sequenceDecoder(sequence.matrix = generated_matrix,
                                          encoder = encoder.function,
                                          aa.method.to.use = aa.method.to.use,
                                          call.threshold = call.threshold,
