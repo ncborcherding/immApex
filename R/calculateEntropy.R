@@ -41,8 +41,8 @@ calculateEntropy <- function(sequences,
                                            "hill0", 
                                            "hill1", 
                                            "hill2"),
-                             padding.symbol = ".")
-{
+                             padding.symbol = ".") {
+  # Preflight checks-----------------------------------------------------------
   stopifnot(is.character(sequences))
   if (is.null(aa.length))
     aa.length <- max(nchar(sequences))

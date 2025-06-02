@@ -11,7 +11,9 @@ df_fac <- within(df_chr, {
   J <- factor(J, levels = c("J1","J2"))
 })
 
-## single-locus summaries ----------------------------------------------------
+# ---------------------------------------------------------------------------
+# single-locus summaries 
+# ---------------------------------------------------------------------------
 test_that("single-locus 'proportion' returns named numeric vector", {
   res <- calculateGeneUsage(df_chr, loci = "V")
   expect_type(res, "double")
@@ -27,7 +29,9 @@ test_that("single-locus 'count' and 'percent' scale correctly", {
   expect_equal(sum(pct), 100, tolerance = 1e-12)
 })
 
-## paired-locus summaries ----------------------------------------------------
+# ---------------------------------------------------------------------------
+# paired-locus summaries 
+# ---------------------------------------------------------------------------
 test_that("paired-locus 'proportion' returns matrix with correct dims", {
   prop <- calculateGeneUsage(df_chr, loci = c("V","J"))
   expect_true(is.matrix(prop))
@@ -47,14 +51,19 @@ test_that("levels argument pads missing combinations with zeros", {
   expect_equal(sum(mat), nrow(df_chr))
 })
 
-## factor input behaves like character --------------------------------------
+# ---------------------------------------------------------------------------
+# factor input behaves like character 
+# ---------------------------------------------------------------------------
+
 test_that("factor columns are handled correctly", {
   res1 <- calculateGeneUsage(df_chr, loci = "V")
   res2 <- calculateGeneUsage(df_fac, loci = "V")
   expect_equal(res1, res2, tolerance = 1e-12)
 })
 
-## error handling -----------------------------------------------------------
+# ---------------------------------------------------------------------------
+# error handling 
+# ---------------------------------------------------------------------------
 test_that("invalid inputs raise informative errors", {
   # loci not present
   expect_error(calculateGeneUsage(df_chr, loci = "X"))

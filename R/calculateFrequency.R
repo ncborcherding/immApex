@@ -42,7 +42,7 @@ calculateFrequency <- function(sequences,
                                sequence.dictionary = amino.acids,
                                padding.symbol = ".",
                                tidy = FALSE) {
-  
+  # Preflight checks-----------------------------------------------------------
   stopifnot(is.character(sequences),
             nchar(padding.symbol) == 1L,
             padding.symbol %!in% sequence.dictionary)

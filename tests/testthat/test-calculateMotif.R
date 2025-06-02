@@ -1,8 +1,8 @@
 # test script for calculateMotif.R - testcases are NOT comprehensive!
 
-## ---------------------------------------------------------------------------
-## 1.  Basic contiguous motif counting
-## ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# Basic contiguous motif counting
+# ---------------------------------------------------------------------------
 test_that("contiguous motifs counted correctly", {
   
   seqs <- c("AAA", "AAB", "ABA")
@@ -27,9 +27,9 @@ test_that("contiguous motifs counted correctly", {
   expect_equal(res$motif, ref$motif)
 })
 
-## ---------------------------------------------------------------------------
-## 2.  min.depth filtering works
-## ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+#  min.depth filtering works
+# ---------------------------------------------------------------------------
 test_that("min.depth removes low-frequency motifs", {
   
   seqs <- c("ABCABC")                  
@@ -40,9 +40,9 @@ test_that("min.depth removes low-frequency motifs", {
   expect_equal(nrow(res), 0)
 })
 
-## ---------------------------------------------------------------------------
-## 3.  Discontinuous (single-gap) motifs
-## ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+#  Discontinuous (single-gap) motifs
+# ---------------------------------------------------------------------------
 test_that("discontinuous motifs included when requested", {
   
   seqs <- rep("CASS", 5)
@@ -60,9 +60,9 @@ test_that("discontinuous motifs included when requested", {
   expect_equal(gapped, 5L)
 })
 
-## ---------------------------------------------------------------------------
-## 4.  Threading gives identical results
-## ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# Threading gives identical results
+# ---------------------------------------------------------------------------
 test_that("multi-thread and single-thread results are identical", {
   
   skip_if_not_installed("Rcpp")   # threading check irrelevant otherwise
@@ -78,9 +78,9 @@ test_that("multi-thread and single-thread results are identical", {
   expect_equal(single, multi)
 })
 
-## ---------------------------------------------------------------------------
-## 5.  Edge-cases & argument validation
-## ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# Edge-cases & argument validation
+# ---------------------------------------------------------------------------
 test_that("argument validation works", {
   
   expect_error(calculateMotif(character(0)),           "empty")
