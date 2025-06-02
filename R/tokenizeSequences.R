@@ -23,7 +23,7 @@
 #' @param max.length Additional length to pad, NULL will pad sequences 
 #' to the max length of input.sequences
 #' @param convert.to.matrix Return a matrix (TRUE) or a vector (FALSE)
-#' @param pad.token Integer ID to use for padding (default = length(char_set)+1).
+#' @param padding.token Integer ID to use for padding (default = length(char_set)+1).
 #' @param verbose Print messages corresponding to the processing step
 #' 
 #' @export
@@ -34,7 +34,7 @@ tokenizeSequences <- function(input.sequences,
                               stop.token = "^", 
                               max.length = NULL,
                               convert.to.matrix = TRUE,
-                              pad.token = NULL,
+                              padding.token = NULL,
                               verbose = TRUE) {
   # Preflight checks-----------------------------------------------------------
   if (!length(input.sequences))
@@ -62,7 +62,7 @@ tokenizeSequences <- function(input.sequences,
   if (max(lens) > max.length)
     stop("`max.length` is smaller than the longest sequence.")
   
-  pad.id <- pad.token %||% (length(char_set) + 1L)
+  pad.id <- padding.token %||% (length(char_set) + 1L)
   
   # Tokenise and pad in one sweep ---------------------------------------------
   if (convert.to.matrix) {
