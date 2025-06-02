@@ -21,7 +21,8 @@
 #' for the positional weight matrix. If NULL, assumes uniform likelihood.
 #' @param sequence.dictionary The letters to use in sequence generation 
 #' (default are all amino acids)
-#' @param padding.symbol Symbol to use for padding at the end of sequences
+#' @param padding.symbol Single character used for right-padding. Must not be
+#' one of the sequence.dictionary.
 #' @param verbose Print messages corresponding to the processing step
 #' 
 #' @importFrom stats median
@@ -54,8 +55,8 @@ probabilityMatrix <- function(input.sequences,
   }
   padded_sequences <- .padded.strings(strings = input.sequences, 
                                       max.length = max.length,
-                                      padded.token = padding.symbol,
-                                      concatenate = TRUE)
+                                      pad = padding.symbol,
+                                      collapse  = TRUE)
   if(verbose) {
     message("Calculating Positional Probabilites for sequences...")
   }

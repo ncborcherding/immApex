@@ -2,21 +2,21 @@
 #'
 #' Computes a range of summary statistics for property values of one or more AA 
 #' property scales at ever esidue position of a set of protein (or peptide) 
-#' sequences.  The function is entirely vectorised: it first calls 
+#' sequences. The function is entirely vectorised: it first calls 
 #' [`calculateFrequency()`] to obtain a residue-by-position **frequency** 
 #' matrix *F* (each column sums to 1) and then performs a single matrix product.
 #'
-#' @param sequences Character vector of amino-acid strings.
+#' @param input.sequences Character vector of amino-acid strings.
 #' @param property.set See [`positionalPropertyProfile()`].
 #' @param summary.fun Character string (`"mean"`, `"median"`, `"sum"`,
 #' `"min"`, `"max"`), **or** a function accepting a numeric vector and
 #' returning length-1 numeric.  Defaults to `"mean"`.
 #' @param transform Character string controlling a *post-summary*
-#' transformation.  One of  `"none"` (default), `"sqrt"`, `"log1p"`, 
+#' transformation. One of  `"none"` (default), `"sqrt"`, `"log1p"`, 
 #' `"zscore"` (row-wise), or `"minmax"` (row-wise).
 #' @param groups Optional group factor (see [`calculateProperty()`]).  
 #' Summary statistics are computed independently within each group.
-#' @param max.length Integer.  Pad/trim to this length
+#' @param max.length Integer. Pad/trim to this length
 #'   (`max(nchar(sequences))` by default).
 #' @param padding.symbol Single character used for right-padding. Must not be
 #'   one of the 20 canonical residues.
@@ -29,19 +29,19 @@
 #' If `tidy = TRUE`, a long `data.frame` is returned instead
 #' .
 #' @export
-positionalPropertySummary <- function(sequences,
-                                      property.set = "Atchley",
-                                      summary.fun  = "mean",
-                                      transform    = "none",
-                                      groups       = NULL,
-                                      max.length   = NULL,
-                                      padding.symbol = ".",
-                                      tidy           = FALSE) {
+calculateProperty <- function(input.sequences,
+                              property.set = "Atchley",
+                              summary.fun  = "mean",
+                              transform    = "none",
+                              groups       = NULL,
+                              max.length   = NULL,
+                              padding.symbol = ".",
+                              tidy           = FALSE) {
   
   ## ------------------------------------------------------------------ 
   ## 0.  Helpers + argument normalization 
   ## ------------------------------------------------------------------ 
-  stopifnot(is.character(sequences),
+  stopifnot(is.character(input.sequences),
             padding.symbol %!in% amino.acids,
             nchar(padding.symbol) == 1L)
   
@@ -63,11 +63,11 @@ positionalPropertySummary <- function(sequences,
   
   if (!is.null(groups)) {
     groups <- as.factor(groups)
-    stopifnot(length(groups) == length(sequences))
+    stopifnot(length(groups) == length(input.sequences))
   }
   
   if (is.null(max.length))
-    max.length <- max(nchar(sequences), 1L)
+    max.length <- max(nchar(input.sequences), 1L)
   
   ## ------------------------------------------------------------------ ##
   ## 1.  Property matrix (k × 20) ------------------------------------ ##
@@ -137,8 +137,8 @@ positionalPropertySummary <- function(sequences,
   
   for (g in seq_along(grp_levels)) {
     
-    idx_g <- if (is.null(groups)) seq_along(sequences) else which(groups == grp_levels[g])
-    C     <- counts_per_group(sequences[idx_g])         
+    idx_g <- if (is.null(groups)) seq_along(input.sequences) else which(groups == grp_levels[g])
+    C     <- counts_per_group(input.sequences[idx_g])         
     Npos  <- colSums(C)
     
     if (identical(summary.fun, base::mean)) {          

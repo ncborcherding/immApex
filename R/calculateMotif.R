@@ -11,7 +11,8 @@
 #' times, substituting one position at a time with `discontinuous.symbol`
 #' (default `"."`), yielding gapped motif patterns such as `"C.S"`.
 #'
-#' @param sequences Character vector of amino-acid sequences.
+#' @param input.sequences Character vector of sequences (amino acid or 
+#' nucleotide)
 #' @param motif.lengths Integer vector of motif sizes (≥ 1). **Default:** `2:5`.
 #' @param min.depth Minimum count a motif must reach to be retained in the 
 #' output (`>= 1`). **Default:** `3`.
@@ -35,16 +36,16 @@
 #'
 #' @export
 #' @importFrom Rcpp evalCpp
-calculateMotif <- function(sequences,
+calculateMotif <- function(input.sequences,
                            motif.lengths      = 2:5,
                            min.depth          = 3,
                            discontinuous      = FALSE,
                            discontinuous.symbol = ".",
                            nthreads           = 1) {
   
-  sequences <- as.character(sequences)
-  if (length(sequences) == 0L)
-    stop("`sequences` is empty.")
+  input.sequences <- as.character(input.sequences)
+  if (length(input.sequences) == 0L)
+    stop("`input.sequences` is empty.")
   
   if (any(motif.lengths <= 0))
     stop("`motif.lengths` must be positive integers.")
@@ -57,7 +58,7 @@ calculateMotif <- function(sequences,
       nchar(discontinuous.symbol) != 1L)
     stop("`discontinuous.symbol` must be a single character.", call. = FALSE)
   
-  res <- calculateMotif_cpp(sequences,
+  res <- calculateMotif_cpp(input.sequences,
                             as.integer(motif.lengths),
                             discontinuous,
                             substr(discontinuous.symbol, 1L, 1L),

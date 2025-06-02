@@ -24,24 +24,24 @@
 #' installed, `sequenceEncoder()` will look them up in `Peptides:::AAdata`.
 #' Otherwise an informative error is thrown.
 #'
-#' @param sequences `character` vector. Amino-acid sequences (uppercase
-#' single-letter code).  Gaps or unknown symbols are replaced by `pad.symbol`.
+#' @param sequences `character` vector. Sequences (uppercase
+#' single-letter code).  Gaps or unknown symbols are replaced by `padding.symbol`.
 #' @param mode Either `"onehot"` (default) or `"property"`.
 #' @param property.set *Optional* `character` vector of property names to
 #' extract from \pkg{Peptides} (ignored in `"onehot"` mode).  Ignored if 
 #' `property.matrix` is supplied.
 #' @param property.matrix *Optional* numeric matrix (`20 × P`). Overrides 
 #' `property.set`.
-#' @param sequence.dictionary Character vector of the amino-acid alphabet
-#' (default = 20 standard residues). The order defines the row order of 
+#' @param sequence.dictionary Character vector of the nucleotide or amino-acid 
+#' alphabet (default = 20 standard residues). The order defines the row order of 
 #' `property.matrix`.
-#' @param pad.symbol  Single character used for padding / unknowns (default 
-#' `"."`).  If not already in `sequence.dictionary`, it is appended internally.
+#' @param padding.symbol Single character used for right-padding. Must not be
+#'   one of the sequence.dictionary.
 #' @param summary.fun For property mode only: currently `"mean"` or `""`
 #' (empty string) for no summary.  When `"mean"`, the computes the per-sequence mean across
 #' positions and returns it as an extra element `summary`.
 #' @param max.length  Positive integer. Sequences longer than this are
-#' truncated; shorter ones are right-padded with `pad.symbol`. If `NULL` 
+#' truncated; shorter ones are right-padded with `padding.symbol`. If `NULL` 
 #' (default) the longest input sequence sets the maximum.
 #' @param nthreads Number of threads to request (passed to the C++ back-end).
 #' Honoured only when the package is compiled with OpenMP; otherwise silently 
@@ -80,7 +80,7 @@ sequenceEncoder <- function(sequences,
                             property.set     = NULL,
                             property.matrix  = NULL,
                             sequence.dictionary = amino.acids,       
-                            pad.symbol       = ".",
+                            padding.symbol   = ".",
                             summary.fun      = "",
                             max.length       = NULL,
                             nthreads         = parallel::detectCores(),
@@ -145,7 +145,7 @@ sequenceEncoder <- function(sequences,
     mode           = mode,
     alphabet       = sequence.dictionary,
     prop_mat_      = prop_mat,
-    pad_token      = pad.symbol,
+    pad_token      = padding.symbol,
     summary        = summary.fun,
     max_len        = max.length,
     nthreads       = nthreads

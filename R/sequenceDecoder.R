@@ -30,7 +30,8 @@
 #' stringent
 #' @param sequence.dictionary The letters to use in sequence generation 
 #' (default are all amino acids)
-#' @param padding.symbol Symbol to use for padding at the end of sequences
+#' @param padding.symbol Single character used for right-padding. Must not be
+#'   one of the sequence.dictionary
 #' @param remove.padding Remove the additional symbol from the end of decoded sequences
 #' @importFrom utils data
 #' 

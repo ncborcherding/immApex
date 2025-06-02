@@ -11,13 +11,17 @@
 #'                   min.length = 8,
 #'                   max.length = 16)
 #'                         
-#' @param prefix.motif Add defined amino acid/nucleotide sequence to the start of the generated sequences.
-#' @param suffix.motif Add defined amino acid/nucleotide sequence to the end of the generated sequences
+#' @param prefix.motif Add defined amino acid/nucleotide sequence to the start 
+#' of the generated sequences.
+#' @param suffix.motif Add defined amino acid/nucleotide sequence to the end of 
+#' the generated sequences
 #' @param number.of.sequences Number of sequences to generate
-#' @param min.length Minimum length of the final sequence. The min.length may be adjusted if 
+#' @param min.length Minimum length of the final sequence. The min.length may 
+#' be adjusted if 
 #' incongruent with prefix.motif/suffix.motif lengths
 #' @param max.length Maximum length of the final sequence
-#' @param sequence.dictionary The letters to use in sequence generation (default are all amino acids)
+#' @param sequence.dictionary The letters to use in sequence generation 
+#' (default are all amino acids)
 #' 
 #' @export
 #' 

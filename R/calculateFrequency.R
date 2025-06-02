@@ -5,7 +5,8 @@
 #' strings are padded to a common width so the calculation is entirely
 #' vectorised (one logical comparison + one `colSums()` per residue).
 #'
-#' @param sequences  A character vector of AA or nucleotide strings.
+#' @param sequences  Character vector of sequences (amino acid or 
+#' nucleotide)
 #' @param max.length Integer.  Pad/trim to this length. Defaults to
 #'  `max(nchar(sequences))`.
 #' @param sequence.dictionary Vector of valid residue symbols that should be
