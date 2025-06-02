@@ -136,3 +136,25 @@ amino.acids <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M"
   
   v.col
 }
+
+.match.gene <- function(x,
+                       table,
+                       suffix_rx = "\\*.*$") {
+  
+  ## 1. first try an exact 1-to-1 match -------------------------------
+  out <- match(x, table, nomatch = NA_integer_)
+  
+  ## 2. second pass on the still-unmatched entries --------------------
+  no_hit <- is.na(out) & !is.na(x)
+  if (any(no_hit)) {
+    
+    # strip allele suffixes from both sets once
+    tbl_core <- sub(suffix_rx, "", table)
+    x_core   <- sub(suffix_rx, "", x[no_hit])
+    
+    # attempt a core-gene match
+    out[no_hit] <- match(x_core, tbl_core, nomatch = NA_integer_)
+  }
+  
+  out
+}
