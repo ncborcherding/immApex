@@ -1,6 +1,5 @@
 # test script for getIR.R - testcases are NOT comprehensive!
 
-test_that("getIR works", {
   test_that("Test for valid sequence type", {
     dummy_data <- data.frame(barcode = c("cell1", "cell2"),
                              CTaa = c("CASSLGG", "CASRLGG"),
@@ -60,5 +59,4 @@ test_that("getIR works", {
                     chains = "TRA")
     expect_true(is.data.frame(result))
   })
-})
   

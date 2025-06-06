@@ -48,7 +48,7 @@ calculateFrequency <- function(sequences,
             nchar(padding.symbol) == 1L,
             padding.symbol %!in% sequence.dictionary)
   
-  ## 1. Pad to a rectangular character matrix 
+  # 1. Pad to a rectangular character matrix 
   if (is.null(max.length))
     max.length <- max(nchar(sequences), 1L)
   
@@ -60,7 +60,7 @@ calculateFrequency <- function(sequences,
   seq_mat <- do.call(rbind, strsplit(unlist(padded), ""))  # nSeq × max.length
   nSeq <- length(padded)
   
-  ## 3.  Fast frequency calculation (one pass per residue) 
+  # 2.  Fast frequency calculation (one pass per residue) 
   res_mat <- matrix(0,
                     nrow = length(sequence.dictionary) + 1,
                     ncol = max.length,
@@ -72,7 +72,7 @@ calculateFrequency <- function(sequences,
     res_mat[residue, ] <- colSums(seq_mat == residue) / nSeq
   }
   
-  ## 4.  Optional tidy reshaping 
+  # 3.  Optional tidy reshaping 
   if (tidy) {
     res_mat <- as.data.frame(as.table(res_mat),
                              stringsAsFactors = FALSE,

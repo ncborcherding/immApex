@@ -56,22 +56,62 @@
 #' @return A vector of mutated sequences
 
 variationalSequences <- function(input.sequences,
-                                 encoder.function = "onehotEncoder",
-                                 aa.method.to.use = NULL,
-                                 number.of.sequences = 100,
-                                 encoder.hidden.dim = c(128,64),
-                                 decoder.hidden.dim = NULL,
-                                 latent.dim = 16,
-                                 batch.size = 16,
-                                 epochs = 50,
-                                 learning.rate = 0.001,
-                                 epsilon.std = 1,
-                                 call.threshold = 0.2,
-                                 activation.function = "relu",
-                                 optimizer = "adam",
+                                 encoder.function        = "onehotEncoder",
+                                 aa.method.to.use        = NULL,
+                                 number.of.sequences     = 100,
+                                 encoder.hidden.dim      = c(128, 64),
+                                 decoder.hidden.dim      = NULL,
+                                 latent.dim              = 16,
+                                 batch.size              = 16,
+                                 epochs                  = 50,
+                                 learning.rate           = 0.001,
+                                 epsilon.std             = 1,
+                                 call.threshold          = 0.2,
+                                 activation.function     = "relu",
+                                 optimizer               = "adam",
                                  disable.eager.execution = FALSE,
-                                 sequence.dictionary = amino.acids,
-                                 verbose = TRUE) {
+                                 sequence.dictionary     = amino.acids,
+                                 verbose                 = TRUE) {
+  basilisk::basiliskRun(
+    env = immApexEnv,         
+    fun = .variationalSequences_impl,   
+    input.sequences        = input.sequences,
+    encoder.function       = encoder.function,
+    aa.method.to.use       = aa.method.to.use,
+    number.of.sequences    = number.of.sequences,
+    encoder.hidden.dim     = encoder.hidden.dim,
+    decoder.hidden.dim     = decoder.hidden.dim,
+    latent.dim             = latent.dim,
+    batch.size             = batch.size,
+    epochs                 = epochs,
+    learning.rate          = learning.rate,
+    epsilon.std            = epsilon.std,
+    call.threshold         = call.threshold,
+    activation.function    = activation.function,
+    optimizer              = optimizer,
+    disable.eager.execution= disable.eager.execution,
+    sequence.dictionary    = sequence.dictionary,
+    verbose                = verbose
+  )
+}
+
+.variationalSequences_impl <- function(input.sequences,
+                                       encoder.function = "onehotEncoder",
+                                       aa.method.to.use = NULL,
+                                       number.of.sequences = 100,
+                                       encoder.hidden.dim = c(128,64),
+                                       decoder.hidden.dim = NULL,
+                                       latent.dim = 16,
+                                       batch.size = 16,
+                                       epochs = 50,
+                                       learning.rate = 0.001,
+                                       epsilon.std = 1,
+                                       call.threshold = 0.2,
+                                       activation.function = "relu",
+                                       optimizer = "adam",
+                                       disable.eager.execution = FALSE,
+                                       sequence.dictionary = amino.acids,
+                                       verbose = TRUE) {
   
   n_train <- floor(length(input.sequences) * 0.8)  # Default to 80% for training
   
@@ -96,13 +136,11 @@ variationalSequences <- function(input.sequences,
   # Prepare the sequences matrix
   sequence.matrix <- switch(encoder.function,
                             "onehotEncoder" = onehotEncoder(input.sequences, 
-                                                            sequence.dictionary = sequence.dictionary,
-                                                            convert.to.matrix = TRUE),
+                                                            sequence.dictionary = sequence.dictionary),
                             "propertyEncoder" = propertyEncoder(input.sequences, 
-                                                                method.to.use = aa.method.to.use,
-                                                                convert.to.matrix = TRUE),
+                                                                method.to.use = aa.method.to.use),
                             stop("Invalid encoder provided."))
-  
+  sequence.matrix <- sequence.matrix[[2]]
   # Custom VAE Loss Layer
   vae_loss_layer <- function(original_dim) {
         layer_lambda(f = function(x) {

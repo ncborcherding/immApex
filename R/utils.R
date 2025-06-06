@@ -158,3 +158,38 @@ amino.acids <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M"
   
   out
 }
+
+
+.transform.apply <- function(x,
+                             method = c("none", "sqrt", "log1p",
+                                        "zscore", "minmax")) {
+  
+  stopifnot(is.matrix(x) || is.numeric(x))
+  method <- match.arg(method)
+  
+  out <- switch(method,
+                none   = x,
+                
+                sqrt   = sqrt(pmax(x, 0)),
+                
+                log1p  = log1p(pmax(x, 0)),
+                
+                zscore = {
+                  center <- rowMeans(x, na.rm = TRUE)
+                  scale  <- sqrt(pmax(rowMeans(x^2, na.rm = TRUE) - center^2,
+                                      .Machine$double.eps))
+                  sweep(sweep(x, 1L, center), 1L, scale, "/")
+                },
+                
+                minmax = {
+                  a <- apply(x, 1L, min,  na.rm = TRUE)
+                  b <- apply(x, 1L, max,  na.rm = TRUE)
+                  denom <- pmax(b - a, .Machine$double.eps)
+                  sweep(sweep(x, 1L, a), 1L, denom, "/")
+                }
+  )
+  
+  # keep row/col names intact
+  dimnames(out) <- dimnames(x)
+  out
+}

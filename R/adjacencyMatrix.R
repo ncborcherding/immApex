@@ -13,7 +13,8 @@
 #' adj.matrix <- adjacencyMatrix(new.sequences,
 #'                               normalize = TRUE)
 #'                         
-#' @param input.sequences The amino acid or nucleotide sequences to use
+#' @param input.sequences Character vector of sequences (amino acid or 
+#' nucleotide)
 #' @param normalize Return the values as a function of total number of 
 #' residues (\strong{TRUE}) or frequencies (\strong{FALSE})
 #' @param sequence.dictionary The letters to use in sequence generation 

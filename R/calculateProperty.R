@@ -14,49 +14,48 @@
 #' @param transform Character string controlling a *post-summary*
 #' transformation. One of  `"none"` (default), `"sqrt"`, `"log1p"`, 
 #' `"zscore"` (row-wise), or `"minmax"` (row-wise).
-#' @param groups Optional group factor (see [`calculateProperty()`]).  
-#' Summary statistics are computed independently within each group.
 #' @param max.length Integer. Pad/trim to this length
 #'   (`max(nchar(sequences))` by default).
 #' @param padding.symbol Single character used for right-padding. Must not be
 #'   one of the 20 canonical residues.
 #' @param tidy Logical; if `TRUE`, return a long-format `data.frame`
 #'
-#' @return
-#' *When `groups` is **NULL*** – a numeric matrix (*k* × *L*).  
-#' *When `groups` is supplied* – an array of dimension
-#'   (*k* × *L* × *G*) with dimnames `scale`, `position`, `group`.  
-#' If `tidy = TRUE`, a long `data.frame` is returned instead
-#' .
+#' @return A numeric matrix (*k* × *L*) **or** a tidy data.frame with columns
+#' scale, position, value.
+#' 
+#' @examples
+#' set.seed(1)
+#' seqs <- c("CASSLGQGAETQYF", "CASSPGQGDYEQYF", "CASSQETQYF")
+#' aa.Atchley <- calculateProperty(seqs, property.set = "Atchley")
+#' 
 #' @export
 calculateProperty <- function(input.sequences,
-                              property.set = "Atchley",
-                              summary.fun  = "mean",
-                              transform    = "none",
-                              groups       = NULL,
-                              max.length   = NULL,
+                              property.set  = "Atchley",
+                              summary.fun   = "mean",
+                              transform     = "none",
+                              groups        = NULL,
+                              max.length    = NULL,
                               padding.symbol = ".",
                               tidy           = FALSE) {
   
-  ## ------------------------------------------------------------------ 
-  ## 0.  Helpers + argument normalization 
-  ## ------------------------------------------------------------------ 
+  # Preflight checks-----------------------------------------------------------
   stopifnot(is.character(input.sequences),
             padding.symbol %!in% amino.acids,
             nchar(padding.symbol) == 1L)
   
-  # coerce summary.fun into function (fast path for built-ins)
-  summary.fun <- switch(
-    deparse(substitute(summary.fun)),
-    "mean"  = base::mean,
-    "median"= stats::median,
-    "sum"   = base::sum,
-    "min"   = base::min,
-    "max"   = base::max,
-    summary.fun)   # user-supplied
+  if (is.character(summary.fun)) {
+    summary.fun <- switch(summary.fun,
+                          "mean"   = base::mean,
+                          "median" = stats::median,
+                          "sum"    = base::sum,
+                          "min"    = base::min,
+                          "max"    = base::max,
+                          stop("Unknown summary.fun keyword: ", summary.fun))
+  }
   
-  if (!is.function(summary.fun) || length(formals(summary.fun)) != 1)
-    stop("'summary.fun' must be a one-argument function or one of the built-in names.")
+  if (!is.function(summary.fun))
+    stop("'summary.fun' must be a one-argument numeric function ",
+         "or one of the built-in keywords.")
   
   transform <- match.arg(transform,
                          c("none","sqrt","log1p","zscore","minmax"))
@@ -69,139 +68,109 @@ calculateProperty <- function(input.sequences,
   if (is.null(max.length))
     max.length <- max(nchar(input.sequences), 1L)
   
-  ## ------------------------------------------------------------------ ##
-  ## 1.  Property matrix (k × 20) ------------------------------------ ##
-  ## ------------------------------------------------------------------ ##
-  # -- (a) built-in scale sets
-  if (is.character(property.set)) {
-    
-    S <- as.matrix(S)
-    
-    # -- (b) user-supplied matrix ----------------------------------------
+  # 1.  Property matrix (k × 20)  
+  S <- if (is.character(property.set)) {
+    .aa.property.matrix(property.set)
   } else if (is.matrix(property.set) || is.data.frame(property.set)) {
-    
-    S <- as.matrix(property.set)
-    
+    as.matrix(property.set)
   } else {
     stop("'property.set' must be a recognised name or a numeric matrix.")
   }
   
-  # -- (c) sanity checks & AA column ordering ---------------------------
-  if (is.null(colnames(S)))
-    stop("Custom property matrices must have the 20 amino acids as column names.")
+  S <- S[ , amino.acids, drop = FALSE]                 # enforce AA order
+  k <- nrow(S)
   
-  missing <- setdiff(amino.acids, colnames(S))
-  if (length(missing))
-    stop("Property matrix is missing columns for: ",
-         paste(missing, collapse = ", "))
+  # 2. residue frequencies (20 × L)  
+  nSeq  <- length(input.sequences)
+  Freq  <- calculateFrequency(
+    sequences           = input.sequences,
+    max.length          = max.length,
+    sequence.dictionary = amino.acids,
+    padding.symbol      = padding.symbol,
+    tidy                = FALSE)[amino.acids, , drop = FALSE]
   
-  # TODO: write .aa_property_matrix
-  #S <- .aa_property_matrix(property.set)
-  S <- switch(property.set,
-              "Atchley"  = protr::extractAtchleyFactor(),
-              "Kidera"   = protr::extractKideraFactor(),
-              "stScales" = protr::extractStScales(),
-              "tScales"  = protr::extractTScales(),
-              "VHSE"     = protr::extractVHSEScales())
-  
-  S <- S[ , amino.acids, drop = FALSE]   
-  k <- nrow(S)                            
-  
-  ## ------------------------------------------------------------------ 
-  ## 2.  Generate residue counts
-  ## ------------------------------------------------------------------
-  counts_per_group <- function(seq_subset) {
-    pad_mat <- .padded.strings(seq_subset,
-                               max.length = max.length,
-                               padded.token = padding.symbol,
-                               concatenate = TRUE)
-    seq_mat <- do.call(rbind, strsplit(unlist(pad_mat), ""))
+  # 3. Summary per position 
+  if (identical(summary.fun, base::mean)) {
     
-    # Map to 1:21 integers 
-    lvl <- c(amino.acids, padding.symbol)
-    idx <- match(seq_mat, lvl)
+    Summ <- S %*% Freq                                    # k × L  (mean)
     
-    # Per-position tabulation (20 rows × L cols) 
-    C <- matrix(0L, 20, max.length,
-                dimnames = list(amino.acids, NULL))
-    for (j in seq_len(max.length))
-      C[ , j] <- tabulate(idx[ , j], nbins = 21L)[1:20]
-    C
-  }
-  
-  grp_levels <- if (is.null(groups)) "(all)" else levels(groups)
-  Summ <- array(NA_real_, dim = c(k, max.length, length(grp_levels)),
-                dimnames = list(scale    = rownames(S),
-                                position = paste0("Pos.", seq_len(max.length)),
-                                group    = grp_levels))
-  
-  for (g in seq_along(grp_levels)) {
+  } else if (identical(summary.fun, base::sum)) {
     
-    idx_g <- if (is.null(groups)) seq_along(input.sequences) else which(groups == grp_levels[g])
-    C     <- counts_per_group(input.sequences[idx_g])         
-    Npos  <- colSums(C)
+    Summ <- S %*% (Freq * nSeq)                           # counts (= sum)
     
-    if (identical(summary.fun, base::mean)) {          
-      Freq <- sweep(C, 2L, Npos, "/")
-      Summ[ , , g] <- S %*% Freq                         
-      next
-    }
-    
-    if (identical(summary.fun, base::sum)) {             
-      Summ[ , , g] <- S %*% C                         
-      next
-    }
-    
-    ## ---------------------------------------------------------------------- 
-    ## 3.  Generic summaries (median, min, max, custom) 
-    ## ---------------------------------------------------------------------- 
-    # Pre-compute, for each scale, the property value per residue
-    prop_by_res <- lapply(seq_len(k), function(i) S[i, ])
+  } else {                                                # median, min, max, custom
+    Counts <- Freq * nSeq                               
+    Summ   <- matrix(NA_real_, k, max.length)
     
     for (j in seq_len(max.length)) {
-      cnts <- C[ , j]                                    # length-20
-      if (!any(cnts)) next                               # all padding
+      cnts <- Counts[, j]
+      if (!any(cnts != 0)) next                               
       for (i in seq_len(k)) {
-        vals <- rep(prop_by_res[[i]], times = cnts)
-        Summ[i, j, g] <- summary.fun(vals)
+        vals <- rep(S[i, ], times = cnts)
+        Summ[i, j] <- summary.fun(vals)
       }
     }
   }
   
-  ## ------------------------------------------------------------------ 
-  ## 4.  Optional row-wise transformation 
-  ## ------------------------------------------------------------------ 
-  transform_apply <- switch(transform,
-                            "none"   = identity,
-                            "sqrt"   = function(x) sqrt(pmax(x, 0)),
-                            "log1p"  = function(x) log1p(pmax(x, 0)),
-                            "zscore" = function(x) {
-                              center <- rowMeans(x, na.rm = TRUE)
-                              scale  <- sqrt(pmax(rowMeans(x^2, na.rm = TRUE) - center^2, .Machine$double.eps))
-                              sweep(sweep(x, 1L, center), 1L, scale, "/")
-                            },
-                            "minmax" = function(x) {
-                              a <- apply(x, 1L, min,  na.rm = TRUE)
-                              b <- apply(x, 1L, max,  na.rm = TRUE)
-                              sweep(sweep(x, 1L, a), 1L, pmax(b - a, .Machine$double.eps), "/")
-                            })
-  Summ <- transform_apply(Summ)
+  dimnames(Summ) <- list(scale    = rownames(S),
+                         position = paste0("Pos.", seq_len(max.length)))
+
   
-  ## ------------------------------------------------------------------ 
-  ## 5.  Tidy reshaping  
-  ## ------------------------------------------------------------------ 
+  # 4.Optional transform 
+  Summ <- .transform.apply(Summ, method = transform) 
+  
+  # 4.Optional tidy
   if (tidy) {
-    if (length(grp_levels) == 1L) {
-      Summ <- as.data.frame(as.table(Summ[ , , 1, drop = FALSE]),
-                            stringsAsFactors = FALSE,
-                            responseName = "value")
-      names(Summ) <- c("scale","position","value")
-    } else {
-      Summ <- reshape2::melt(Summ, varnames = c("scale","position","group"),
-                             value.name = "value")
-    }
-    Summ$position <- as.integer(sub("Pos\\.", "", Summ$position))
+    Summ <- as.data.frame.table(Summ,
+                                stringsAsFactors = FALSE,
+                                responseName     = "value")
+    Summ$position <- as.integer(sub("^Pos\\.", "", Summ$position))
   }
   
   Summ
 }
+
+.aa.property.matrix <- function(key) {
+  
+  if (exists(key, envir = .builtin_scales, inherits = FALSE))
+    return(.builtin_scales[[key]])
+  
+  if (requireNamespace("Peptides", quietly = TRUE)) {
+    acc <- Peptides:::AAdata                               # named list
+    if (key %in% names(acc)) {
+      v <- do.call(rbind, acc[[key]])
+      return(v)
+    }
+  }
+  
+  stop("Unknown property set: '", key, "'. ",
+       "Use one of the built-ins, ",
+       "or supply a custom numeric matrix.")
+}
+
+.builtin_scales <- new.env(parent = emptyenv())
+
+.builtin_scales$Atchley <- t(matrix(c(
+  -0.591, -1.302, -0.733,  1.570, -0.146, # A (Alanine)
+  1.538, -0.055,  1.502,  0.440,  2.897, # R (Arginine)
+  0.945,  0.828,  1.299, -0.169,  0.933, # N (Asparagine)
+  1.050,  0.302, -1.768,  0.276,  1.068, # D (Aspartic Acid)
+  -1.343,  0.465, -0.862, -1.020, -0.255, # C (Cysteine)
+  0.931, -0.179, -3.005,  0.941,  0.360, # Q (Glutamine)
+  1.357, -1.453,  1.477,  0.114, -0.384, # E (Glutamic Acid)
+  -0.384,  1.652,  1.330,  1.045,  2.065, # G (Glycine)
+  -0.510,  0.292, -0.203, -1.378, -0.276, # H (Histidine)
+  -1.006, -0.590,  1.891, -0.397,  0.412, # I (Isoleucine)
+  -1.006, -0.590,  1.891, -0.397,  0.412, # L (Leucine)
+  0.960, -0.181,  1.932, -0.041,  1.697, # K (Lysine)
+  -1.343,  0.465, -0.862, -1.020, -0.255, # M (Methionine)
+  -1.006, -0.590,  1.891, -0.397,  0.412, # F (Phenylalanine)
+  0.189,  0.001, -1.756,  0.767, -0.542, # P (Proline)
+  -0.228,  1.399, -4.760,  0.670, -2.647, # S (Serine)
+  -0.228,  1.399, -4.760,  0.670, -2.647, # T (Threonine)
+  -1.006, -0.590,  1.891, -0.397,  0.412, # W (Tryptophan)
+  -1.343,  0.465, -0.862, -1.020, -0.255, # Y (Tyrosine)
+  -1.006, -0.590,  1.891, -0.397,  0.412  # V (Valine)
+), nrow = 20, ncol = 5, byrow = TRUE, 
+dimnames = list(amino.acids, paste0("AF",1:5))))
+
