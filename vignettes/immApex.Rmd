@@ -23,7 +23,7 @@ set.seed(42)
 
 # Introduction
 
-Single-cell sequencing is an emerging technology in the field of immunology and oncology that allows researchers to couple RNA quantification and other modalities, like immune cell receptor profiling at the level of an individual cell. A number of workflows and software packages have been created to process and analyze single-cell transcriptomic data. These packages allow users to take the vast dimensionality of the data generated in single-cell-based experiments and distill the data into novel insights. Some of the packages within the R environment that offer single-cell immune profiling support include [scRepertoire](https://github.com/BorchLab/scRepertoire), [immunarch](https://github.com/immunomind/immunarch), and [immcantation](https://immcantation.readthedocs.io/en/stable/). None of these packages offer support for deep-learning models for immune repertoire profiling. 
+Single-cell sequencing is an emerging technology in the field of immunology and oncology that allows researchers to couple RNA quantification and other modalities, like immune cell receptor profiling at the level of an individual cell. A number of workflows and software packages have been created to process and analyze single-cell transcriptomic data. These packages allow users to take the vast dimensionality of the data generated in single-cell-based experiments and distill the data into novel insights. Some of the packages within the R environment that offer single-cell immune profiling support include [scRepertoire](https://github.com/BorchLab/scRepertoire), [immunarch](https://github.com/immunomind/immunarch), and [immcantation](https://immcantation.readthedocs.io/en/stable/). None of these packages offer support for machine or deep learning applications for immune repertoire profiling. 
 
 **immApex** is meant to serve as an API for deep-learning models based on immune receptor sequencing. These functions extract or generate amino acid or nucleotide sequences and prepare them for deep learning tasks through [Keras3](https://tensorflow.rstudio.com/guides/keras/basics). **immApex** is the underlying structure for the BCR models in [Ibex](https://github.com/BorchLab/Ibex) and TCR models in [Trex](https://github.com/BorchLab/Trex). It should be noted that the tools here are created for immune receptor sequences; they will work more generally for nucleotide or amino acid sequences. The package itself supports AIRR, Adaptive, and 10x formats and interacts with the **scRepertoire** R package.
 
@@ -250,7 +250,7 @@ property.matrix <- propertyEncoder(input.sequences =  c(sequences, mutated.seque
 head(property.matrix[,1:20])
 ```
 
-```propertyEncoder()``` also allows us to use multiple approaches simultaneously by setting **method.to.use** as a vector.
+`propertyEncoder()` also allows us to use multiple approaches simultaneously by setting **method.to.use** as a vector.
 
 ```{r tidy = FALSE}
 mulit.property.matrix <- propertyEncoder(input.sequences =  c(sequences, mutated.sequences), 
@@ -307,20 +307,108 @@ token.matrix <- tokenizeSequences(input.sequences =  c(sequences, mutated.sequen
 head(token.matrix[,1:18])
 ```
 
+# Repertoire Analysis and Feature Engineering
+
+Beyond encoding single sequences, immApex provides functions to calculate summary statistics and features across a collection of sequences, such as a clonal repertoire.
+
+## calculateFrequency
+
+This function calculates the relative frequency of each residue at each position across a set of sequences.
+
+Parameters for calculateFrequency()
+
+* sequences: A character vector of sequences.
+* max.length: The length to align sequences to by padding/trimming.
+* sequence.dictionary: The set of valid residues to track.
+* tidy: If TRUE, returns a long-format data frame suitable for ggplot2.
+
+```{r tidy = FALSE}
+freq.matrix <- calculateFrequency(sequences, max.length = 20)
+head(freq.matrix[, 1:10])
+```
+
+# calculateEntropy
+
+This function measures the diversity (or entropy) at each position in a set of aligned sequences. It can use several common diversity metrics.
+
+Parameters for `calculateEntropy()`
+
+* sequences: A character vector of sequences.
+* method: The diversity metric to use: "shannon", "inv.simpson", "gini.simpson", "norm.entropy", "pielou", or Hill numbers ("hill0", "hill1", "hill2").
+
+```{r tidy = FALSE}
+shannon.entropy <- calculateEntropy(sequences, method = "shannon")
+head(shannon.entropy)
+```
+
+## calculateProperty
+
+This function computes position-wise summary statistics for amino acid properties. For each position, it calculates a metric (like the mean) of a specific physicochemical property for all residues found at that position.
+
+Parameters for `calculateProperty()`
+
+* input.sequences: A character vector of amino acid sequences.
+* property.set: The amino acid property scale to use (e.g., "Atchley").
+* summary.fun: The summary statistic to apply ("mean", "median", "sum" etc.).
+
+```{r tidy = FALSE}
+# Calculate the mean of Atchley factors at each position
+atchley.profile <- calculateProperty(sequences, property.set = "Atchley", summary.fun = "mean")
+head(atchley.profile[, 1:6])
+```
+
+## calculateGeneUsage
+
+This function quantifies the usage of gene loci (e.g., V and J genes) within a repertoire.
+
+Parameters for `calculateGeneUsage()`
+* input.data: A data frame containing gene assignments.
+* loci: A character vector of one or two column names corresponding to the gene loci.
+* summary: The output format: "proportion" (default), "count", or "percent".
+
+```{r tidy = FALSE}
+# Using the built-in AIRR data
+data_airr <- immapex_example.data[["AIRR"]]
+
+# Calculate paired V-J gene usage as percentages
+vj_usage <- calculateGeneUsage(data_airr, 
+                               loci = c("v_call", "j_call"),
+                               summary = "percent")
+vj_usage[1:5, 1:5]
+```
+
+## calculateMotif
+
+This function rapidly finds and counts contiguous (or gapped) amino acid or nucleotide motifs of specified lengths across a set of sequences.
+
+Parameters for `calculateMotif()`
+
+* input.sequences: A character vector of sequences.
+* motif.lengths: An integer vector of motif sizes to search for.
+* min.depth: The minimum number of times a motif must appear to be included in the output.
+* discontinuous: If TRUE, also finds motifs with a single gap (e.g., "C.S").
+
+```{r tidy = FALSE}
+motif.counts <- calculateMotif(sequences, motif.lengths = 3, min.depth = 5)
+head(motif.counts)
+```
+
 ## probabilityMatrix
 
-Another method for encoding a group of sequences is to calculate the positional probability of sequences using ```probabilityMatrixs()```. This function could represent a collection of antigen-specific sequences or even work on embedding a total repertoire.  
+This function calculates a positional probability matrix (PPM) for a group of sequences. This can be used to represent the sequence profile of an antigen-specific repertoire or to generate a sequence logo.
 
 ```{r tidy = FALSE}
 ppm.matrix <- probabilityMatrix(sequences)
 head(ppm.matrix)
 ```
 
-In addition, ```probabilityMatrix()``` can convert the positional probability matrix into a positional weight matrix using log-likelihood using the argument **convert.PWM** = TRUE. We can provide a set of background frequencies for the amino acids with **background.frequencies** or leave this blank to assume a uniform distribution for all amino acids. Here, we are going to use an example background. 
+The PPM can also be converted to a positional weight matrix (PWM) using a log-likelihood ratio.
 
 ```{r tidy = FALSE}
 set.seed(42)
+# Generate a sample background frequency
 back.freq <- sample(1:1000, 20)
+names(back.freq) <- amino.acids
 back.freq <- back.freq/sum(back.freq)
 
 pwm.matrix <- probabilityMatrix(sequences,
@@ -330,51 +418,40 @@ pwm.matrix <- probabilityMatrix(sequences,
 head(pwm.matrix)
 ```
 
-## adjacencyMatrix
+## adjacencyMatrix and buildNetwork
 
-Similar to the positional probability, we can also summarize a given set of sequences by the frequency of adjacency for a given set of amino acid or nucleotide residues using ```adjacencyMatrix()```. For this function, a matrix of n x n (defined by the length of **sequence.dictionary**) is created and the number of times a residue is adjacent to one another is calculated. We can **normalize** the values using the total number of residues evaluated. 
+These functions help analyze relationships between residues or whole sequences.
+
+`adjacencyMatrix()` summarizes transitions between adjacent residues, creating a matrix of co-occurrence counts.
 
 ```{r tidy = FALSE}
 adj.matrix <- adjacencyMatrix(sequences, 
                               normalize = FALSE)
-adj.matrix
+adj.matrix[1:10, 1:10]
 ```
 
-## buildNetwork
+`buildNetwork()` constructs a similarity network where nodes are sequences and edges connect sequences with an edit distance below a given threshold.
 
-The function ```buildNetwork()``` constructs a weighted similarity network from nucleotide or amino acid sequences sequences provided either as a character vector or a data frame with gene annotations. It accepts an edit distance threshold and optional logical parameters (**filter.v** and **filter.j**) to restrict comparisons to sequences with matching V or J gene annotations. Internally, it uses a symmetric deletion lookup combined with a banded edit-distance algorithm.
-
-```{r tidy = FALSE, eval = FALSE}
-# Generating similar sequences
-set.seed(42)
-sequences <- generateSequences(prefix.motif = "CASSRT",
-                               suffix.motif = "YF",
-                               number.of.sequences = 1000,
-                               min.length = 8,
-                               max.length = 12)
-
-# Building Edit-distance-based Network
+```{r tidy = FALSE}
+# Building an edit-distance-based network
 g1 <- buildNetwork(sequences, 
                    threshold = 2)
 
-# Remove isolated nodes
+# Remove isolated nodes for clearer visualization
 g1 <- delete_vertices(g1, which(degree(g1) == 0))
 
 # Convert to tidygraph for use with ggraph
 g_tidy <- as_tbl_graph(g1)
 
 # Plot the network
-ggraph(g_tidy, 
-       layout = "fr") + 
-  geom_edge_link(aes(width = weight), 
-                 color = "black") + 
-  geom_node_point(aes(size = degree(g1, mode = "all")),
-                  fill = "steelblue", 
-                  color= "black", 
-                  shape = 21) +
+ggraph(g_tidy, layout = "fr") + 
+  geom_edge_link(aes(width = weight), color = "black", alpha = 0.5) + 
+  geom_node_point(aes(size = degree(g_tidy, mode = "all")),
+                  fill = "steelblue", color= "black", shape = 21) +
   theme_void() + 
   scale_edge_width(range = c(0.1, 0.5)) + 
-  theme(legend.position = "none")
+  labs(size = "Degree") +
+  theme(legend.position = "right")
 ```
 
 # Extracting Sequences
