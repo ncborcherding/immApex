@@ -117,7 +117,13 @@ variationalSequences <- function(input.sequences,
   
   # Input validation
   if(length(input.sequences) < 1) stop("input.sequences must have at least one sequence.")
-
+  
+  # Optimizer validation
+  available_optimizers <- tolower(names(keras3::keras$optimizers))
+  available_optimizers <- available_optimizers[-grep("get|schedules|serialize|legacy", available_optimizers)]
+  if (!tolower(optimizer) %in% available_optimizers) {
+    stop("Please select a compatible optimizer function in the Keras R implementation.")
+  }
   
   if (disable.eager.execution) {
     tensorflow::tf$compat$v1$disable_eager_execution()
@@ -209,8 +215,8 @@ variationalSequences <- function(input.sequences,
   }
       
   # Compile the model
-  optimizer_fn <- get(paste0("keras3::optimizer_", optimizer))
-  vae_model |> keras3::compile(optimizer = optimizer_fn(learning_rate = learning.rate))
+  optimizer_fn <- getFromNamespace(paste0("optimizer_", tolower(optimizer)), "keras3")
+  vae_with_loss |> keras3::compile(optimizer = optimizer_fn(learning_rate = learning.rate))
   
   
   if(verbose) {    
