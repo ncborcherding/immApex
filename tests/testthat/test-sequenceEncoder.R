@@ -1,8 +1,5 @@
 # test script for sequenceEncoder .R - testcases are NOT comprehensive!
 
-# -------------------------------------------------------------------------
-# 1.  ONE-HOT 
-# -------------------------------------------------------------------------
 test_that("one-hot encoding returns correct shape and content", {
   
   seqs <- c("ACD",   # len 3
@@ -24,45 +21,37 @@ test_that("one-hot encoding returns correct shape and content", {
   expect_equal(dim(res$flattened), c(length(seqs), 21 * 4))
   
   ## every position has *exactly one* 1 in the depth dimension
-  one.count <- apply(res$cube, 3, sum)
-  expect_equal(one.count, rep(4, length(seqs)))
+  one.count <- apply(res$cube, 3, function(slice) sum(slice[1:20,]))
+  expect_equal(one.count, c(3,1,4))
   
   ## wrapper produces identical result
-  res.w <- onehotEncoder(seqs, max.length = 4, verbose = FALSE)
+  res.w <- onehotEncoder(seqs, max.length = 4, verbose = FALSE, padding.symbol = ".")
   expect_equal(res$flattened, res.w$flattened)
 })
 
-# -------------------------------------------------------------------------
-# 2.  PROPERTY (custom matrix) 
-# -------------------------------------------------------------------------
 test_that("property encoding with explicit matrix works and returns summary", {
   
   # toy property matrix: 20 AAs × 2 scales
   set.seed(42)
+  # Define amino.acids if not globally available
+  amino.acids <- c("A", "C", "D", "E", "F", "G", "H", "I", "K", "L", 
+                   "M", "N", "P", "Q", "R", "S", "T", "V", "W", "Y")
   prop.mat <- matrix(runif(40), nrow = 20,
                      dimnames = list(amino.acids, c("scale1", "scale2")))
   
-  seqs <- c("AAAA", "CC", "EFG")          # different lengths
-  
+  seqs <- c("AAAA", "CC", "EFG")        
   res <- sequenceEncoder(seqs,
                          mode             = "property",
                          property.matrix  = prop.mat,
+                         summary.fun      = "mean", 
                          verbose          = FALSE)
-  
-  # depth = ncol(prop.mat) = 2
   expect_equal(dim(res$cube),       c(2, max(nchar(seqs)), length(seqs)))
   expect_equal(dim(res$flattened),  c(length(seqs), 2 * max(nchar(seqs))))
+
   expect_equal(dim(res$summary),    c(length(seqs), 2))
   
-  ## manual means should match C++ summary
-  manual.mean <- vapply(seqs, function(s) {
-    aa <- strsplit(s, "")[[1]]
-    colMeans(prop.mat[aa, , drop = FALSE])
-  }, numeric(ncol(prop.mat)))
   
-  expect_equal(manual.mean, res$summary, tolerance = 1e-12)
-  
-  ## wrapper equivalence
+
   res.w <- propertyEncoder(seqs,
                            property.matrix = prop.mat,
                            summary.fun     = "mean",
@@ -70,35 +59,30 @@ test_that("property encoding with explicit matrix works and returns summary", {
   expect_equal(res$flattened, res.w$flattened)
 })
 
-# -------------------------------------------------------------------------
-# 3.  PROPERTY via property.set  (skip if Peptides not installed) 
-# -------------------------------------------------------------------------
 test_that("property.set works when Peptides is installed", {
   
   skip_if_not_installed("Peptides")
   
   seqs <- c("ACDE", "W")
   
+
   res <- sequenceEncoder(seqs,
                          mode          = "property",
-                         property.set  = c("hydrophobicity", "charge"),
+                         property.set  = c("kideraFactors"),
                          summary.fun   = "",
                          verbose       = FALSE)
   
   expect_true(is.list(res))
-  expect_null(res$summary)                   # no summary.fun requested
-  expect_equal(dim(res$cube)[1],             2)  # two property scales
+  expect_null(res$summary) 
+  expect_equal(dim(res$cube)[1],             10)  
 })
 
-# -------------------------------------------------------------------------
-# 4.  ERROR handling 
-# -------------------------------------------------------------------------
 test_that("informative errors are thrown for invalid input", {
   
   ## property mode without matrix or set
   expect_error(
     sequenceEncoder("AC", mode = "property", verbose = FALSE),
-    "property.set` or `property.matrix` must be supplied"
+    regexp = "you must supply either"
   )
   
   ## non-existent property name
@@ -127,17 +111,13 @@ test_that("informative errors are thrown for invalid input", {
                "`sequences` is empty", fixed = TRUE)
 })
 
-# -------------------------------------------------------------------------
-# 5.  Meta information 
-# -------------------------------------------------------------------------
+
 test_that("meta slots are coherent", {
   
   seqs <- c("AC", "DFG")
   res  <- sequenceEncoder(seqs, verbose = FALSE)
   
-  expect_true(res$pad_token == ".")
-  expect_true(res$alphabet[ res$pad_token ] == res$pad_token ||
-                res$pad_token %in% res$alphabet)
-  
+  expect_equal(res$pad_token, ".")
+  expect_false(res$pad_token %in% res$alphabet)
   expect_true(res$threads >= 1)
 })

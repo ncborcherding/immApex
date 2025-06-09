@@ -90,45 +90,25 @@ sequenceEncoder <- function(sequences,
   
   #  Property matrix construction / validation --------------------------------
   if (mode == "property") {
-    
-    if (!is.null(property.matrix)) {
-      
-      stopifnot(is.matrix(property.matrix),
-                nrow(property.matrix) == length(sequence.dictionary),
-                is.numeric(property.matrix))
-      
-      prop_mat <- property.matrix
-      
-    } else {
-      
-      if (is.null(property.set))
-        stop("`property.set` or `property.matrix` must be supplied in ",
-             "property mode.")
-      
-      if (!requireNamespace("Peptides", quietly = TRUE)) {
-        stop("Package \"Peptides\" is required to look up `property.set` ",
-             "but is not installed.  Either install it or supply ",
-             "`property.matrix` directly.")
+    if (!is.null(property.set)) {
+      prop_mat <- t(.aa.property.matrix(property.set))
+    } else if (!is.null(property.matrix)) {
+      if (!is.matrix(property.matrix) || !is.numeric(property.matrix) ||
+          nrow(property.matrix) != length(sequence.dictionary)) {
+        stop(sprintf(
+          "`property.matrix` rows (%d) must match `sequence.dictionary` length (%d).",
+          nrow(property.matrix), length(sequence.dictionary)
+        ))
       }
-      
-      aaData <- get("AAdata", envir = asNamespace("Peptides"))
-      idx    <- match(property.set, names(aaData), nomatch = 0L)
-      
-      if (any(idx == 0L))
-        stop("The following properties were not found in Peptides:::AAdata: ",
-             paste(property.set[idx == 0L], collapse = ", "))
-      
-      prop_mat <- do.call(cbind, aaData[idx])
-      colnames(prop_mat) <- names(aaData)[idx]
-      
-      # ensure row order matches `sequence.dictionary`
-      rownames(prop_mat) <- rownames(prop_mat) %||% LETTERS[1:20]
-      prop_mat <- prop_mat[sequence.dictionary, , drop = FALSE]
+      prop_mat <- property.matrix
+    } else {
+      stop("In `property` mode, you must supply either `property.set` 
+           (as a character vector) or `property.matrix` (as a numeric matrix).")
     }
-    
   } else {
     prop_mat <- NULL
   }
+  
   
   # Max length set -----------------------------------------------------------
   if (is.null(max.length))

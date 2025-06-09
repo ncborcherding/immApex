@@ -143,24 +143,41 @@ Rcpp::List encodeSequences_cpp(const CharacterVector &sequences,
     
     std::vector<double> acc( (mode == "property") ? P : 0, 0.0 );
     
+    // Get the index for the padding token once
+    const int pad_idx = aa2idx.at(pad_token);
+    
     for (int pos = 0; pos < max_len; ++pos) {
       
       const char aa_char = (pos < L_obs) ? seq[pos] : pad_token;
-      const int  aa_idx  = (aa2idx.count(aa_char) ? aa2idx.at(aa_char)
-                              : aa2idx.at(pad_token));
+      
+      // Find the index, defaulting to the padding index if the character is not in the alphabet
+      const int  aa_idx  = (aa2idx.count(aa_char)) ? aa2idx.at(aa_char) : pad_idx;
       
       if (mode == "onehot") {
+        // This logic is correct as `D` (depth) is K, which includes the padding symbol
         const std::size_t off = idx3d(s, pos, aa_idx, S, max_len, D);
         cube[ off ] = 1.0;
         flat(s, pos * D + aa_idx) = 1.0;
-      }
-      else { // property
-        for (int p = 0; p < P; ++p) {
-          const double val = prop_mat(aa_idx, p);
-          const std::size_t off = idx3d(s, pos, p, S, max_len, D);
-          cube[ off ] = val;
-          flat(s, pos * D + p) = val;
-          if (need_summary) acc[p] += val;
+        
+      } else { // property mode
+        
+        // **FIX**: Check if the character is a pad/unknown symbol BEFORE accessing prop_mat
+        if (aa_idx == pad_idx) {
+          // For padded/unknown positions, encode with zeros
+          for (int p = 0; p < P; ++p) {
+            const std::size_t off = idx3d(s, pos, p, S, max_len, D);
+            cube[ off ] = 0.0;
+            flat(s, pos * D + p) = 0.0;
+          }
+        } else {
+          // For valid amino acids, access the property matrix (this is now safe)
+          for (int p = 0; p < P; ++p) {
+            const double val = prop_mat(aa_idx, p);
+            const std::size_t off = idx3d(s, pos, p, S, max_len, D);
+            cube[ off ] = val;
+            flat(s, pos * D + p) = val;
+            if (need_summary) acc[p] += val;
+          }
         }
       }
     } // end position loop
