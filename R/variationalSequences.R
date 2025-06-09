@@ -216,7 +216,9 @@ variationalSequences <- function(input.sequences,
       
   # Compile the model
   optimizer_fn <- getFromNamespace(paste0("optimizer_", tolower(optimizer)), "keras3")
-  vae_with_loss |> keras3::compile(optimizer = optimizer_fn(learning_rate = learning.rate))
+  vae_with_loss |> keras3::compile(
+                      optimizer = optimizer_fn(learning_rate = learning.rate), 
+                      loss = dummy_loss)
   
   
   if(verbose) {    
