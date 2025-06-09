@@ -17,6 +17,9 @@
 * Added ```scaleMatrix()``` for comprehensive scale/transformation functions
 * Added ```summaryMatrix()``` for fast summarization of matrix values
 
+## BUGS
+* Fixed NT position issue with ```inferCDR()```
+
 # immApex VERSION 1.2.2
 * Updated unit tests and vignette check
 * Converted package to basilisk from reticulate

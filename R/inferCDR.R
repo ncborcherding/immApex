@@ -71,8 +71,11 @@ inferCDR <- function(input.data,
   pos_idx <- .sequence.positions[sequences]
   if (sequence.type == "nt") {
     pos_idx <- lapply(pos_idx, function(x) {
-      rng <- range(x) * 3L
-      seq.int(min(rng), max(rng) + 3L)
+      aa_start <- min(x)
+      aa_end <- max(x)
+      nt_start <- (aa_start - 1L) * 3L + 1L
+      nt_end <- aa_end * 3L
+      seq.int(nt_start, nt_end)
     })
   }
   
