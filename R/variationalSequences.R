@@ -234,13 +234,15 @@ variationalSequences <- function(input.sequences,
         callbacks = es
   )
   if (verbose) message("Sampling and decoding new sequences...")
-  latent_bounds <- apply(predict(keras3::keras_model(input_layer, z_mean), x_train), 2, range)
+  latent_space <- predict(encoder, x_train)
+  latent_bounds <- apply(latent_space, 2, range)
+  
   z_samples <- sapply(seq_len(latent.dim), function(i) {
     runif(number.of.sequences, min = latent_bounds[1, i], max = latent_bounds[2, i])
   })
   z_samples <- matrix(z_samples, ncol = latent.dim)
+  generated_matrix <- decoder |> predict(z_samples)
   
-  generated_matrix <- decoder_model |> predict(z_samples)
   candidate.sequences <- sequenceDecoder(sequence.matrix = generated_matrix,
                                          encoder = encoder.function,
                                          aa.method.to.use = aa.method.to.use,
