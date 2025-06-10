@@ -5,7 +5,10 @@ seqs <- c("ACD",            # 3-mer
           "FGHIK")          # 5-mer
 
 test_that("matrix mode returns correct type, dimensions, and padding", {
-  mat <- tokenizeSequences(seqs, add.startstop = TRUE, convert.to.matrix = TRUE)
+  mat <- tokenizeSequences(seqs, 
+                           add.startstop = TRUE, 
+                           convert.to.matrix = TRUE,
+                           verbose = FALSE)
   
   expect_true(is.matrix(mat) && is.integer(mat))
   
@@ -23,7 +26,8 @@ test_that("list mode mirrors matrix logic", {
                            add.startstop = FALSE,
                            convert.to.matrix = FALSE,
                            max.length = 6,
-                           padding.token = 99)
+                           padding.token = 99,
+                           verbose = FALSE)
   expect_type(lst, "list")
   expect_length(lst, length(seqs))
   expect_equal(lengths(lst), rep(6L, 2))          # padded to 6
@@ -40,7 +44,9 @@ test_that("verbose flag emits message exactly once", {
 
 test_that("max.length shorter than longest sequence triggers error", {
   expect_error(
-    tokenizeSequences(seqs, max.length = 2),
+    tokenizeSequences(seqs, 
+                      max.length = 2,
+                      verbose = FALSE),
     "`max.length` is smaller"
   )
 })
@@ -48,18 +54,24 @@ test_that("max.length shorter than longest sequence triggers error", {
 test_that("unknown characters are caught", {
   bad <- c("AXZ")  # Z not in amino.acids
   expect_error(
-    tokenizeSequences(bad, add.startstop = FALSE),
+    tokenizeSequences(bad, 
+                      add.startstop = FALSE,
+                      verbose = FALSE),
     "Unknown character"
   )
 })
 
 test_that("non-single-character tokens are rejected", {
   expect_error(
-    tokenizeSequences("AC", start.token = "XX"),
+    tokenizeSequences("AC", 
+                      start.token = "XX",
+                      verbose = FALSE),
     "single characters"
   )
   expect_error(
-    tokenizeSequences("AC", stop.token  = "YY"),
+    tokenizeSequences("AC", 
+                      stop.token  = "YY",
+                      verbose = FALSE),
     "single characters"
   )
 })
