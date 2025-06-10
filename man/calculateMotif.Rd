@@ -5,7 +5,7 @@
 \title{Motif Enumeration and Counting}
 \usage{
 calculateMotif(
-  sequences,
+  input.sequences,
   motif.lengths = 2:5,
   min.depth = 3,
   discontinuous = FALSE,
@@ -14,7 +14,8 @@ calculateMotif(
 )
 }
 \arguments{
-\item{sequences}{Character vector of amino-acid sequences.}
+\item{input.sequences}{Character vector of sequences (amino acid or 
+nucleotide)}
 
 \item{motif.lengths}{Integer vector of motif sizes (≥ 1). **Default:** `2:5`.}
 

@@ -83,7 +83,7 @@ calculateProperty <- function(input.sequences,
   # 2. residue frequencies (20 × L)  
   nSeq  <- length(input.sequences)
   Freq  <- calculateFrequency(
-    sequences           = input.sequences,
+    input.sequences     = input.sequences,
     max.length          = max.length,
     sequence.dictionary = amino.acids,
     padding.symbol      = padding.symbol,
@@ -111,11 +111,9 @@ calculateProperty <- function(input.sequences,
       }
     }
   }
-  
   dimnames(Summ) <- list(scale    = rownames(S),
                          position = paste0("Pos.", seq_len(max.length)))
 
-  
   # 4.Optional transform 
   Summ <- .transform.apply(Summ, method = transform) 
   
@@ -126,7 +124,6 @@ calculateProperty <- function(input.sequences,
                                 responseName     = "value")
     Summ$position <- as.integer(sub("^Pos\\.", "", Summ$position))
   }
-  
   Summ
 }
 
@@ -147,9 +144,9 @@ calculateProperty <- function(input.sequences,
        "Use one of the built-ins, ",
        "or supply a custom numeric matrix.")
 }
+amino.acids <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")
 
 .builtin_scales <- new.env(parent = emptyenv())
-
 
 .builtin_scales$Atchley <- t(matrix(c(
   # A (Alanine)

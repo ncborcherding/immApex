@@ -4,6 +4,7 @@
 #' autoencoder (VAE) and perturbation of the probability distributions.
 #' 
 #' @examples
+#' \dontrun{
 #' sequences <- generateSequences(prefix.motif = "CAS",
 #'                                suffix.motif = "YF",
 #'                                number.of.sequences = 100,
@@ -11,16 +12,15 @@
 #'                                max.length = 16)
 #' 
 #' new.sequences <- variationalSequences(sequences, 
-#'                                       encoder = "onehotEncoder",
+#'                                       mode = "onehotEncoder",
 #'                                       encoder.hidden.dim = c(256, 128),
 #'                                       latent.dim = 16,
 #'                                       batch.size = 16)
-#' 
+#' }
 #' @param input.sequences The amino acid or nucleotide sequences to use
-#' @param mode The encoding mode used for decoding: `"onehot"` or `"property"`.
-#' @param property.set For `mode = "property"`, a character vector of property
-#'   names (e.g., `"Atchley"`) that were used for the original encoding.
-#'   See `?sequenceEncoder`.
+#' @param mode Either `"onehot"` (default) or `"property"`.
+#' @param property.set *Optional* `character` vector of property names to
+#' extract from \pkg{Peptides} (ignored in `"onehot"` mode).  
 #' @param number.of.sequences Number of sequences to generate
 #' @param encoder.hidden.dim A vector of the neurons to use in the hidden layers
 #' for the encoder portion of the model
@@ -45,15 +45,16 @@
 #' fit layer_input loss_binary_crossentropy optimizer_adadelta 
 #' optimizer_adagrad optimizer_adam optimizer_adamax optimizer_ftrl 
 #' optimizer_nadam optimizer_rmsprop optimizer_sgd  
-#' callback_early_stopping 
+#' callback_early_stopping layer_normalization 
+#' @importFrom magrittr %>%
 #' @importFrom stats predict runif
 #' @importFrom tensorflow tf
 #' @export 
 #' @return A vector of mutated sequences
-
+#' 
 variationalSequences <- function(input.sequences,
-                                 mode                    = c("onehot", "property"),
-                                 property.set            = NULL,
+                                 mode                    = "onehot",
+                                 property.set        = NULL,
                                  number.of.sequences     = 100,
                                  encoder.hidden.dim      = c(128, 64),
                                  decoder.hidden.dim      = NULL,
@@ -68,12 +69,13 @@ variationalSequences <- function(input.sequences,
                                  disable.eager.execution = FALSE,
                                  sequence.dictionary     = amino.acids,
                                  verbose                 = TRUE) {
+  
   basilisk::basiliskRun(
-    env = immApexEnv,         
+    env = immApexEnv,          
     fun = .variationalSequences_impl,   
     input.sequences        = input.sequences,
-    mode                   = mode,
-    property.set           = property.set,
+    mode       = mode,
+    property.set       = property.set,
     number.of.sequences    = number.of.sequences,
     encoder.hidden.dim     = encoder.hidden.dim,
     decoder.hidden.dim     = decoder.hidden.dim,
@@ -92,7 +94,7 @@ variationalSequences <- function(input.sequences,
 }
 
 .variationalSequences_impl <- function(input.sequences,
-                                       mode = NULL,
+                                       mode = "onehotEncoder",
                                        property.set = NULL,
                                        number.of.sequences = 100,
                                        encoder.hidden.dim = c(128,64),
@@ -109,17 +111,17 @@ variationalSequences <- function(input.sequences,
                                        sequence.dictionary = amino.acids,
                                        verbose = TRUE) {
   
-  n_train <- floor(length(input.sequences) * 0.8)  # Default to 80% for training
+  # Ensure Keras session is cleared and R garbage collection runs when the function exits
+  on.exit({
+    keras3::clear_session()
+    gc()
+  }, add = TRUE)
   
-  # Input validation
+  
+  n_train <- floor(length(input.sequences) * 0.8)
+  
   if(length(input.sequences) < 1) stop("input.sequences must have at least one sequence.")
   
-  # Optimizer validation
-  available_optimizers <- tolower(names(keras3::keras$optimizers))
-  available_optimizers <- available_optimizers[-grep("get|schedules|serialize|legacy", available_optimizers)]
-  if (!tolower(optimizer) %in% available_optimizers) {
-    stop("Please select a compatible optimizer function in the Keras R implementation.")
-  }
   
   if (disable.eager.execution) {
     tensorflow::tf$compat$v1$disable_eager_execution()
@@ -132,102 +134,103 @@ variationalSequences <- function(input.sequences,
     verbose = 0,
     mode = "min")
   
+  # Input validation
+  if(length(input.sequences) < 1) stop("input.sequences must have at least one sequence.")
+  
+  # Optimizer validation
+  available_optimizers <- tolower(names(keras3::keras$optimizers))
+  available_optimizers <- available_optimizers[-grep("get|schedules|serialize|legacy", available_optimizers)]
+  if (!tolower(optimizer) %in% available_optimizers) {
+    stop("Please select a compatible optimizer function in the Keras R implementation.")
+  }
+  
   if(verbose)  message("Encoding Sequences...")
-
+  
   # Prepare the sequences matrix
   sequence.matrix <- sequenceEncoder(input.sequences,
                                      mode = mode,
                                      sequence.dictionary = sequence.dictionary, 
-                                     property.set = property.set)
+                                     property.set = property.set)[[2]]
   
-  sequence.matrix <- sequence.matrix[[2]]
   # Custom VAE Loss Layer
   vae_loss_layer <- function(original_dim) {
-        layer_lambda(f = function(x) {
-          x_decoded_mean <- x[[1]]
-          x_input <- x[[2]]
-          z_mean <- x[[3]]
-          z_log_var <- x[[4]]
-          xent_loss <- loss_binary_crossentropy(x_input, x_decoded_mean) * original_dim
-          kl_loss <- -0.5 * tf$reduce_mean(1 + z_log_var - tf$square(z_mean) - tf$exp(z_log_var), axis = -1L)
-          tf$reduce_mean(xent_loss + kl_loss)
-        })
+    layer_lambda(f = function(x) {
+      x_decoded_mean <- x[[1]]
+      x_input <- x[[2]]
+      z_mean <- x[[3]]
+      z_log_var <- x[[4]]
+      xent_loss <- loss_binary_crossentropy(x_input, x_decoded_mean) * original_dim
+      kl_loss <- -0.5 * tf$reduce_mean(1 + z_log_var - tf$square(z_mean) - tf$exp(z_log_var), axis = -1L)
+      tf$reduce_mean(xent_loss + kl_loss)
+    })
   }
   original_dim <- ncol(sequence.matrix)
   
-  # Data splitting
   train_indices <- sample(seq_len(nrow(sequence.matrix)), n_train)
   x_train <- sequence.matrix[train_indices, ]
   x_test <- sequence.matrix[-train_indices, ]
   
-  
-  # Encoder
   encoder_input <- layer_input(shape = original_dim)
   h <- encoder_input
   for (dim in encoder.hidden.dim) {
-       h <- layer_dense(h, units = dim, activation = activation.function)
+    h <- layer_dense(h, units = dim, activation = activation.function)
   }
   z_mean <- layer_dense(h, units = latent.dim, name = "z_mean")
   z_log_var <- layer_dense(h, units = latent.dim, name = "z_log_var")
-      
-  # Sampling Layer
+  
   z <- layer_lambda(f = function(args) {
-        z_mean <- args[[1]]
-        z_log_var <- args[[2]]
-        batch <- tf$shape(z_mean)[1]
-        dim <- tf$shape(z_mean)[2]
-        epsilon <- tf$random$normal(shape = c(batch, dim), mean = 0., stddev = epsilon.std)
-        z_mean + tf$exp(z_log_var / 2) * epsilon
-      }, output_shape = c(latent.dim))(list(z_mean, z_log_var))
-      
-  # Decoder
+    z_mean <- args[[1]]
+    z_log_var <- args[[2]]
+    batch <- tf$shape(z_mean)[1]
+    dim <- tf$shape(z_mean)[2]
+    epsilon <- tf$random$normal(shape = c(batch, dim), mean = 0., stddev = epsilon.std)
+    z_mean + tf$exp(z_log_var / 2) * epsilon
+  }, output_shape = c(latent.dim))(list(z_mean, z_log_var))
+  
   decoder_input <- layer_input(shape = latent.dim)
   d <- decoder_input
   if (is.null(decoder.hidden.dim)) {
-    decoder.hidden.dim <- rev(encoder.hidden.dim)  # Default to mirroring the encoder layers
+    decoder.hidden.dim <- rev(encoder.hidden.dim)
   }
   for (dim in decoder.hidden.dim) {
     d <- layer_dense(d, units = dim, activation = "relu")
   }
   decoder_output <- layer_dense(d, units = original_dim, activation = "sigmoid")
-      
-  # Encoder and Decoder Models
+  
   encoder <- keras_model(encoder_input, z_mean)
   decoder <- keras_model(decoder_input, decoder_output)
-      
-  # VAE Model
-  decoder_output <- decoder(z)
-  vae <- keras_model(encoder_input, decoder_output)
-      
-  # Add custom loss layer
-  loss_layer <- vae_loss_layer(original_dim)(list(decoder_output, encoder_input, z_mean, z_log_var))
+  
+  vae_output <- decoder(z)
+  loss_layer <- vae_loss_layer(original_dim)(list(vae_output, encoder_input, z_mean, z_log_var))
   vae_with_loss <- keras_model(encoder_input, loss_layer)
-      
-  # Dummy loss function
+
+  
   dummy_loss <- function(y_true, y_pred) {
     tf$reduce_mean(y_pred)
   }
-      
-  # Compile the model
+  
   optimizer_fn <- getFromNamespace(paste0("optimizer_", tolower(optimizer)), "keras3")
   vae_with_loss |> keras3::compile(
-                      optimizer = optimizer_fn(learning_rate = learning.rate), 
-                      loss = dummy_loss)
-  
+    optimizer = optimizer_fn(learning_rate = learning.rate), 
+    loss = dummy_loss)
   
   if(verbose) {    
     message("Fitting Model....")
   }
-  vae_with_loss |> fit(
-        x_train, x_train, 
-        shuffle = TRUE,
-        epochs = epochs,
-        batch_size = batch.size,
-        validation_data = list(x_test, x_test),
-        verbose = 0,
-        callbacks = es
+  
+  vae_with_loss %>% fit(
+    x_train, x_train, 
+    shuffle = TRUE,
+    epochs = epochs,
+    batch_size = batch.size,
+    validation_data = list(x_test, x_test),
+    verbose = 0,
+    callbacks = es
   )
-  if (verbose) message("Sampling and decoding new sequences...")
+  
+  if(verbose) message("Generating New Sequences....")
+  
+  # 1. Use the existing 'encoder' model instead of re-building it.
   latent_space <- predict(encoder, x_train)
   latent_bounds <- apply(latent_space, 2, range)
   
@@ -235,9 +238,11 @@ variationalSequences <- function(input.sequences,
     runif(number.of.sequences, min = latent_bounds[1, i], max = latent_bounds[2, i])
   })
   z_samples <- matrix(z_samples, ncol = latent.dim)
+  
+  # 2. Use the correct 'decoder' model object.
   generated_matrix <- decoder |> predict(z_samples)
   
-  candidate.sequences <- sequenceDecoder(generated_matrix,
+  candidate.sequences <- sequenceDecoder(encoded.object = generated_matrix,
                                          mode = mode,
                                          property.set = property.set,
                                          call.threshold = call.threshold,

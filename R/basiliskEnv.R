@@ -4,9 +4,12 @@ immApexEnv <- BasiliskEnvironment(
   pkgname = "immApex",
   packages = c(
     "python=3.9",
-    "keras=3.6.*",            
-    "tensorflow=2.18.*",      
-    "h5py=3.13",
-    "numpy=1.26"
+    "pip=23.3.1",
+    "setuptools=69.2.*",
+    "wheel=0.42.*",
+    "numpy=1.26", 
+    "h5py=3.10", 
+    "keras=3.3.*",
+    "tensorflow=2.16.*"
   )
 )

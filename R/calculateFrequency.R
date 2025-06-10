@@ -5,7 +5,7 @@
 #' strings are padded to a common width so the calculation is entirely
 #' vectorised (one logical comparison + one `colSums()` per residue).
 #'
-#' @param sequences  Character vector of sequences (amino acid or 
+#' @param input.sequences  Character vector of sequences (amino acid or 
 #' nucleotide)
 #' @param max.length Integer.  Pad/trim to this length. Defaults to
 #'  `max(nchar(sequences))`.
@@ -38,21 +38,21 @@
 #'                    tidy = TRUE)
 #'
 #' @export
-calculateFrequency <- function(sequences,
+calculateFrequency <- function(input.sequences,
                                max.length = NULL,
                                sequence.dictionary = amino.acids,
                                padding.symbol = ".",
                                tidy = FALSE) {
   # Preflight checks-----------------------------------------------------------
-  stopifnot(is.character(sequences),
+  stopifnot(is.character(input.sequences),
             nchar(padding.symbol) == 1L,
             padding.symbol %!in% sequence.dictionary)
   
   # 1. Pad to a rectangular character matrix 
   if (is.null(max.length))
-    max.length <- max(nchar(sequences), 1L)
+    max.length <- max(nchar(input.sequences), 1L)
   
-  padded <- .padded.strings(sequences,
+  padded <- .padded.strings(input.sequences,
                             max.length = max.length,
                             pad = padding.symbol,
                             collapse  = TRUE)

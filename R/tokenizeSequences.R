@@ -45,7 +45,7 @@ tokenizeSequences <- function(input.sequences,
   if (add.startstop) {
     sequences <- paste0(start.token, input.sequences, stop.token)
     char_set  <- c(start.token, amino.acids, stop.token)
-    if (verbose) cat("Added start/stop tokens...")
+    if (verbose) message("Added start/stop tokens...")
   } else {
     sequences <- input.sequences
     char_set  <- amino.acids
@@ -62,12 +62,12 @@ tokenizeSequences <- function(input.sequences,
   if (max(lens) > max.length)
     stop("`max.length` is smaller than the longest sequence.")
   
-  if (verbose) cat("Padding Sequences...")
+  if (verbose) message("Padding Sequences...")
   pad.id <- padding.symbol %||% (length(char_set) + 1L)
   
   # Tokenise and pad in one sweep ---------------------------------------------
   if (convert.to.matrix) {
-    if (verbose) cat("Converting to Matrix...")
+    if (verbose) message("Converting to Matrix...")
     N <- length(sequences)
     mat <- matrix(pad.id, nrow = N, ncol = max.length) # integer matrix
     

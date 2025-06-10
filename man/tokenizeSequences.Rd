@@ -11,7 +11,7 @@ tokenizeSequences(
   stop.token = "^",
   max.length = NULL,
   convert.to.matrix = TRUE,
-  pad.token = NULL,
+  padding.symbol = NULL,
   verbose = TRUE
 )
 }
@@ -29,7 +29,7 @@ to the max length of input.sequences}
 
 \item{convert.to.matrix}{Return a matrix (TRUE) or a vector (FALSE)}
 
-\item{pad.token}{Integer ID to use for padding (default = length(char_set)+1).}
+\item{padding.symbol}{Single character used for right-padding.}
 
 \item{verbose}{Print messages corresponding to the processing step}
 }

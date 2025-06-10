@@ -37,6 +37,7 @@ geometricEncoder <- function(input.sequences,
       }
       return(m)
     }
+    data("immapex_blosum.pam.matrices", package = "immApex", envir = environment())
     if (!exists("immapex_blosum.pam.matrices")) {
       stop("Built-in matrix data `immapex_blosum.pam.matrices` not found.")
     }

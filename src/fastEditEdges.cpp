@@ -9,7 +9,7 @@
 #include <omp.h>
 #endif
 
-using namespace Rcpp;     
+using namespace Rcpp;
 
 // ----------------------------------------------------------------------------
 //  Levenshtein with early‐exit (banded DP)
@@ -98,7 +98,7 @@ DataFrame fast_edge_list(CharacterVector           seqs,
   size_t approx = (size_t)n * (n-1) / 2;
   std::vector<std::string> out_from; out_from.reserve(approx);
   std::vector<std::string> out_to;   out_to  .reserve(approx);
-  std::vector<int>         out_d;    out_d   .reserve(approx);
+  std::vector<double>      out_d;    out_d   .reserve(approx);
   
 #ifdef _OPENMP
   int nthread = omp_get_max_threads();
@@ -112,7 +112,7 @@ DataFrame fast_edge_list(CharacterVector           seqs,
 {
   std::vector<std::string> loc_from; loc_from.reserve(approx / nthread);
   std::vector<std::string> loc_to;   loc_to  .reserve(approx / nthread);
-  std::vector<int>         loc_d;    loc_d   .reserve(approx / nthread);
+  std::vector<double>      loc_d;    loc_d   .reserve(approx / nthread);
   
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic,32)
@@ -135,7 +135,15 @@ DataFrame fast_edge_list(CharacterVector           seqs,
       if (d <= maxd) {
         loc_from.push_back(lbl[i]);
         loc_to  .push_back(lbl[k]);
-        loc_d   .push_back(d);
+        // [FIX] Calculate and push back the correct distance type
+        if (thresh < 1.0) {
+          // Relative distance mode
+          double rel_dist = static_cast<double>(d) / std::max(lens[i], lens[k]);
+          loc_d.push_back(rel_dist);
+        } else {
+          // Absolute distance mode
+          loc_d.push_back(static_cast<double>(d));
+        }
       }
     }
   }

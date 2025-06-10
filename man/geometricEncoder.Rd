@@ -8,60 +8,25 @@ geometricEncoder(
   input.sequences,
   method = "BLOSUM62",
   substitution = NULL,
-  theta = pi/3,
-  verbose = TRUE
+  theta = pi/3
 )
 }
 \arguments{
 \item{input.sequences}{Character vector of AA strings.}
 
-\item{method}{Character key into an internal or user list
-(default `"BLOSUM62"`), **or** a 20×20 numeric matrix.}
+\item{method}{Character key for a built-in substitution matrix 
+(e.g., "BLOSUM62"), or a 20x20 numeric matrix itself.}
 
-\item{substitution}{Optional 20×20 matrix *or* named list of matrices.
-When supplied, skips the built-in data lookup.}
+\item{substitution}{Optional named list of matrices to look up `method` in.
+If `method` is a matrix, this is ignored.}
 
-\item{theta}{Rotation angle in radians for every 2-D block (default `pi/3`).}
-
-\item{verbose}{Print messages corresponding to the processing step}
+\item{theta}{Rotation angle in radians (default `pi/3`).}
 }
 \value{
-A numeric matrix with `length(input.sequences)` rows and 20
-columns. Row order follows the input vector.
+A numeric matrix with `length(input.sequences)` rows and 20 columns.
 }
 \description{
-Projects each input sequence into a 20-dimensional numeric space by (i) 
-looking up the rows of a substitution matrix (BLOSUM, PAM, or user-supplied),
-(ii) averaging those vectors, and (iii) applying a block-diagonal 2D 
-rotation (`θ`) across the 20 axes.
-}
-\section{Built-in substitution matrices}{
-
-The package ships with ten canonical 20 × 20 matrices (stored as
-`immapex_blosum.pam.matrices`) that can be referenced through the `method`
-argument:
-\itemize{
-  \item{\strong{BLOSUM}: "BLOSUM45", "BLOSUM50", "BLOSUM62",
-        "BLOSUM80", "BLOSUM100"}
-  \item{\strong{PAM}:    "PAM30", "PAM40", "PAM70",
-        "PAM120", "PAM250"}
-}
-}
-
-\examples{
-# Synthetic input
-new.sequences <- generateSequences(prefix.motif = "CAS",
-                                   suffix.motif = "YF",
-                                   number.of.sequences = 100,
-                                   min.length = 8,
-                                   max.length = 16)
-
-# Encode with the default BLOSUM62
-emb <- geometricEncoder(new.sequences)
-
-# Encode with a custom matrix
-myMat <- matrix(runif(400), 20, 20,
-                dimnames = list(amino.acids, NULL))
-emb2  <- geometricEncoder(new.sequences, substitution = myMat)
-
+#' Projects sequences into a 20D space using a substitution matrix,
+vector averaging, and rotation. This version is optimized for speed
+by using fully vectorized operations.
 }

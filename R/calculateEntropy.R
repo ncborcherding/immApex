@@ -17,7 +17,7 @@
 #' numeric vector of clone counts and return a single numeric value.
 #'
 #' @param sequences `character()`. Vector of CDR3 AA strings.
-#' @param aa.length `integer(1)`. Target length to align / pad to.
+#' @param max.length `integer(1)`. Target length to align / pad to.
 #' *Default* = `max(nchar(sequences))`.
 #' @param method Either the name of a built-in metric  (`"shannon"`, 
 #' `"inv.simpson"`, `"gini.simpson"`, `"norm.entropy"`, `"pielou"`, `"hill0"`, 
@@ -31,8 +31,8 @@
 #' seqs <- c("CASSLGQDTQYF", "CASSIRSSYNEQFF", "CASSTGELFF")
 #' calculateEntropy (seqs, method = "shannon")
 #' @export
-calculateEntropy <- function(sequences,
-                             aa.length = NULL,
+calculateEntropy <- function(input.sequences,
+                             max.length = NULL,
                              method    = c("shannon", 
                                            "inv.simpson", 
                                            "gini.simpson", 
@@ -43,9 +43,9 @@ calculateEntropy <- function(sequences,
                                            "hill2"),
                              padding.symbol = ".") {
   # Preflight checks-----------------------------------------------------------
-  stopifnot(is.character(sequences))
-  if (is.null(aa.length))
-    aa.length <- max(nchar(sequences))
+  stopifnot(is.character(input.sequences))
+  if (is.null(max.length))
+    max.length <- max(nchar(input.sequences))
   if (nchar(padding.symbol) != 1L)
     stop("'padding.symbol' must be a single character")
   
@@ -53,15 +53,15 @@ calculateEntropy <- function(sequences,
   
   # 1. Pad sequences to equal length and split into a char matrix
   pad_seq  <- paste0(
-    sequences,
-    vapply(aa.length - nchar(sequences),
+    input.sequences,
+    vapply(max.length - nchar(input.sequences),
            function(x) if (x > 0) strrep(padding.symbol, x) else "",
            character(1))
   )
   mat <- matrix(
     unlist(strsplit(pad_seq, "")),
-    ncol = aa.length, byrow = TRUE,
-    dimnames = list(NULL, paste0("Pos", seq_len(aa.length)))
+    ncol = max.length, byrow = TRUE,
+    dimnames = list(NULL, paste0("Pos", seq_len(max.length)))
   )
   
   ## pick the scoring function 
@@ -74,7 +74,7 @@ calculateEntropy <- function(sequences,
   }
   
   ## 3. Vectorised per-column calculation 
-  res <- vapply(seq_len(aa.length), function(i) {
+  res <- vapply(seq_len(max.length), function(i) {
     cnt <- table(mat[, i])
     cnt <- cnt[names(cnt) != padding.symbol]             # drop padding
     if (length(cnt) <= 1L) return(0)          # no variability

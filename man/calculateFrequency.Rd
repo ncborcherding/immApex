@@ -5,7 +5,7 @@
 \title{Relative Residue Frequencies at Every Position}
 \usage{
 calculateFrequency(
-  sequences,
+  input.sequences,
   max.length = NULL,
   sequence.dictionary = amino.acids,
   padding.symbol = ".",
@@ -13,7 +13,8 @@ calculateFrequency(
 )
 }
 \arguments{
-\item{sequences}{A character vector of AA or nucleotide strings.}
+\item{input.sequences}{Character vector of sequences (amino acid or 
+nucleotide)}
 
 \item{max.length}{Integer.  Pad/trim to this length. Defaults to
 `max(nchar(sequences))`.}

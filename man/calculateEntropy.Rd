@@ -5,17 +5,15 @@
 \title{Positional Entropy / Diversity Biological Sequences}
 \usage{
 calculateEntropy(
-  sequences,
-  aa.length = NULL,
+  input.sequences,
+  max.length = NULL,
   method = c("shannon", "inv.simpson", "gini.simpson", "norm.entropy", "pielou", "hill0",
     "hill1", "hill2"),
   padding.symbol = "."
 )
 }
 \arguments{
-\item{sequences}{`character()`. Vector of CDR3 AA strings.}
-
-\item{aa.length}{`integer(1)`. Target length to align / pad to.
+\item{max.length}{`integer(1)`. Target length to align / pad to.
 *Default* = `max(nchar(sequences))`.}
 
 \item{method}{Either the name of a built-in metric  (`"shannon"`, 
@@ -23,6 +21,8 @@ calculateEntropy(
 `"hill1"`, `"hill2"`) **or** a custom function as described above.}
 
 \item{padding.symbol}{Symbol to use for padding at the end of sequences.}
+
+\item{sequences}{`character()`. Vector of CDR3 AA strings.}
 }
 \value{
 Named `numeric()` vector of diversity scores,

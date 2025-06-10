@@ -80,7 +80,7 @@ inferCDR <- function(input.data,
   }
   
   # Build a lookup table ------------------------------------------------------
-  if (verbose) cat("Building V-gene / CDR map …\n")
+  if (verbose) message("Building V-gene / CDR map …\n")
   
   ref_seqs <- reference[["sequences"]]
   ref_names <- names(ref_seqs)
@@ -108,7 +108,7 @@ inferCDR <- function(input.data,
   if (verbose) {
     miss <- sum(is.na(key))
     if (miss)
-      cat("Warning:", miss, "V genes not found in reference; CDRs set to NA.\n")
+      message("Warning:", miss, "V genes not found in reference; CDRs set to NA.\n")
   }
   
   input.data

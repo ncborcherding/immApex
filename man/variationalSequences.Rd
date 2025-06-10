@@ -6,8 +6,8 @@
 \usage{
 variationalSequences(
   input.sequences,
-  encoder.function = "onehotEncoder",
-  aa.method.to.use = NULL,
+  mode = "onehot",
+  property.set = NULL,
   number.of.sequences = 100,
   encoder.hidden.dim = c(128, 64),
   decoder.hidden.dim = NULL,
@@ -27,15 +27,10 @@ variationalSequences(
 \arguments{
 \item{input.sequences}{The amino acid or nucleotide sequences to use}
 
-\item{encoder.function}{The method to prepare the sequencing information - 
-"onehotEncoder" or "propertyEncoder"}
+\item{mode}{Either `"onehot"` (default) or `"property"`.}
 
-\item{aa.method.to.use}{The method or approach to use for the conversion:
-\itemize{
-  \item{Individual sets: atchleyFactors, crucianiProperties, FASGAI, kideraFactors, MSWHIM,
-  ProtFP, stScales, tScales, VHSE, zScales"}
-  \item{Multiple Sets: c("atchleyFactors", "VHSE") }
-}}
+\item{property.set}{*Optional* `character` vector of property names to
+extract from \pkg{Peptides} (ignored in `"onehot"` mode).}
 
 \item{number.of.sequences}{Number of sequences to generate}
 
@@ -78,6 +73,7 @@ Use this to simulate sequences using a variational
 autoencoder (VAE) and perturbation of the probability distributions.
 }
 \examples{
+\dontrun{
 sequences <- generateSequences(prefix.motif = "CAS",
                                suffix.motif = "YF",
                                number.of.sequences = 100,
@@ -85,9 +81,9 @@ sequences <- generateSequences(prefix.motif = "CAS",
                                max.length = 16)
 
 new.sequences <- variationalSequences(sequences, 
-                                      encoder = "onehotEncoder",
+                                      mode = "onehotEncoder",
                                       encoder.hidden.dim = c(256, 128),
                                       latent.dim = 16,
                                       batch.size = 16)
-
+}
 }

@@ -16,15 +16,9 @@
 #' @section Property mode:
 #' If you supply `property.matrix` directly, it **must** be a numeric matrix
 #' whose **rows correspond to the 20 canonical amino acids in the order of
-#' `sequence.dictionary`** and whose columns are the property scales.  This keeps the
-#' function free of mandatory heavy packages.  
+#' `sequence.dictionary`** and whose columns are the property scales.  
 #'
-#' If you would rather reference property names (e.g. `"hydrophobicity",
-#' "charge"`), pass them via `property.set`.  If the \pkg{Peptides} package is
-#' installed, `sequenceEncoder()` will look them up in `Peptides:::AAdata`.
-#' Otherwise an informative error is thrown.
-#'
-#' @param sequences `character` vector. Sequences (uppercase
+#' @param input.sequences `character` vector. Sequences (uppercase
 #' single-letter code).  Gaps or unknown symbols are replaced by `padding.symbol`.
 #' @param mode Either `"onehot"` (default) or `"property"`.
 #' @param property.set *Optional* `character` vector of property names to
@@ -48,7 +42,7 @@
 #' coerced to `1`.  Default = `parallel::detectCores()`.
 #' @param verbose Logical. If `TRUE` (default) prints a short progress message.
 #'
-#' @return A named `list` with at least two elements  
+#' @return A named `list` with the following elements: 
 #' \describe{
 #'   \item{`cube`}{Numeric array with dimensions  
 #'                 `c(depth, max.length, length(sequences))`.  
@@ -59,7 +53,7 @@
 #'   \item{`summary`}{(Only when `summary.fun != ""`) Numeric matrix,
 #'                   `length(sequences) × depth`, containing the requested
 #'                   statistic.}
-#'   \item{`sequence.dictionary`, `pad_token`, `threads`}{Metadata echoed from the call.}
+#'   \item{`sequence.dictionary`, `padding.symbol`, `threads`}{Metadata echoed from the call.}
 #' }
 #'
 #'
@@ -74,7 +68,7 @@
 #'                         summary.fun  = "mean")
 #'
 #' @export
-sequenceEncoder <- function(sequences,
+sequenceEncoder <- function(input.sequences,
                             mode             = c("onehot", "property"),
                             property.set     = NULL,
                             property.matrix  = NULL,
@@ -108,19 +102,18 @@ sequenceEncoder <- function(sequences,
     prop_mat <- NULL
   }
   
-  
   # Max length set -----------------------------------------------------------
   if (is.null(max.length))
-    max.length <- max(nchar(sequences), 1L)
+    max.length <- max(nchar(input.sequences), 1L)
   
   # Encoding sequences --------------------------------------------------------
   if (verbose)
     message(sprintf("[sequenceEncoder] Encoding %d sequence%s (%s mode, L≤%d)…",
-                    length(sequences), ifelse(length(sequences) == 1L, "", "s"),
+                    length(input.sequences), ifelse(length(input.sequences) == 1L, "", "s"),
                     mode, max.length))
   
   out <- encodeSequences_cpp(
-    sequences      = sequences,
+    sequences      = input.sequences,
     mode           = mode,
     alphabet       = sequence.dictionary,
     prop_mat_      = prop_mat,

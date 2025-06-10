@@ -11,12 +11,12 @@
 #'                                max.length = 16)
 #'                                 
 #' mutated_sequences <- mutateSequences(sequences, 
-#'                                      n.sequence = 1,
+#'                                      number.of.sequences = 1,
 #'                                      position.start = 3,
 #'                                      position.end = 8)
 #' 
 #' @param input.sequences The amino acid or nucleotide sequences to use
-#' @param n.sequences The number of mutated sequences to return
+#' @param number.of.sequences The number of mutated sequences to return
 #' @param mutation.rate The rate of mutations to introduce into sequences
 #' @param position.start The starting position to mutate along the sequence
 #' \strong{Default} = NULL will start the random mutations at position 1
@@ -28,7 +28,7 @@
 #' @export 
 #' @return A vector of mutated sequences
 mutateSequences <- function(input.sequences, 
-                            n.sequences = 1, 
+                            number.of.sequences = 1, 
                             mutation.rate = 0.01,
                             position.start = NULL,
                             position.end = NULL,
@@ -36,8 +36,8 @@ mutateSequences <- function(input.sequences,
   
   # Preflight checks-----------------------------------------------------------
   stopifnot(is.character(input.sequences),
-            length(n.sequences) == 1L,
-            n.sequences >= 0L,
+            length(number.of.sequences) == 1L,
+            number.of.sequences >= 0L,
             is.numeric(mutation.rate),
             mutation.rate >= 0, mutation.rate <= 1)
   
@@ -74,7 +74,7 @@ mutateSequences <- function(input.sequences,
   }
   
   ## Generate all mutants -----------------------------------------------------
-  originals <- rep(input.sequences, each = n.sequences)
+  originals <- rep(input.sequences, each = number.of.sequences)
   mutated.sequences   <- vapply(originals, mutate_one, FUN.VALUE = character(1))
   return(mutated.sequences)
 }

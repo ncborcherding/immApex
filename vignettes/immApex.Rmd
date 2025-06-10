@@ -15,6 +15,12 @@ vignette: >
   %\VignetteEncoding{UTF-8} 
 ---
 
+```{r include = FALSE}
+# Set a temporary, writable directory for ALL basilisk operations.
+Sys.setenv(BASILISK_CACHE_DIR = tempdir())
+```
+
+
 ```{r, echo=FALSE, results="hide", message=FALSE}
 knitr::opts_chunk$set(error=FALSE, message=FALSE, warning=FALSE)
 library(BiocStyle)
@@ -37,99 +43,42 @@ suppressMessages(library(keras3))
 suppressMessages(library(ggplot2))
 suppressMessages(library(viridis))
 suppressMessages(library(magrittr))
+suppressMessages(library(igraph))
 suppressMessages(library(tidygraph))
+suppressMessages(library(ggraph))
 ```
 
-# Getting and Manipulating Sequences
-
-## generateSequences
-
-Generating synthetic sequences is a quick way to start testing the model code. ```generateSequences()``` can also generate realistic noise for generative adversarial networks.
-
-Parameters for ```generateSequences()```
-
-* **prefix.motif** Add a defined sequence to the start of the generated sequences.
-* **suffix.motif** Add a defined sequence to the end of the generated sequences
-* **number.of.sequences** Number of sequences to generate
-* **min.length** Minimum length of the final sequence (will be adjusted if incongruent with prefix.motif/suffix.motif)
-* **max.length** Maximum length of the final sequence
-* **sequence.dictionary** The letters to use in sequence generation (default are all amino acids)
-
-```{r tidy = FALSE}
-sequences <- generateSequences(prefix.motif = "CAS",
-                               suffix.motif = "YF",
-                               number.of.sequences = 1000,
-                               min.length = 8,
-                               max.length = 16)
-head(sequences)
+```{r include = FALSE}
+# Trigger the one-time build of the Python environment
+basilisk::basiliskRun(env = immApex:::immApexEnv, fun = function() {
+  invisible(NULL)
+})
 ```
 
-If we want to generate nucleotide sequences instead of amino acids, we must to change the **sequence.dictionary**.
+# Acquiring and Preparing Repertoire Data
+
+## getIMGT
+
+Depending on the sequencing technology and the version, we might want to expand the length of our sequence embedding approach. The first step in the process is pulling the reference sequences from the ImMunoGeneTics (IMGT) system using ```getIMGT()```. More information for IMGT can be found at [imgt.org](https://www.imgt.org/). Data from IMGT is under a CC BY-NC-ND 4.0 license. Please be aware that attribution is required for usage and should not be used to create commercial or derivative work. 
+
+Parameters for ```getIMGT()```
+
+* **species** One or two word designation of species. Currently supporting: "human", "mouse", "rat", "rabbit", "rhesus monkey", "sheep", "pig", "platypus", "alpaca", "dog", "chicken", and "ferret"
+* **chain** Sequence chain to access
+* **frame** Designation for "all", "inframe" or "inframe+gap"
+* **region** Sequence gene loci to access
+* **sequence.type** Type of sequence - "aa" for amino acid or "nt" for nucleotide
+
+Here, we will use the ```getIMGT()``` function to get the amino acid sequences for the TRBV region to get all the sequences by V gene allele.
 
 ```{r tidy = FALSE}
-nucleotide.sequences <- generateSequences(number.of.sequences = 1000,
-                                          min.length = 8,
-                                          max.length = 16, 
-                                          sequence.dictionary = c("A", "C", "T", "G"))
-head(nucleotide.sequences)
-```
+TRBV_aa <- getIMGT(species = "human",
+                   chain = "TRB",
+                   frame = "inframe",
+                   region = "v",
+                   sequence.type = "aa") 
 
-## variationalSequences
-
-In addition to making random sequences with ```generateSequences()```, we can also use generative deep learning to simulate similar, de novo sequences with ```variationalSequences()```. ```variationalSequences()``` uses a variational autoencoder that allows for sampling and generation of sequences similar to the input sequences. 
-
-It should be noted that the success of this approach is highly dependent on the number of sequences used as input and the hyperparameters of the model. As such, ```variationalSequences()``` has a number of arguments to modify to allow for optimization.
-
-Parameters for ```variationalSequences()``
-
-* **input.sequences** The amino acid or nucleotide sequences to use
-* **encoder.function** The method to prepare the sequencing information - **"onehotEncoder"** or **"propertyEncoder"**
-* **aa.method.to.use** The method or approach to use for the conversion, see ```propertyEncoder()```
-*  **number.of.sequences** Number of sequences to generate
-*  **encoder.hidden.dim** A vector of the neurons to use in the hidden layers for the encoder portion of the model
-*  **decoder.hidden.dim** A vector of the neurons to use in the hidden layers for the decoder portion of the model. If NULL assumes symmetric autoencoder
-*  **latent.dim** The size of the latent dimensions
-*  **batch.size** The batch size to use for VAE training
-*  **epochs** The number of epochs to use in VAE training
-*  **learning.rate** The learning rate to use in VAE training
-*  **epsilon.std** The epsilon to use in VAE training
-*  **call.threshold** The relative strictness of sequence calling with higher values being more stringent
-*  **activation.function** The activation for the dense connected layers
-*  **optimizer** The optimizer to use in VAE training
-*  **disable.eager.execution** Disable the eager execution parameter for tensorflow.
-*  **sequence.dictionary** The letters to use in sequence mutation (default are all amino acids)
-
-```{r tidy = FALSE}
-variational.sequences <- variationalSequences(sequences, 
-                                              encoder = "onehotEncoder",
-                                              number.of.sequences = 100,
-                                              encoder.hidden.dim = c(256, 128),
-                                              latent.dim = 16,
-                                              batch.size = 16, 
-                                              call.threshold = 0.1)
-head(variational.sequences)
-```
-
-## mutateSequences
-
-A common approach is to mutate sequences randomly or at specific intervals. This can be particularly helpful if we have fewer sequences or want to test a model for accuracy given new, altered sequences. ```mutateSequences()``` allows us to tune the type of mutation, where along the sequences to introduce the mutation and the overall number of mutations.
-
-Parameters for ```mutateSequences()```
-
-* **input.sequences** The amino acid or nucleotide sequences to use
-* **n.sequences** The number of mutated sequences to return per input.sequence
-* **mutation.rate** The rate of mutations introduced into sequences
-* **position.start** The starting position to mutate along the sequence. Default NULL will start the random mutations at position 1.
-* **position.end** The ending position to mutate along the sequence. Default NULL will end the random mutations at the last position.
-* **sequence.dictionary** The letters to use in sequence mutation (default are all amino acids)
-
-```{r tidy = FALSE}
-mutated.sequences <- mutateSequences(sequences, 
-                                     n.sequence = 1,
-                                     position.start = 3,                                  
-                                     position.end = 8)
-head(sequences)
-head(mutated.sequences)
+TRBV_aa[[1]][1]
 ```
 
 ## formatGenes
@@ -203,111 +152,103 @@ Adaptive_example <- inferCDR(Adaptive_example,
 Adaptive_example[200:210,c("CDR1_IMGT", "CDR2_IMGT")]
 ```
 
-# Encoders
+# Generating and Augmenting Sequence Sets
 
-## onehotEncoder
+## generateSequences
 
-One hot encoding of amino acid or nucleotide sequences is a common method for transforming sequences into numeric matrices compatible with Keras3 (or other workflows).
+Generating synthetic sequences is a quick way to start testing the model code. ```generateSequences()``` can also generate realistic noise for generative adversarial networks.
 
-Parameters for ```onehotEncoder()```
+Parameters for ```generateSequences()```
+
+* **prefix.motif** Add a defined sequence to the start of the generated sequences.
+* **suffix.motif** Add a defined sequence to the end of the generated sequences
+* **number.of.sequences** Number of sequences to generate
+* **min.length** Minimum length of the final sequence (will be adjusted if incongruent with prefix.motif/suffix.motif)
+* **max.length** Maximum length of the final sequence
+* **sequence.dictionary** The letters to use in sequence generation (default are all amino acids)
+
+```{r tidy = FALSE}
+sequences <- generateSequences(prefix.motif = "CAS",
+                               suffix.motif = "YF",
+                               number.of.sequences = 1000,
+                               min.length = 8,
+                               max.length = 16)
+sequences <- unique(sequences)
+head(sequences)
+```
+
+If we want to generate nucleotide sequences instead of amino acids, we must to change the **sequence.dictionary**.
+
+```{r tidy = FALSE}
+nucleotide.sequences <- generateSequences(number.of.sequences = 1000,
+                                          min.length = 8,
+                                          max.length = 16, 
+                                          sequence.dictionary = c("A", "C", "T", "G"))
+head(nucleotide.sequences)
+```
+
+## mutateSequences
+
+A common approach is to mutate sequences randomly or at specific intervals. This can be particularly helpful if we have fewer sequences or want to test a model for accuracy given new, altered sequences. ```mutateSequences()``` allows us to tune the type of mutation, where along the sequences to introduce the mutation and the overall number of mutations.
+
+Parameters for ```mutateSequences()```
 
 * **input.sequences** The amino acid or nucleotide sequences to use
-* **max.length** Additional length to pad, NULL will pad sequences to the max length of input.sequences
-* **convert.to.matrix** Return a matrix (**TRUE**) or a 3D array (**FALSE**)
-* **sequence.dictionary** The letters to use in encoding (default are all amino acids + NA value)
+* **number.of.sequences** The number of mutated sequences to return per input.sequence
+* **mutation.rate** The rate of mutations introduced into sequences
+* **position.start** The starting position to mutate along the sequence. Default NULL will start the random mutations at position 1.
+* **position.end** The ending position to mutate along the sequence. Default NULL will end the random mutations at the last position.
+* **sequence.dictionary** The letters to use in sequence mutation (default are all amino acids)
 
 ```{r tidy = FALSE}
-sequence.matrix <- onehotEncoder(input.sequences =  c(sequences, mutated.sequences), 
-                                 convert.to.matrix = TRUE)
-head(sequence.matrix[,1:20])
+mutated.sequences <- mutateSequences(sequences, 
+                                     number.of.sequences = 1,
+                                     position.start = 3,                                  
+                                     position.end = 8)
+head(sequences)
+head(mutated.sequences)
 ```
 
-## propertyEncoder
+## variationalSequences
 
-An alternative to one hot encoding is transforming the sequences into an array/matrix of numerical values using amino acid properties. 
+In addition to making random sequences with ```generateSequences()```, we can also use generative deep learning to simulate similar, de novo sequences with ```variationalSequences()```. ```variationalSequences()``` uses a variational autoencoder that allows for sampling and generation of sequences similar to the input sequences. 
 
-These properties are largely based on dimensional reduction strategies, but it is essential to know the assumptions for each approach (links to original work below). **Important to note: ** this encoding strategy is specific for amino acids. 
+It should be noted that the success of this approach is highly dependent on the number of sequences used as input and the hyperparameters of the model. As such, ```variationalSequences()``` has a number of arguments to modify to allow for optimization.
 
-**method.to.use**  
+Parameters for ```variationalSequences()``
 
-* atchleyFactors - [citation](https://pubmed.ncbi.nlm.nih.gov/15851683/)
-* crucianiProperties - [citation](https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/abs/10.1002/cem.856)
-* FASGAI - [citation](https://pubmed.ncbi.nlm.nih.gov/18318694/)
-* kideraFactors - [citation](https://link.springer.com/article/10.1007/BF01025492)
-* MSWHIM - [citation](https://pubs.acs.org/doi/10.1021/ci980211b)
-* ProtFP - [citation](https://pubmed.ncbi.nlm.nih.gov/24059694/)
-* stScales - [citation](https://pubmed.ncbi.nlm.nih.gov/19373543/)
-* tScales - [citation](https://www.sciencedirect.com/science/article/abs/pii/S0022286006006314)
-* VHSE - [citation](https://pubmed.ncbi.nlm.nih.gov/15895431/)
-* zScales - [citation](https://pubmed.ncbi.nlm.nih.gov/9651153/)
-
+* **input.sequences** The amino acid or nucleotide sequences to use
+* **mode** The encoding mode used for decoding: `"onehot"` or `"property"`.
+* **property.set** For `mode = "property"`, a character vector of property names.
+*  **number.of.sequences** Number of sequences to generate
+*  **encoder.hidden.dim** A vector of the neurons to use in the hidden layers for the encoder portion of the model
+*  **decoder.hidden.dim** A vector of the neurons to use in the hidden layers for the decoder portion of the model. If NULL assumes symmetric autoencoder
+*  **latent.dim** The size of the latent dimensions
+*  **batch.size** The batch size to use for VAE training
+*  **epochs** The number of epochs to use in VAE training
+*  **learning.rate** The learning rate to use in VAE training
+*  **epsilon.std** The epsilon to use in VAE training
+*  **call.threshold** The relative strictness of sequence calling with higher values being more stringent
+*  **activation.function** The activation for the dense connected layers
+*  **optimizer** The optimizer to use in VAE training
+*  **disable.eager.execution** Disable the eager execution parameter for tensorflow.
+*  **sequence.dictionary** The letters to use in sequence mutation (default are all amino acids)
 
 ```{r tidy = FALSE}
-property.matrix <- propertyEncoder(input.sequences =  c(sequences, mutated.sequences), 
-                                   method.to.use = "FASGAI",
-                                   convert.to.matrix = TRUE)
-
-head(property.matrix[,1:20])
+variational.sequences <- variationalSequences(sequences, 
+                                              mode = "onehot",
+                                              number.of.sequences = 100,
+                                              encoder.hidden.dim = c(256, 128),
+                                              latent.dim = 16,
+                                              batch.size = 16, 
+                                              call.threshold = 0.1)
+head(variational.sequences)
+```
+```{r, include=FALSE}
+keras3::clear_session()
 ```
 
-`propertyEncoder()` also allows us to use multiple approaches simultaneously by setting **method.to.use** as a vector.
-
-```{r tidy = FALSE}
-mulit.property.matrix <- propertyEncoder(input.sequences =  c(sequences, mutated.sequences), 
-                                         method.to.use = c("atchleyFactors", "kideraFactors"),
-                                         convert.to.matrix = TRUE)
-
-head(mulit.property.matrix[,1:20])
-```
-
-If, instead, we would like to get the set of summarized values across all amino acid residues for a given **method.to.use**, we can use **summary.function** and select "median", "mean", "sum", variance ("vars"), or Median Absolute Deviation ("mads"). 
-
-```{r tidy = FALSE}
-median.property.matrix <- propertyEncoder(input.sequences =  c(sequences, mutated.sequences), 
-                                          method.to.use = "crucianiProperties",
-                                          summary.function = "median")
-
-head(median.property.matrix[,1:3])
-```
-
-## geometricEncoder
-
-One approach to encoding amino acid sequences is geometric isometry, such as [GIANA](https://pubmed.ncbi.nlm.nih.gov/34349111/).
-
-Parameters for ```geometricEncoder()```
-
-* **method.to.use** Select the following substitution matrices: "BLOSUM45", "BLOSUM50", "BLOSUM62", "BLOSUM80", "BLOSUM100", "PAM30", "PAM40", "PAM70", "PAM120", or "PAM250"
-* **theta** The angle in which to create the rotation matrix
-
-```{r tidy = FALSE}
-geometric.matrix <- geometricEncoder(sequences, 
-                                     method.to.use = "BLOSUM62",
-                                     theta = pi/3)
-head(geometric.matrix)
-```
-
-## tokenizeSequences
-
-Another approach to transforming a sequence into numerical values is tokenizing it into numbers. This is a common approach for recurrent neural networks where one letter corresponds to a single integer. In addition, we can add start and stop tokens to our original sequences to differentiate between the beginning and end of the sequences. 
-
-Parameters for ```tokenizeSequences()```
-
-* **add.startstop** Add start and stop tokens to the sequence
-* **start.token** The character to use for the start token
-* **stop.token** The character to use for the stop token
-* **max.length** Additional length to pad, NULL will pad sequences to the max length of input.sequences
-* **convert.to.matrix** Return a matrix (**TRUE**) or a vector (**FALSE**)
-
-```{r tidy = FALSE}
-token.matrix <- tokenizeSequences(input.sequences =  c(sequences, mutated.sequences), 
-                                  add.startstop = TRUE,
-                                  start.token = "!",
-                                  stop.token = "^", 
-                                  convert.to.matrix = TRUE)
-head(token.matrix[,1:18])
-```
-
-# Repertoire Analysis and Feature Engineering
+# Feature Engineering from Repertoires
 
 Beyond encoding single sequences, immApex provides functions to calculate summary statistics and features across a collection of sequences, such as a clonal repertoire.
 
@@ -315,15 +256,15 @@ Beyond encoding single sequences, immApex provides functions to calculate summar
 
 This function calculates the relative frequency of each residue at each position across a set of sequences.
 
-Parameters for calculateFrequency()
+Parameters for ```calculateFrequency()```
 
-* sequences: A character vector of sequences.
-* max.length: The length to align sequences to by padding/trimming.
-* sequence.dictionary: The set of valid residues to track.
-* tidy: If TRUE, returns a long-format data frame suitable for ggplot2.
+* **input.sequences**: A character vector of sequences.
+* **max.length**: The length to align sequences to by padding/trimming.
+* **tidy**: If TRUE, returns a long-format data frame suitable for ggplot2.
 
 ```{r tidy = FALSE}
-freq.matrix <- calculateFrequency(sequences, max.length = 20)
+freq.matrix <- calculateFrequency(sequences, 
+                                  max.length = 20)
 head(freq.matrix[, 1:10])
 ```
 
@@ -333,11 +274,11 @@ This function measures the diversity (or entropy) at each position in a set of a
 
 Parameters for `calculateEntropy()`
 
-* sequences: A character vector of sequences.
-* method: The diversity metric to use: "shannon", "inv.simpson", "gini.simpson", "norm.entropy", "pielou", or Hill numbers ("hill0", "hill1", "hill2").
+* **method**: The diversity metric to use: "shannon", "inv.simpson", "gini.simpson", "norm.entropy", "pielou", or Hill numbers ("hill0", "hill1", "hill2").
 
 ```{r tidy = FALSE}
-shannon.entropy <- calculateEntropy(sequences, method = "shannon")
+shannon.entropy <- calculateEntropy(sequences, 
+                                    method = "shannon")
 head(shannon.entropy)
 ```
 
@@ -347,13 +288,14 @@ This function computes position-wise summary statistics for amino acid propertie
 
 Parameters for `calculateProperty()`
 
-* input.sequences: A character vector of amino acid sequences.
-* property.set: The amino acid property scale to use (e.g., "Atchley").
-* summary.fun: The summary statistic to apply ("mean", "median", "sum" etc.).
+* **property.set**: The amino acid property scale to use (e.g., "Atchley").
+* **summary.fun**: The summary statistic to apply ("mean", "median", "sum" etc.).
 
 ```{r tidy = FALSE}
 # Calculate the mean of Atchley factors at each position
-atchley.profile <- calculateProperty(sequences, property.set = "Atchley", summary.fun = "mean")
+atchley.profile <- calculateProperty(sequences, 
+                                     property.set = "Atchley", 
+                                     summary.fun = "mean")
 head(atchley.profile[, 1:6])
 ```
 
@@ -362,9 +304,8 @@ head(atchley.profile[, 1:6])
 This function quantifies the usage of gene loci (e.g., V and J genes) within a repertoire.
 
 Parameters for `calculateGeneUsage()`
-* input.data: A data frame containing gene assignments.
-* loci: A character vector of one or two column names corresponding to the gene loci.
-* summary: The output format: "proportion" (default), "count", or "percent".
+* **loci**: A character vector of one or two column names corresponding to the gene loci.
+* **summary**: The output format: "proportion" (default), "count", or "percent".
 
 ```{r tidy = FALSE}
 # Using the built-in AIRR data
@@ -383,13 +324,14 @@ This function rapidly finds and counts contiguous (or gapped) amino acid or nucl
 
 Parameters for `calculateMotif()`
 
-* input.sequences: A character vector of sequences.
-* motif.lengths: An integer vector of motif sizes to search for.
-* min.depth: The minimum number of times a motif must appear to be included in the output.
-* discontinuous: If TRUE, also finds motifs with a single gap (e.g., "C.S").
+* **motif.lengths**: An integer vector of motif sizes to search for.
+* **min.depth**: The minimum number of times a motif must appear to be included in the output.
+* **discontinuous**: If TRUE, also finds motifs with a single gap (e.g., "C.S").
 
 ```{r tidy = FALSE}
-motif.counts <- calculateMotif(sequences, motif.lengths = 3, min.depth = 5)
+motif.counts <- calculateMotif(sequences, 
+                               motif.lengths = 3, 
+                               min.depth = 5)
 head(motif.counts)
 ```
 
@@ -433,15 +375,20 @@ adj.matrix[1:10, 1:10]
 `buildNetwork()` constructs a similarity network where nodes are sequences and edges connect sequences with an edit distance below a given threshold.
 
 ```{r tidy = FALSE}
-# Building an edit-distance-based network
-g1 <- buildNetwork(sequences, 
+# Building an edge list
+g1 <- buildNetwork(data.frame(sequences = sequences),
+                   seq_col = "sequences",
                    threshold = 2)
 
+# Forming network
+graph <- graph_from_edgelist(as.matrix(g1[,1:2]))
+E(graph)$weight <- g1[,3]
+
 # Remove isolated nodes for clearer visualization
-g1 <- delete_vertices(g1, which(degree(g1) == 0))
+graph <- delete_vertices(graph, which(degree(graph) == 0))
 
 # Convert to tidygraph for use with ggraph
-g_tidy <- as_tbl_graph(g1)
+g_tidy <- as_tbl_graph(graph)
 
 # Plot the network
 ggraph(g_tidy, layout = "fr") + 
@@ -454,7 +401,92 @@ ggraph(g_tidy, layout = "fr") +
   theme(legend.position = "right")
 ```
 
-# Extracting Sequences
+# Encoding Sequences for Model Input
+
+## onehotEncoder
+
+One hot encoding of amino acid or nucleotide sequences is a common method for transforming sequences into numeric matrices or arrays compatible with downstream applications.
+
+Parameters for ```onehotEncoder()```
+
+* **input.sequences** The amino acid or nucleotide sequences to use
+* **max.length** Additional length to pad, NULL will pad sequences to the max length of input.sequences
+* **sequence.dictionary** The letters to use in encoding (default are all amino acids)
+
+```onehotEncoder()``` will return a list with the following elements:
+* `cube` - Numeric array with dimensions  `c(depth, max.length, length(sequences))`.Depth = *sequence.dictionary size* in `"onehot"` mode, or *number of property scales* in `"property"` mode.
+* `flattened` - Numeric matrix, `length(sequences)` rows by `depth × max.length` columns.
+* Additional list elements will depend on the call but include `summary`, `sequence.dictionary`,  `padding.symbol`, and `threads`.
+
+
+```{r tidy = FALSE}
+encoded.object <- onehotEncoder(input.sequences =  c(sequences, mutated.sequences))
+head(encoded.object)
+```
+
+## propertyEncoder
+
+An alternative to one hot encoding is transforming the sequences into an array/matrix of numerical values using amino acid properties. 
+
+These properties are largely based on dimensional reduction strategies, but it is essential to know the assumptions for each approach (links to original work below). **Important to note: ** this encoding strategy is specific for amino acids. 
+
+**property.set**  
+
+* atchleyFactors - [citation](https://pubmed.ncbi.nlm.nih.gov/15851683/)
+* crucianiProperties - [citation](https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/abs/10.1002/cem.856)
+* FASGAI - [citation](https://pubmed.ncbi.nlm.nih.gov/18318694/)
+* kideraFactors - [citation](https://link.springer.com/article/10.1007/BF01025492)
+* MSWHIM - [citation](https://pubs.acs.org/doi/10.1021/ci980211b)
+* ProtFP - [citation](https://pubmed.ncbi.nlm.nih.gov/24059694/)
+* stScales - [citation](https://pubmed.ncbi.nlm.nih.gov/19373543/)
+* tScales - [citation](https://www.sciencedirect.com/science/article/abs/pii/S0022286006006314)
+* VHSE - [citation](https://pubmed.ncbi.nlm.nih.gov/15895431/)
+* zScales - [citation](https://pubmed.ncbi.nlm.nih.gov/9651153/)
+
+
+```{r tidy = FALSE}
+property.encoded <- propertyEncoder(input.sequences =  c(sequences, mutated.sequences), 
+                                    property.set = "FASGAI")
+
+head(property.encoded[[2]])
+```
+
+## geometricEncoder
+
+One approach to encoding amino acid sequences is geometric isometry, such as [GIANA](https://pubmed.ncbi.nlm.nih.gov/34349111/).
+
+Parameters for ```geometricEncoder()```
+
+* **method** Select the following substitution matrices: "BLOSUM45", "BLOSUM50", "BLOSUM62", "BLOSUM80", "BLOSUM100", "PAM30", "PAM40", "PAM70", "PAM120", or "PAM250"
+* **theta** The angle in which to create the rotation matrix
+
+```{r tidy = FALSE}
+geometric.matrix <- geometricEncoder(sequences, 
+                                     method = "BLOSUM62",
+                                     theta = pi/3)
+head(geometric.matrix)
+```
+
+## tokenizeSequences
+
+Another approach to transforming a sequence into numerical values is tokenizing it into numbers. This is a common approach for recurrent neural networks where one letter corresponds to a single integer. In addition, we can add start and stop tokens to our original sequences to differentiate between the beginning and end of the sequences. 
+
+Parameters for ```tokenizeSequences()```
+
+* **add.startstop** Add start and stop tokens to the sequence
+* **start.token** The character to use for the start token
+* **stop.token** The character to use for the stop token
+* **max.length** Additional length to pad, NULL will pad sequences to the max length of input.sequences
+* **convert.to.matrix** Return a matrix (**TRUE**) or a vector (**FALSE**)
+
+```{r tidy = FALSE}
+token.matrix <- tokenizeSequences(input.sequences =  c(sequences, mutated.sequences), 
+                                  add.startstop = TRUE,
+                                  start.token = "!",
+                                  stop.token = "^", 
+                                  convert.to.matrix = TRUE)
+head(token.matrix[,1:18])
+```
 
 ## sequenceDecoder
 
@@ -463,18 +495,17 @@ We have a function called ```sequenceDecoder()``` that extracts sequences from o
 Parameters for ```sequenceDecoder()```
 
 * **sequence.matrix** The encoded sequences to decode in an array or matrix
-* **encoder** The method to prepare the sequencing information - "onehotEncoder" or "propertyEncoder"
-* **aa.method.to.use** The method or approach to use for the conversion corresponding to the input to ```propertyEncoder()```. This will be ignored if **encoder** = "onehotEncoder"
+* **mode** The encoding mode used for decoding: `"onehot"` or `"property"`
+* **property.set** For `mode = "property"`, a character vector of property names (e.g., `"Atchley"`) that were used for the original encoding.
 * **call.threshold** The relative strictness of sequence calling with higher values being more stringent
 
 ```{r tidy = FALSE}
 property.matrix <- propertyEncoder(input.sequences =  c(sequences, mutated.sequences), 
-                                   method.to.use = "FASGAI",
-                                   convert.to.matrix = TRUE)
+                                   property.set = "FASGAI")
 
-property.sequences <- sequenceDecoder(property.matrix,
-                                      encoder = "propertyEncoder",
-                                      aa.method.to.use = "FASGAI",
+property.sequences <- sequenceDecoder(property.matrix[[1]],
+                                      mode = "property",
+                                      property.set  = "FASGAI",
                                       call.threshold = 1)
 head(sequences)
 head(property.sequences)
@@ -483,11 +514,10 @@ head(property.sequences)
 A similar approach can be applied when using matrices or arrays derived from one-hot encoding: 
 
 ```{r tidy=FALSE}
-sequence.matrix <- onehotEncoder(input.sequences =  c(sequences, mutated.sequences), 
-                                 convert.to.matrix = TRUE)
+sequence.matrix <- onehotEncoder(input.sequences =  c(sequences, mutated.sequences))
 
 OHE.sequences <- sequenceDecoder(sequence.matrix,
-                                 encoder = "onehotEncoder")
+                                 mode= "onehot")
 
 head(OHE.sequences)
 ```
@@ -508,13 +538,13 @@ The steps to train the model include:
 ```{r tidy = FALSE}
 #Sampling to make Training/Validation Data Cohorts
 set.seed(42)
-num_sequences <- nrow(sequence.matrix)
+num_sequences <- nrow(sequence.matrix[[2]])
 indices <- 1:num_sequences
 train_indices <- sample(indices, size = floor(0.8 * num_sequences))
 val_indices <- setdiff(indices, train_indices)
     
-x_train <- sequence.matrix[train_indices,]
-x_val <- sequence.matrix[val_indices,]
+x_train <- sequence.matrix[[2]][train_indices,]
+x_val <- sequence.matrix[[2]][val_indices,]
    
 # Parameters
 input_shape <- dim(x_train)[2]
@@ -574,6 +604,10 @@ plot(history) +
   theme_classic()
 ```
 
+```{r, include=FALSE}
+keras3::clear_session()
+```
+
 ## Classifier
 
 We can also build classifiers directly using deep or shallow neural networks. Building deep classifiers requires more data than classical machine learning methods, like random forests, so the vignette may not be ideal.
@@ -595,15 +629,14 @@ class2.sequences <- generateSequences(prefix.motif = "CASF",
 
 labels <- as.numeric(c(rep(0, 10000), rep(1, 10000)))
 
-classifier.matrix <- onehotEncoder(input.sequences =  c(class1.sequences, class2.sequences), 
-                                   convert.to.matrix = TRUE)
+classifier.matrix <- onehotEncoder(input.sequences =  c(class1.sequences, class2.sequences))
 ```
 
 Next, we will define and train the Keras3 classifier model using artificial sequences. We will use a simple convolutional neural network with 2 layers and then a single neuron that will classify the sequences into class 1 or class 2 (here, the labels are 0 and 1).
 
 ```{r tidy = FALSE}
 #Input shape will be 1D as we are using a matrix
-input.shape <- dim(classifier.matrix)[2]
+input.shape <- dim(classifier.matrix[[2]])[2]
 
 #Simple model structure
 classifier.model <- keras_model_sequential() %>% 
@@ -620,9 +653,9 @@ classifier.model %>% compile(
 
 #Separating data and labels
 set.seed(42)
-val_indices <- sample(nrow(classifier.matrix), 10000*0.2)
-x_val <- classifier.matrix[val_indices,]
-x_train <- classifier.matrix[-val_indices,]
+val_indices <- sample(nrow(classifier.matrix[[2]]), 10000*0.2)
+x_val <- classifier.matrix[[2]][val_indices,]
+x_train <- classifier.matrix[[2]][-val_indices,]
 
 val_labels <- labels[val_indices]
 train_labels <- labels[-val_indices]
@@ -640,6 +673,10 @@ plot(history) +
   scale_color_viridis(option = "B", discrete = TRUE) + 
   scale_fill_manual(values = c("black","black")) + 
   theme_classic()
+```
+
+```{r, include=FALSE}
+keras3::clear_session()
 ```
 
 Here, we can achieve a validation accuracy of 98.25%, which is impressive. But to contextualize, we used ```generateSequences()``` and distinct motifs - "CAS" vs "CASF" to create our 2 classes of sequences. Using sequences from experimental data will likely result in lower accuracy or require greater model complexity.

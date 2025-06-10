@@ -7,12 +7,12 @@
 \title{Universal Amino-acid Sequence Encoder}
 \usage{
 sequenceEncoder(
-  sequences,
+  input.sequences,
   mode = c("onehot", "property"),
   property.set = NULL,
   property.matrix = NULL,
   sequence.dictionary = amino.acids,
-  pad.symbol = ".",
+  padding.symbol = ".",
   summary.fun = "",
   max.length = NULL,
   nthreads = parallel::detectCores(),
@@ -24,8 +24,8 @@ onehotEncoder(..., mode = "onehot")
 propertyEncoder(..., mode = "property")
 }
 \arguments{
-\item{sequences}{`character` vector. Amino-acid sequences (uppercase
-single-letter code).  Gaps or unknown symbols are replaced by `pad.symbol`.}
+\item{input.sequences}{`character` vector. Sequences (uppercase
+single-letter code).  Gaps or unknown symbols are replaced by `padding.symbol`.}
 
 \item{mode}{Either `"onehot"` (default) or `"property"`.}
 
@@ -36,19 +36,19 @@ extract from \pkg{Peptides} (ignored in `"onehot"` mode).  Ignored if
 \item{property.matrix}{*Optional* numeric matrix (`20 × P`). Overrides 
 `property.set`.}
 
-\item{sequence.dictionary}{Character vector of the amino-acid alphabet
-(default = 20 standard residues). The order defines the row order of 
+\item{sequence.dictionary}{Character vector of the nucleotide or amino-acid 
+alphabet (default = 20 standard residues). The order defines the row order of 
 `property.matrix`.}
 
-\item{pad.symbol}{Single character used for padding / unknowns (default 
-`"."`).  If not already in `sequence.dictionary`, it is appended internally.}
+\item{padding.symbol}{Single character used for right-padding. Must not be
+one of the sequence.dictionary.}
 
 \item{summary.fun}{For property mode only: currently `"mean"` or `""`
 (empty string) for no summary.  When `"mean"`, the computes the per-sequence mean across
 positions and returns it as an extra element `summary`.}
 
 \item{max.length}{Positive integer. Sequences longer than this are
-truncated; shorter ones are right-padded with `pad.symbol`. If `NULL` 
+truncated; shorter ones are right-padded with `padding.symbol`. If `NULL` 
 (default) the longest input sequence sets the maximum.}
 
 \item{nthreads}{Number of threads to request (passed to the C++ back-end).
@@ -58,7 +58,7 @@ coerced to `1`.  Default = `parallel::detectCores()`.}
 \item{verbose}{Logical. If `TRUE` (default) prints a short progress message.}
 }
 \value{
-A named `list` with at least two elements  
+A named `list` with the following elements: 
 \describe{
   \item{`cube`}{Numeric array with dimensions  
                 `c(depth, max.length, length(sequences))`.  
@@ -69,7 +69,7 @@ A named `list` with at least two elements
   \item{`summary`}{(Only when `summary.fun != ""`) Numeric matrix,
                   `length(sequences) × depth`, containing the requested
                   statistic.}
-  \item{`sequence.dictionary`, `pad_token`, `threads`}{Metadata echoed from the call.}
+  \item{`sequence.dictionary`, `padding.symbol`, `threads`}{Metadata echoed from the call.}
 }
 }
 \description{
@@ -91,13 +91,7 @@ pipelines (autoencoders, random forests, etc.).
 
 If you supply `property.matrix` directly, it **must** be a numeric matrix
 whose **rows correspond to the 20 canonical amino acids in the order of
-`sequence.dictionary`** and whose columns are the property scales.  This keeps the
-function free of mandatory heavy packages.  
-
-If you would rather reference property names (e.g. `"hydrophobicity",
-"charge"`), pass them via `property.set`.  If the \pkg{Peptides} package is
-installed, `sequenceEncoder()` will look them up in `Peptides:::AAdata`.
-Otherwise an informative error is thrown.
+`sequence.dictionary`** and whose columns are the property scales.
 }
 
 \examples{
@@ -107,8 +101,7 @@ enc <- sequenceEncoder(aa,
 
 prop <- sequenceEncoder(aa,
                         mode = "property",
-                        property.set = c("hydrophobicity", "charge"),
+                        property.set = c("Atchley"),
                         summary.fun  = "mean")
-
 
 }

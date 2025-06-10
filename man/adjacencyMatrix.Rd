@@ -12,31 +12,32 @@ adjacencyMatrix(
 )
 }
 \arguments{
-\item{input.sequences}{The amino acid or nucleotide sequences to use}
+\item{input.sequences}{Character vector of sequences (amino acid or
+nucleotide)}
 
-\item{normalize}{Return the values as a function of total number of 
-residues (\strong{TRUE}) or frequencies (\strong{FALSE})}
+\item{normalize}{Return the values as a normalized frequency (TRUE) or raw
+counts (FALSE).}
 
-\item{sequence.dictionary}{The letters to use in sequence generation 
-(default are all amino acids)}
+\item{sequence.dictionary}{The letters to use in the matrix
+(defaults to a standard 20 amino acids).}
 
 \item{directed}{Logical; if FALSE (default) the matrix is symmetrised.}
 }
 \value{
-Adjacency matrix based on input.sequences.
+An adjacency matrix.
 }
 \description{
 Calculate frequency of adjacency between residues
 along a set of biological sequences.
 }
 \examples{
-new.sequences <- generateSequences(prefix.motif = "CAS",
-                                   suffix.motif = "YF",
-                                   number.of.sequences = 100,
-                                   min.length = 8,
-                                   max.length = 16)
-                          
-adj.matrix <- adjacencyMatrix(new.sequences,
-                              normalize = TRUE)
-                        
+# new.sequences <- generateSequences(prefix.motif = "CAS",
+#                                      suffix.motif = "YF",
+#                                      number.of.sequences = 100,
+#                                      min.length = 8,
+#                                      max.length = 16)
+#
+# adj.matrix <- adjacencyMatrix(new.sequences,
+#                               normalize = TRUE)
+
 }

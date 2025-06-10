@@ -197,8 +197,8 @@ Rcpp::List encodeSequences_cpp(const CharacterVector &sequences,
   );
   if (need_summary) out["summary"] = summaryMat;
   
-  out["alphabet"]  = alphabet;
-  out["pad_token"] = std::string(1, pad_token);
+  out["sequence.dictionary"]  = alphabet;
+  out["padding.symbol"] = std::string(1, pad_token);
 #ifdef _OPENMP
   out["threads"]   = nthreads;
 #else

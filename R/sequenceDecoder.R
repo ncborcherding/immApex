@@ -59,9 +59,9 @@ sequenceDecoder <- function(encoded.object,
                             remove.padding = TRUE) {
   
   # Preflight checks-----------------------------------------------------------
-  if (is.list(encoded.object) && all(c("cube", "alphabet") %in% names(encoded.object))) {
-    if (missing(sequence.dictionary) && !is.null(encoded.object$alphabet)) {
-      sequence.dictionary <- encoded.object$alphabet
+  if (is.list(encoded.object) && all(c("cube", "sequence.dictionary") %in% names(encoded.object))) {
+    if (missing(sequence.dictionary) && !is.null(encoded.object$sequence.dictionary)) {
+      sequence.dictionary <- encoded.object$sequence.dictionary
     }
     if (missing(padding.symbol) && !is.null(encoded.object$pad_token)) {
       padding.symbol <- encoded.object$pad_token
