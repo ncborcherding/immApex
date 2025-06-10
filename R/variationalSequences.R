@@ -17,14 +17,10 @@
 #'                                       batch.size = 16)
 #' 
 #' @param input.sequences The amino acid or nucleotide sequences to use
-#' @param encoder.function The method to prepare the sequencing information - 
-#' "onehotEncoder" or "propertyEncoder"
-#' @param aa.method.to.use The method or approach to use for the conversion:
-#' \itemize{
-#'   \item{Individual sets: atchleyFactors, crucianiProperties, FASGAI, kideraFactors, MSWHIM,
-#'   ProtFP, stScales, tScales, VHSE, zScales"}
-#'   \item{Multiple Sets: c("atchleyFactors", "VHSE") }
-#' } 
+#' @param mode The encoding mode used for decoding: `"onehot"` or `"property"`.
+#' @param property.set For `mode = "property"`, a character vector of property
+#'   names (e.g., `"Atchley"`) that were used for the original encoding.
+#'   See `?sequenceEncoder`.
 #' @param number.of.sequences Number of sequences to generate
 #' @param encoder.hidden.dim A vector of the neurons to use in the hidden layers
 #' for the encoder portion of the model
@@ -56,8 +52,8 @@
 #' @return A vector of mutated sequences
 
 variationalSequences <- function(input.sequences,
-                                 encoder.function        = "onehotEncoder",
-                                 aa.method.to.use        = NULL,
+                                 mode                    = c("onehot", "property"),
+                                 property.set            = NULL,
                                  number.of.sequences     = 100,
                                  encoder.hidden.dim      = c(128, 64),
                                  decoder.hidden.dim      = NULL,
@@ -76,8 +72,8 @@ variationalSequences <- function(input.sequences,
     env = immApexEnv,         
     fun = .variationalSequences_impl,   
     input.sequences        = input.sequences,
-    encoder.function       = encoder.function,
-    aa.method.to.use       = aa.method.to.use,
+    mode                   = mode,
+    property.set           = property.set,
     number.of.sequences    = number.of.sequences,
     encoder.hidden.dim     = encoder.hidden.dim,
     decoder.hidden.dim     = decoder.hidden.dim,
@@ -96,8 +92,8 @@ variationalSequences <- function(input.sequences,
 }
 
 .variationalSequences_impl <- function(input.sequences,
-                                       encoder.function = "onehotEncoder",
-                                       aa.method.to.use = NULL,
+                                       mode = NULL,
+                                       property.set = NULL,
                                        number.of.sequences = 100,
                                        encoder.hidden.dim = c(128,64),
                                        decoder.hidden.dim = NULL,
@@ -136,16 +132,14 @@ variationalSequences <- function(input.sequences,
     verbose = 0,
     mode = "min")
   
-  if(verbose) {
-    message("Converting to matrix....")
-  }
+  if(verbose)  message("Encoding Sequences...")
+
   # Prepare the sequences matrix
-  sequence.matrix <- switch(encoder.function,
-                            "onehotEncoder" = onehotEncoder(input.sequences, 
-                                                            sequence.dictionary = sequence.dictionary),
-                            "propertyEncoder" = propertyEncoder(input.sequences, 
-                                                                method.to.use = aa.method.to.use),
-                            stop("Invalid encoder provided."))
+  sequence.matrix <- sequenceEncoder(input.sequences,
+                                     mode = mode,
+                                     sequence.dictionary = sequence.dictionary, 
+                                     property.set = property.set)
+  
   sequence.matrix <- sequence.matrix[[2]]
   # Custom VAE Loss Layer
   vae_loss_layer <- function(original_dim) {
@@ -243,9 +237,9 @@ variationalSequences <- function(input.sequences,
   z_samples <- matrix(z_samples, ncol = latent.dim)
   generated_matrix <- decoder |> predict(z_samples)
   
-  candidate.sequences <- sequenceDecoder(sequence.matrix = generated_matrix,
-                                         encoder = encoder.function,
-                                         aa.method.to.use = aa.method.to.use,
+  candidate.sequences <- sequenceDecoder(generated_matrix,
+                                         mode = mode,
+                                         property.set = property.set,
                                          call.threshold = call.threshold,
                                          sequence.dictionary = sequence.dictionary,
                                          padding.symbol = ".")
