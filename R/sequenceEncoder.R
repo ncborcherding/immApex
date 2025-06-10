@@ -70,9 +70,8 @@
 #'
 #' prop <- sequenceEncoder(aa,
 #'                         mode = "property",
-#'                         property.set = c("hydrophobicity", "charge"),
+#'                         property.set = c("Atchley"),
 #'                         summary.fun  = "mean")
-#'
 #'
 #' @export
 sequenceEncoder <- function(sequences,
