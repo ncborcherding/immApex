@@ -26,7 +26,7 @@ test_that("list mode mirrors matrix logic", {
                            add.startstop = FALSE,
                            convert.to.matrix = FALSE,
                            max.length = 6,
-                           padding.token = 99,
+                           padding.symbol = 99,
                            verbose = FALSE)
   expect_type(lst, "list")
   expect_length(lst, length(seqs))
@@ -84,10 +84,10 @@ test_that("empty input returns empty structure of appropriate type", {
   expect_true(is.list(l) && length(l) == 0)
 })
 
-test_that("custom padding token honoured in matrix output", {
+test_that("custom padding symbol honoured in matrix output", {
   mat <- tokenizeSequences(seqs,
                            convert.to.matrix = TRUE,
-                           padding.token = 777)
+                           padding.symbol = 777)
   expect_true(all(mat[mat == 777L] == 777L))
 })
 

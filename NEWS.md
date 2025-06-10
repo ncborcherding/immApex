@@ -20,6 +20,7 @@
 ## BUGS
 * Fixed NT position issue with ```inferCDR()```
 * Fixed ```generateSequence()``` range issue for single-length sequences
+* Fixed binary frequency issue in ```positionalEncoder()```
 
 # immApex VERSION 1.2.2
 * Updated unit tests and vignette check
