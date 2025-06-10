@@ -4,7 +4,6 @@ aa <- amino.acids
 seqs <- c("ACD",            # 3-mer
           "FGHIK")          # 5-mer
 
-# -------------------------------------------------------------------------
 test_that("matrix mode returns correct type, dimensions, and padding", {
   mat <- tokenizeSequences(seqs, add.startstop = TRUE, convert.to.matrix = TRUE)
   
@@ -19,7 +18,6 @@ test_that("matrix mode returns correct type, dimensions, and padding", {
   expect_equal(mat[1, (nchar(seqs[1]) + 3):ncol(mat)], rep(pad.id, 2))
 })
 
-# -------------------------------------------------------------------------
 test_that("list mode mirrors matrix logic", {
   lst <- tokenizeSequences(seqs,
                            add.startstop = FALSE,
@@ -32,7 +30,6 @@ test_that("list mode mirrors matrix logic", {
 })
 
 
-# -------------------------------------------------------------------------
 test_that("verbose flag emits message exactly once", {
   expect_output(
     tokenizeSequences(seqs, verbose = TRUE),
@@ -41,7 +38,6 @@ test_that("verbose flag emits message exactly once", {
   )
 })
 
-# -------------------------------------------------------------------------
 test_that("max.length shorter than longest sequence triggers error", {
   expect_error(
     tokenizeSequences(seqs, max.length = 2),
@@ -49,7 +45,6 @@ test_that("max.length shorter than longest sequence triggers error", {
   )
 })
 
-# -------------------------------------------------------------------------
 test_that("unknown characters are caught", {
   bad <- c("AXZ")  # Z not in amino.acids
   expect_error(
@@ -58,7 +53,6 @@ test_that("unknown characters are caught", {
   )
 })
 
-# -------------------------------------------------------------------------
 test_that("non-single-character tokens are rejected", {
   expect_error(
     tokenizeSequences("AC", start.token = "XX"),
@@ -70,7 +64,6 @@ test_that("non-single-character tokens are rejected", {
   )
 })
 
-# -------------------------------------------------------------------------
 test_that("empty input returns empty structure of appropriate type", {
   m <- tokenizeSequences(character(0))
   expect_true(is.matrix(m) && length(m) == 0)
@@ -79,7 +72,6 @@ test_that("empty input returns empty structure of appropriate type", {
   expect_true(is.list(l) && length(l) == 0)
 })
 
-# -------------------------------------------------------------------------
 test_that("custom padding token honoured in matrix output", {
   mat <- tokenizeSequences(seqs,
                            convert.to.matrix = TRUE,
@@ -87,7 +79,6 @@ test_that("custom padding token honoured in matrix output", {
   expect_true(all(mat[mat == 777L] == 777L))
 })
 
-# -------------------------------------------------------------------------
 test_that("all returned integers map to the declared character set", {
   mat <- tokenizeSequences(seqs, convert.to.matrix = TRUE)
   pad.id <- max(mat)

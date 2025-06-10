@@ -19,6 +19,7 @@
 
 ## BUGS
 * Fixed NT position issue with ```inferCDR()```
+* Fixed ```generateSequence()``` range issue for single-length sequences
 
 # immApex VERSION 1.2.2
 * Updated unit tests and vignette check
