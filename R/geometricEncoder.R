@@ -1,110 +1,90 @@
 #' Geometric Encoder from Amino Acid Strings
 #' 
-#' Projects each input sequence into a 20-dimensional numeric space by (i) 
-#' looking up the rows of a substitution matrix (BLOSUM, PAM, or user-supplied),
-#' (ii) averaging those vectors, and (iii) applying a block-diagonal 2D 
-#' rotation (`θ`) across the 20 axes.
-#' 
-#' @section Built-in substitution matrices:
-#' The package ships with ten canonical 20 × 20 matrices (stored as
-#' `immapex_blosum.pam.matrices`) that can be referenced through the `method`
-#' argument:
-#' \itemize{
-#'   \item{\strong{BLOSUM}: "BLOSUM45", "BLOSUM50", "BLOSUM62",
-#'         "BLOSUM80", "BLOSUM100"}
-#'   \item{\strong{PAM}:    "PAM30", "PAM40", "PAM70",
-#'         "PAM120", "PAM250"}
-#' }
-#' 
+#' #' Projects sequences into a 20D space using a substitution matrix,
+#' vector averaging, and rotation. This version is optimized for speed
+#' by using fully vectorized operations.
+#'
 #' @param input.sequences Character vector of AA strings.
-#' @param method Character key into an internal or user list
-#'   (default `"BLOSUM62"`), **or** a 20×20 numeric matrix.
-#' @param substitution Optional 20×20 matrix *or* named list of matrices.
-#'  When supplied, skips the built-in data lookup.
-#' @param theta Rotation angle in radians for every 2-D block (default `pi/3`).
-#' @param verbose Print messages corresponding to the processing step
-#' 
-#' @examples 
-#' # Synthetic input
-#' new.sequences <- generateSequences(prefix.motif = "CAS",
-#'                                    suffix.motif = "YF",
-#'                                    number.of.sequences = 100,
-#'                                    min.length = 8,
-#'                                    max.length = 16)
+#' @param method Character key for a built-in substitution matrix 
+#'   (e.g., "BLOSUM62"), or a 20x20 numeric matrix itself.
+#' @param substitution Optional named list of matrices to look up `method` in.
+#'   If `method` is a matrix, this is ignored.
+#' @param theta Rotation angle in radians (default `pi/3`).
 #'
-#' # Encode with the default BLOSUM62
-#' emb <- geometricEncoder(new.sequences)
-#'
-#' # Encode with a custom matrix
-#' myMat <- matrix(runif(400), 20, 20,
-#'                 dimnames = list(amino.acids, NULL))
-#' emb2  <- geometricEncoder(new.sequences, substitution = myMat)
-#' 
-#' @return A numeric matrix with `length(input.sequences)` rows and 20
-#' columns. Row order follows the input vector.
+#' @return A numeric matrix with `length(input.sequences)` rows and 20 columns.
 #' @export
-geometricEncoder <- local({
-    
-    # Cache rotation matrices by theta ----------------------------------------
-    .rot_cache <- new.env(parent = emptyenv())
-    
-    get_rotation <- function(theta) {
-      key <- as.character(theta)
-      if (exists(key, .rot_cache, inherits = FALSE)) return(.rot_cache[[key]])
-      R2  <- matrix(c(cos(theta), -sin(theta), sin(theta), cos(theta)), 2, 2)
-      R20 <- diag(20)
-      for (i in seq(1, 20, 2)) R20[i:(i + 1), i:(i + 1)] <- R2
-      .rot_cache[[key]] <- R20
-      R20
+geometricEncoder <- function(input.sequences,
+                             method = "BLOSUM62",
+                             substitution = NULL,
+                             theta = pi / 3) {
+  
+  # Preflight checks-----------------------------------------------------------
+  if (!is.character(input.sequences)) {
+    stop("`input.sequences` must be a character vector.")
+  }
+  if (length(input.sequences) == 0) {
+    return(matrix(numeric(0), nrow = 0, ncol = 20))
+  }
+  if (anyNA(input.sequences) || any(nchar(input.sequences) == 0)) {
+    stop("NA or empty strings are not allowed in `input.sequences`.")
+  }
+  
+  # 2. Fetch Substitution Matrix 
+  fetch_matrix <- function(m, s) {
+    if (is.matrix(m)) {
+      if (!all(dim(m) == 20) || is.null(rownames(m))) {
+        stop("If `method` is a matrix, it must be 20x20 with amino acid rownames.")
+      }
+      return(m)
+    }
+    if (!exists("immapex_blosum.pam.matrices")) {
+      stop("Built-in matrix data `immapex_blosum.pam.matrices` not found.")
     }
     
-    # Internal helper to fetch the chosen substitution matrix -----------------
-    fetch_matrix <- function(method, subst) {
-      
-      if (is.matrix(subst)) {
-        if (!all(dim(subst) == 20)) stop("`substitution` matrix must be 20×20.")
-        return(subst)
-      }
-      data(immapex_blosum.pam.matrices)
-      
-      src <- if (is.null(subst)) immapex_blosum.pam.matrices else subst
-      if (is.list(src) && !is.null(src[[method]])) {
-        mat <- src[[method]]
-        if (!all(dim(mat) == 20)) stop("Substitution matrix for '", method,
-                                       "' is not 20×20.")
-        return(mat)
-      }
-      stop("Cannot find a 20×20 matrix for method '", method, "'.")
-    }
+    src <- if (is.null(s)) immapex_blosum.pam.matrices else s
     
-    # Main exported function --------------------------------------------------
-    function(input.sequences,
-             method = "BLOSUM62",
-             substitution = NULL,
-             theta = pi / 3,
-             verbose = TRUE) {
-      
-      if (!is.character(input.sequences))
-        stop("`input.sequences` must be a character vector.")
-      if (anyNA(input.sequences))
-        stop("NA strings are not allowed.")
-      
-      R20 <- get_rotation(theta)
-      S   <- fetch_matrix(method, substitution)
-      
-      # index once for speed
-      aa_lookup <- setNames(seq_along(amino.acids), amino.acids)
-      
-      encode_one <- function(seq) {
-        idx <- aa_lookup[strsplit(seq, "", fixed = TRUE)[[1L]]]
-        if (anyNA(idx))
-          stop("Non-canonical amino-acid in sequence: ", seq)
-        M   <- S[idx, , drop = FALSE]          
-        avg <- colMeans(M)                    
-        drop(R20 %*% avg)                     
-      }
-      
-      if (verbose) message("Encoding ", length(input.sequences), " sequences ...")
-      t(vapply(input.sequences, encode_one, FUN.VALUE = numeric(20)))
+    mat <- src[[m]]
+    if (is.null(mat)) stop("Cannot find matrix for method '", m, "'.")
+    if (!all(dim(mat) == 20) || is.null(rownames(mat))) {
+      stop("Matrix for '", m, "' is not a 20x20 matrix with rownames.")
     }
-  })
+    mat
+  }
+  
+  S <- fetch_matrix(method, substitution)
+  aa_lookup <- setNames(seq_len(nrow(S)), rownames(S))
+  
+  # 3. Vectorized Averaging 
+  # Get lengths of each sequence
+  seq_lengths <- nchar(input.sequences)
+  
+  # Create a grouping factor to identify which sequence each amino acid belongs to
+  group_id <- rep.int(seq_along(seq_lengths), seq_lengths)
+  
+  # Ungroup all sequences into a single character vector
+  all_chars <- unlist(strsplit(input.sequences, "", fixed = TRUE), use.names = FALSE)
+  
+  # Perform lookup for all amino acids at once
+  all_indices <- aa_lookup[all_chars]
+  
+  # Check for any non-canonical amino acids
+  if (anyNA(all_indices)) {
+    bad_chars <- unique(all_chars[is.na(all_indices)])
+    stop("Non-canonical amino acid(s) found: ", paste(bad_chars, collapse = ", "))
+  }
+  
+  # Get all corresponding vectors from the substitution matrix
+  all_vectors <- S[all_indices, , drop = FALSE]
+  summed_vectors <- rowsum(all_vectors, group_id, reorder = FALSE)
+  avg_vectors <- summed_vectors / seq_lengths
+  
+  # 4. Vectorized Rotation 
+  R2 <- matrix(c(cos(theta), -sin(theta), sin(theta), cos(theta)), 2, 2)
+  R20 <- diag(20)
+  for (i in seq(1, 19, 2)) {
+    R20[i:(i + 1), i:(i + 1)] <- R2
+  }
+  rotated_vectors <- avg_vectors %*% t(R20)
+  
+  return(rotated_vectors)
+}
