@@ -4,13 +4,16 @@
 \alias{sequenceEncoder}
 \alias{onehotEncoder}
 \alias{propertyEncoder}
+\alias{geometricEncoder}
 \title{Universal Amino-acid Sequence Encoder}
 \usage{
 sequenceEncoder(
   input.sequences,
-  mode = c("onehot", "property"),
+  mode = c("onehot", "property", "geometric"),
   property.set = NULL,
   property.matrix = NULL,
+  method = "BLOSUM62",
+  theta = pi/3,
   sequence.dictionary = amino.acids,
   padding.symbol = ".",
   summary.fun = "",
@@ -22,86 +25,87 @@ sequenceEncoder(
 onehotEncoder(..., mode = "onehot")
 
 propertyEncoder(..., mode = "property")
+
+geometricEncoder(..., mode = "geometric")
 }
 \arguments{
 \item{input.sequences}{`character` vector. Sequences (uppercase
-single-letter code).  Gaps or unknown symbols are replaced by `padding.symbol`.}
+single-letter code).}
 
-\item{mode}{Either `"onehot"` (default) or `"property"`.}
+\item{mode}{Either `"onehot"`, `"property"`, or `"geometric"`.}
 
-\item{property.set}{*Optional* `character` vector of property names to
-extract from \pkg{Peptides} (ignored in `"onehot"` mode).  Ignored if 
-`property.matrix` is supplied.}
+\item{property.set}{*Optional `character` vector* of property names for
+`"property"` mode. Ignored if `property.matrix` is supplied.}
 
-\item{property.matrix}{*Optional* numeric matrix (`20 × P`). Overrides 
-`property.set`.}
+\item{property.matrix}{*Optional numeric matrix (`20 × P`)*. Overrides
+`property.set` in `"property"` mode.}
 
-\item{sequence.dictionary}{Character vector of the nucleotide or amino-acid 
-alphabet (default = 20 standard residues). The order defines the row order of 
-`property.matrix`.}
+\item{method}{*(For geometric mode)* Character key for a built-in substitution
+matrix (e.g., "BLOSUM62"), or a 20x20 numeric matrix itself.}
 
-\item{padding.symbol}{Single character used for right-padding. Must not be
-one of the sequence.dictionary.}
+\item{theta}{*(For geometric mode)* Rotation angle in radians (default `pi/3`).}
 
-\item{summary.fun}{For property mode only: currently `"mean"` or `""`
-(empty string) for no summary.  When `"mean"`, the computes the per-sequence mean across
-positions and returns it as an extra element `summary`.}
+\item{sequence.dictionary}{Character vector of the alphabet (default = 20
+standard amino acids).}
 
-\item{max.length}{Positive integer. Sequences longer than this are
-truncated; shorter ones are right-padded with `padding.symbol`. If `NULL` 
-(default) the longest input sequence sets the maximum.}
+\item{padding.symbol}{Single character for right-padding (non-geometric modes).}
 
-\item{nthreads}{Number of threads to request (passed to the C++ back-end).
-Honoured only when the package is compiled with OpenMP; otherwise silently 
-coerced to `1`.  Default = `parallel::detectCores()`.}
+\item{summary.fun}{For property mode only: `"mean"` or `""` (none).}
 
-\item{verbose}{Logical. If `TRUE` (default) prints a short progress message.}
+\item{max.length}{Integer for truncation/padding. If `NULL` (default), the
+longest sequence sets the maximum. Not used in geometric mode.}
+
+\item{nthreads}{Number of threads for C++ backend. Not used in geometric mode.}
+
+\item{verbose}{Logical. If `TRUE` (default), prints a progress message.}
 }
 \value{
-A named `list` with the following elements: 
+A named `list` containing the encoded data and metadata.
 \describe{
-  \item{`cube`}{Numeric array with dimensions  
-                `c(depth, max.length, length(sequences))`.  
-                Depth = *sequence.dictionary size* in `"onehot"` mode, or
-                *number of property scales* in `"property"` mode.}
-  \item{`flattened`}{Numeric matrix, `length(sequences)` rows by
-                     `depth × max.length` columns.}
-  \item{`summary`}{(Only when `summary.fun != ""`) Numeric matrix,
-                  `length(sequences) × depth`, containing the requested
-                  statistic.}
-  \item{`sequence.dictionary`, `padding.symbol`, `threads`}{Metadata echoed from the call.}
+  \item{`cube`}{3D Numeric array. `NULL` in geometric mode.}
+  \item{`flattened`}{2D Numeric matrix. `NULL` in geometric mode.}
+  \item{`summary`}{2D Numeric matrix containing sequence-level representations.
+    This is the primary output for geometric mode.}
+  \item{...}{Other metadata related to the encoding process.}
 }
 }
 \description{
-`sequenceEncoder()` is a high-level R wrapper around the low-level
-`encodeSequences_cpp()` engine (see `?encodeSequences_cpp`).  It converts a
-character vector of amino-acid sequences into either  
-(1) **one-hot** representations, or  
-(2) **property-based** representations (e.g. hydropathy, charge, Atchley
-factors)
+`sequenceEncoder()` is a high-level function that converts a character vector
+of amino-acid sequences into one of three representations:
+1.  **one-hot**: A binary representation for each amino acid position.
+2.  **property-based**: A numerical representation based on amino acid properties
+    (e.g., hydropathy, charge).
+3.  **geometric**: A fixed-length 20-dimensional vector for each sequence,
+    derived from a substitution matrix and geometric rotation.
 }
 \details{
-The function performs basic argument validation, constructs (or accepts) a
-property matrix when `mode = "property"`, and then calls the C++ back-end.
-The resulting list contains a 3-D array (`cube`) and a flattened 2-D matrix
-(`flattened`) that can feed directly into downstream machine-learning
-pipelines (autoencoders, random forests, etc.).
+The function acts as a wrapper for either the C++ backend (for one-hot and
+property modes) or the R-based geometric transformation.
 }
-\section{Property mode}{
+\section{Property Mode}{
 
 If you supply `property.matrix` directly, it **must** be a numeric matrix
 whose **rows correspond to the 20 canonical amino acids in the order of
 `sequence.dictionary`** and whose columns are the property scales.
 }
 
+\section{Geometric Mode}{
+
+This mode projects sequences into a 20D space. It calculates the average
+vector for each sequence using a substitution matrix (e.g., "BLOSUM62")
+and then applies a planar rotation to the resulting vector.
+}
+
 \examples{
 aa <- c("CARDRST", "YYYGMD", "ACACACAC")
-enc <- sequenceEncoder(aa, 
-                       mode = "onehot")
 
-prop <- sequenceEncoder(aa,
-                        mode = "property",
-                        property.set = c("Atchley"),
-                        summary.fun  = "mean")
+# One-hot encoding
+enc_onehot <- sequenceEncoder(aa, mode = "onehot")
+
+# Property-based encoding
+enc_prop <- sequenceEncoder(aa, mode = "property", property.set = "Atchley")
+
+# Geometric encoding
+enc_geo <- sequenceEncoder(aa, mode = "geometric", method = "BLOSUM62")
 
 }

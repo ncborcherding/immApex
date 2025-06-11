@@ -351,34 +351,47 @@ ggraph(g_tidy, layout = "fr") +
 
 # Encoding Sequences for Model Input
 
+## sequenceEncoder
+
+The primary tool for converting biological sequences into a numerical format suitable for machine learning is the ```sequenceEncoder()``` function. It is a versatile wrapper that can generate three different types of numerical representations, controlled by the mode argument. Understanding this function is key to using the package effectively.
+
+**Key Arguments**:
+
+* **input.sequences**: The character vector of your amino acid or nucleotide sequences.
+* **mode**: The most important argument. A string specifying the encoding type you need: `"onehot"`, `"property"`, or `"geometric"`.
+* **verbose**: A logical flag (TRUE or FALSE) to control whether progress messages are printed.
+
 ## onehotEncoder
 
-One hot encoding of amino acid or nucleotide sequences is a common method for transforming sequences into numeric matrices or arrays compatible with downstream applications.
+One-hot encoding is a common method that transforms each amino acid at each position into a binary vector. This is useful when the specific identity and position of each residue are important. This functionality is accessed by setting **mode** = `"onehot"` in ```sequenceEncoder()``` or by using the ```onehotEncoder()``` alias.
 
-Parameters for ```onehotEncoder()```
+**Mode-Specific Arguments**:
 
-* **input.sequences** The amino acid or nucleotide sequences to use
-* **max.length** Additional length to pad, NULL will pad sequences to the max length of input.sequences
-* **sequence.dictionary** The letters to use in encoding (default are all amino acids)
-
-```onehotEncoder()``` will return a list with the following elements:
-* `cube` - Numeric array with dimensions  `c(depth, max.length, length(sequences))`.Depth = *sequence.dictionary size* in `"onehot"` mode, or *number of property scales* in `"property"` mode.
-* `flattened` - Numeric matrix, `length(sequences)` rows by `depth × max.length` columns.
-* Additional list elements will depend on the call but include `summary`, `sequence.dictionary`,  `padding.symbol`, and `threads`.
-
+* **max.length**: Additional length to pad, NULL will pad sequences to the max length of input.sequences
+* **padding.symbol**: The single character used to pad sequences shorter than max.length.
+* **sequence.dictionary**: The letters to use in encoding (default are all amino acids)
 
 ```{r tidy = FALSE}
-encoded.object <- onehotEncoder(input.sequences =  c(sequences, mutated.sequences))
-head(encoded.object)
+# Generate one-hot encoding using the main function
+enc_onehot <- sequenceEncoder(sequences, mode = "onehot", verbose = FALSE)
+
+# You can achieve the same result with the alias
+enc_onehot_alias <- onehotEncoder(sequences, verbose = FALSE)
+
+# View the first few columns of the flattened matrix output
+head(enc_onehot$flattened[, 1:10])
 ```
 
 ## propertyEncoder
 
-An alternative to one hot encoding is transforming the sequences into an array/matrix of numerical values using amino acid properties. 
+Instead of a binary vector, this method represents each amino acid using a set of continuous numerical values based on physicochemical properties (e.g., hydrophobicity, size, charge). This can capture the biochemical similarity between amino acids. Access this method by setting **mode** = `"property"` or using the ```propertyEncoder()``` alias.
 
-These properties are largely based on dimensional reduction strategies, but it is essential to know the assumptions for each approach (links to original work below). **Important to note: ** this encoding strategy is specific for amino acids. 
+**Mode-Specific Arguments**:
 
-**property.set**  
+* **property.set**: A character string specifying which set of pre-defined amino acid properties to use.
+* **property.matrix**: A custom numeric matrix of property values you provide yourself.
+    
+Available **property.set** options include:
 
 * atchleyFactors - [citation](https://pubmed.ncbi.nlm.nih.gov/15851683/)
 * crucianiProperties - [citation](https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/abs/10.1002/cem.856)
@@ -393,26 +406,44 @@ These properties are largely based on dimensional reduction strategies, but it i
 
 
 ```{r tidy = FALSE}
-property.encoded <- propertyEncoder(input.sequences =  c(sequences, mutated.sequences), 
-                                    property.set = "FASGAI")
+# Generate property-based encoding using FASGAI factors
+enc_prop <- sequenceEncoder(sequences,
+                            mode = "property",
+                            property.set = "FASGAI",
+                            verbose = FALSE)
 
-head(property.encoded[[2]])
+# The propertyEncoder() alias is a convenient shortcut
+enc_prop_alias <- propertyEncoder(sequences, property.set = "FASGAI", verbose = FALSE)
+
+# View the first few columns of the flattened property matrix
+head(enc_prop$flattened[, 1:6])
 ```
 
 ## geometricEncoder
 
-One approach to encoding amino acid sequences is geometric isometry, such as [GIANA](https://pubmed.ncbi.nlm.nih.gov/34349111/).
+This approach creates a single, fixed-length vector (an "embedding") for an entire sequence. It works by averaging the vectors for each amino acid from a substitution matrix (like BLOSUM62) and then applying a geometric rotation. This is useful for tasks where a summary of the entire sequence is needed, similar to approaches like [GIANA](https://pubmed.ncbi.nlm.nih.gov/34349111/). Use this with **mode** = `"geometric"` or the ```geometricEncoder()``` alias.
 
 Parameters for ```geometricEncoder()```
 
-* **method** Select the following substitution matrices: "BLOSUM45", "BLOSUM50", "BLOSUM62", "BLOSUM80", "BLOSUM100", "PAM30", "PAM40", "PAM70", "PAM120", or "PAM250"
-* **theta** The angle in which to create the rotation matrix
+* **method**: Select the following substitution matrices: "BLOSUM45", "BLOSUM50", "BLOSUM62", "BLOSUM80", "BLOSUM100", "PAM30", "PAM40", "PAM70", "PAM120", or "PAM250"
+* **theta**: The angle in which to create the rotation matrix
 
 ```{r tidy = FALSE}
-geometric.matrix <- geometricEncoder(sequences, 
-                                     method = "BLOSUM62",
-                                     theta = pi/3)
-head(geometric.matrix)
+# Generate a geometric embedding for each sequence
+enc_geo <- sequenceEncoder(sequences,
+                           mode = "geometric",
+                           method = "BLOSUM62",
+                           theta = pi / 3,
+                           verbose = FALSE)
+
+# The alias provides a direct path to this functionality
+enc_geo_alias <- geometricEncoder(sequences, 
+                                  method = "BLOSUM62", 
+                                  theta = pi / 3, 
+                                  verbose = FALSE)
+
+# The output is a single summary matrix where each row is a sequence
+head(enc_geo$summary)
 ```
 
 ## tokenizeSequences
@@ -617,10 +648,6 @@ plot(history) +
   scale_color_viridis(option = "B", discrete = TRUE) + 
   scale_fill_manual(values = c("black","black")) + 
   theme_classic()
-```
-
-```{r, include=FALSE}
-keras3::clear_session()
 ```
 
 Here, we can achieve a validation accuracy of 98.25%, which is impressive. But to contextualize, we used ```generateSequences()``` and distinct motifs - "CAS" vs "CASF" to create our 2 classes of sequences. Using sequences from experimental data will likely result in lower accuracy or require greater model complexity.
