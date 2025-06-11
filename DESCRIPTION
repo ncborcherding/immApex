@@ -14,7 +14,6 @@ Imports:
 	basilisk, 
         hash,
 	httr,
-	keras3,
 	magrittr,
 	matrixStats,
 	methods,
@@ -24,7 +23,6 @@ Imports:
 	stats,
 	stringi,
 	stringr,
-	tensorflow,
         utils
 Suggests: 
 	BiocStyle,

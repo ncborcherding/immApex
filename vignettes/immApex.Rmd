@@ -15,11 +15,6 @@ vignette: >
   %\VignetteEncoding{UTF-8} 
 ---
 
-```{r include = FALSE}
-# Set a temporary, writable directory for ALL basilisk operations.
-Sys.setenv(BASILISK_CACHE_DIR = tempdir())
-```
-
 
 ```{r, echo=FALSE, results="hide", message=FALSE}
 knitr::opts_chunk$set(error=FALSE, message=FALSE, warning=FALSE)
@@ -39,20 +34,12 @@ More information is available at the [immApex GitHub Repo](https://github.com/Bo
 
 ```{r}
 suppressMessages(library(immApex))
-suppressMessages(library(keras3))
 suppressMessages(library(ggplot2))
 suppressMessages(library(viridis))
 suppressMessages(library(magrittr))
 suppressMessages(library(igraph))
 suppressMessages(library(tidygraph))
 suppressMessages(library(ggraph))
-```
-
-```{r include = FALSE}
-# Trigger the one-time build of the Python environment
-basilisk::basiliskRun(env = immApex:::immApexEnv, fun = function() {
-  invisible(NULL)
-})
 ```
 
 # Acquiring and Preparing Repertoire Data
@@ -207,45 +194,6 @@ mutated.sequences <- mutateSequences(sequences,
                                      position.end = 8)
 head(sequences)
 head(mutated.sequences)
-```
-
-## variationalSequences
-
-In addition to making random sequences with ```generateSequences()```, we can also use generative deep learning to simulate similar, de novo sequences with ```variationalSequences()```. ```variationalSequences()``` uses a variational autoencoder that allows for sampling and generation of sequences similar to the input sequences. 
-
-It should be noted that the success of this approach is highly dependent on the number of sequences used as input and the hyperparameters of the model. As such, ```variationalSequences()``` has a number of arguments to modify to allow for optimization.
-
-Parameters for ```variationalSequences()``
-
-* **input.sequences** The amino acid or nucleotide sequences to use
-* **mode** The encoding mode used for decoding: `"onehot"` or `"property"`.
-* **property.set** For `mode = "property"`, a character vector of property names.
-*  **number.of.sequences** Number of sequences to generate
-*  **encoder.hidden.dim** A vector of the neurons to use in the hidden layers for the encoder portion of the model
-*  **decoder.hidden.dim** A vector of the neurons to use in the hidden layers for the decoder portion of the model. If NULL assumes symmetric autoencoder
-*  **latent.dim** The size of the latent dimensions
-*  **batch.size** The batch size to use for VAE training
-*  **epochs** The number of epochs to use in VAE training
-*  **learning.rate** The learning rate to use in VAE training
-*  **epsilon.std** The epsilon to use in VAE training
-*  **call.threshold** The relative strictness of sequence calling with higher values being more stringent
-*  **activation.function** The activation for the dense connected layers
-*  **optimizer** The optimizer to use in VAE training
-*  **disable.eager.execution** Disable the eager execution parameter for tensorflow.
-*  **sequence.dictionary** The letters to use in sequence mutation (default are all amino acids)
-
-```{r tidy = FALSE}
-variational.sequences <- variationalSequences(sequences, 
-                                              mode = "onehot",
-                                              number.of.sequences = 100,
-                                              encoder.hidden.dim = c(256, 128),
-                                              latent.dim = 16,
-                                              batch.size = 16, 
-                                              call.threshold = 0.1)
-head(variational.sequences)
-```
-```{r, include=FALSE}
-keras3::clear_session()
 ```
 
 # Feature Engineering from Repertoires
@@ -602,10 +550,6 @@ plot(history) +
   scale_color_viridis(option = "B", discrete = TRUE) + 
   scale_fill_manual(values = c("black","black")) + 
   theme_classic()
-```
-
-```{r, include=FALSE}
-keras3::clear_session()
 ```
 
 ## Classifier

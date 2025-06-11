@@ -7,6 +7,9 @@
 * Reduce overall dependencies on external packages
 * Improved speed of ```generateSequences()```, ```mutateSequences()```, ```adjacencyMatrix()```, ```tokenizeSequences()```, ```geometricEncoder```
 * Added group.by argument to ```getIR()```
+* Defunct ```variationalSequences()``` 
+* Removed keras3/tensorflow suggests/dependencies
+* Removed baslisk environment, python no longer required
 
 ## NEW FEATURES
 * ```calculateEntropy()``` added to calculate the positional entropy along a biological sequence
