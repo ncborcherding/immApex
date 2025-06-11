@@ -514,9 +514,11 @@ First, we'll simulate two distinct classes of sequences using ```generateSequenc
 ```{r}
 # Step 1a: Generate two distinct classes of sequences
 class1.sequences <- generateSequences(prefix.motif = "CAS",
+                                      min.length = 3,
                                       number.of.sequences = 500)
 
 class2.sequences <- generateSequences(prefix.motif = "CSG",
+                                      min.length = 3,
                                       number.of.sequences = 500)
 
 # Combine sequences and create labels

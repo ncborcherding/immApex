@@ -167,6 +167,54 @@ sequenceEncoder <- function(input.sequences,
   
   # Add mode to output for clarity
   out$mode <- mode
+  
+  # Adding dimension names
+  feature_names <- NULL
+  if (mode == "onehot") {
+    # For one-hot, features are the AAs + the padding symbol
+    feature_names <- out$sequence.dictionary
+    if (!(out$padding.symbol %in% feature_names)) {
+      feature_names <- c(feature_names, out$padding.symbol)
+    }
+  } else if (mode == "property") {
+    # For properties, features are the property names (from colnames)
+    if (!is.null(prop_mat)) {
+      if (!is.null(colnames(prop_mat))) {
+        feature_names <- colnames(prop_mat)
+      } else {
+        # Fallback to generic names if no column names are found
+        num_props <- ncol(prop_mat)
+        feature_names <- paste0("Prop", seq_len(num_props))
+      }
+    }
+  }
+  
+  # Naming flattened element
+  if (!is.null(out$flattened) && !is.null(feature_names) && max.length > 0) {
+    col_names <- as.vector(sapply(seq_len(max.length), function(pos) {
+      paste(feature_names, pos, sep = "_")
+    }))
+    colnames(out$flattened) <- col_names
+  }
+  
+  # Naming summary element
+  if (!is.null(out$summary) && !is.null(feature_names)) {
+    colnames(out$summary) <- feature_names
+  }
+  
+  # Naming array element
+  if (!is.null(out$cube) && !is.null(feature_names) && max.length > 0) {
+    # Use names from the input vector if they exist, otherwise create generic ones
+    sample_names <- names(input.sequences)
+    if (is.null(sample_names)) {
+      sample_names <- paste0("S", seq_along(input.sequences))
+    }
+    dimnames(out$cube) <- list(
+      Feature = feature_names,
+      Position = seq_len(max.length),
+      Sample = sample_names
+    )
+  }
   return(out)
 }
 
