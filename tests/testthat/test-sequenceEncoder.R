@@ -22,7 +22,7 @@ test_that("one-hot encoding returns correct shape and content", {
   expect_equal(dim(res$flattened), c(length(seqs), 21 * 4))
   
   ## every position has *exactly one* 1 in the depth dimension
-  one.count <- apply(res$cube, 3, function(slice) sum(slice[1:20,]))
+  one.count <- as.vector(apply(res$cube, 3, function(slice) sum(slice[1:20,])))
   expect_equal(one.count, c(3,1,4))
   
   ## wrapper produces identical result

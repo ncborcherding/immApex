@@ -70,10 +70,10 @@ test_that(".propertyDecoder decodes standard sequences correctly", {
   
   # Decode from the raw 3D cube
   expect_equal(
-    sequenceDecoder(encoded$cube, 
+    as.vector(sequenceDecoder(encoded$cube, 
                     mode = "property", 
                     property.set = "kideraFactors", 
-                    call.threshold = 0.1),
+                    call.threshold = 0.1)),
     c("CARD", "WYN")
   )
   
@@ -95,20 +95,20 @@ test_that(".propertyDecoder handles padding and thresholds", {
   
   # Test padding removal (default)
   expect_equal(
-    sequenceDecoder(encoded$cube, 
+    as.vector(sequenceDecoder(encoded$cube, 
                     mode = "property", 
                     property.set = "Atchley", 
-                    call.threshold = 0.1),
+                    call.threshold = 0.1)),
     c("CA", "R")
   )
   
   # Test keeping padding
   expect_equal(
-    sequenceDecoder(encoded$cube, 
+    as.vector(sequenceDecoder(encoded$cube, 
                     mode = "property", 
                     property.set = "Atchley", 
                     remove.padding = FALSE, 
-                    call.threshold = 0.1),
+                    call.threshold = 0.1)),
     c("CA", "R.")
   )
   
@@ -118,19 +118,19 @@ test_that(".propertyDecoder handles padding and thresholds", {
   
   # With a lenient threshold, it should still be called correctly
   expect_equal(
-    sequenceDecoder(perturbed_cube, 
+    as.vector(sequenceDecoder(perturbed_cube, 
                     mode = "property", 
                     property.set = "Atchley", 
-                    call.threshold = 0.1)[1],
+                    call.threshold = 0.1)[1]),
     "CA"
   )
   
   # With a very strict threshold, the perturbed vector should fail and be padded
   expect_equal(
-    sequenceDecoder(perturbed_cube, 
+    as.vector(sequenceDecoder(perturbed_cube, 
                     mode = "property", 
                     property.set = "Atchley", 
-                    call.threshold = 0.001)[1],
+                    call.threshold = 0.001)[1]),
     ".A"
   )
 })
