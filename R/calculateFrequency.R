@@ -1,11 +1,12 @@
-#' Relative residue frequencies at every position
+#' Relative Residue Frequencies at Every Position
 #'
 #' Quickly computes the per-position relative frequency of each symbol
 #' (amino-acid or nucleotide) in a set of biological sequences.  Variable-length
 #' strings are padded to a common width so the calculation is entirely
-#' vectorised (one logical comparison + one `colSums()` per residue).
+#' vectorized (one logical comparison + one `colSums()` per residue).
 #'
-#' @param sequences  A character vector of AA or nucleotide strings.
+#' @param input.sequences  Character vector of sequences (amino acid or 
+#' nucleotide)
 #' @param max.length Integer.  Pad/trim to this length. Defaults to
 #'  `max(nchar(sequences))`.
 #' @param sequence.dictionary Vector of valid residue symbols that should be
@@ -37,43 +38,41 @@
 #'                    tidy = TRUE)
 #'
 #' @export
-calculateFrequency <- function(sequences,
-                              max.length = NULL,
-                              sequence.dictionary = amino.acids,
-                              padding.symbol = ".",
-                              tidy = FALSE) {
-  
-  stopifnot(is.character(sequences),
+calculateFrequency <- function(input.sequences,
+                               max.length = NULL,
+                               sequence.dictionary = amino.acids,
+                               padding.symbol = ".",
+                               tidy = FALSE) {
+  # Preflight checks-----------------------------------------------------------
+  stopifnot(is.character(input.sequences),
             nchar(padding.symbol) == 1L,
             padding.symbol %!in% sequence.dictionary)
   
-  ## 1. Pad to a rectangular character matrix 
+  # 1. Pad to a rectangular character matrix 
   if (is.null(max.length))
-    max.length <- max(nchar(sequences), 1L)
+    max.length <- max(nchar(input.sequences), 1L)
   
-  padded <- .padded.strings(sequences,
+  padded <- .padded.strings(input.sequences,
                             max.length = max.length,
-                            padded.token = padding.symbol,
-                            concatenate = TRUE)
+                            pad = padding.symbol,
+                            collapse  = TRUE)
   
   seq_mat <- do.call(rbind, strsplit(unlist(padded), ""))  # nSeq × max.length
+  nSeq <- length(padded)
   
-  ## 2. Column-wise totals excluding padding 
-  non_pad_tot <- colSums(seq_mat != padding.symbol)        # length = max.length
-  
-  ## 3.  Fast frequency calculation (one pass per residue) 
+  # 2.  Fast frequency calculation (one pass per residue) 
   res_mat <- matrix(0,
-                    nrow = length(sequence.dictionary),
+                    nrow = length(sequence.dictionary) + 1,
                     ncol = max.length,
-                    dimnames = list(sequence.dictionary,
+                    dimnames = list(c(sequence.dictionary, padding.symbol),
                                     paste0("Pos.", seq_len(max.length))))
   
-  for (residue in sequence.dictionary) {
-    # logical comparison is vectorised; colSums is C-level
-    res_mat[residue, ] <- colSums(seq_mat == residue) / non_pad_tot
+  for (residue in c(sequence.dictionary, padding.symbol)) {
+    # logical comparison is vectorized; colSums is C-level
+    res_mat[residue, ] <- colSums(seq_mat == residue) / nSeq
   }
   
-  ## 4.  Optional tidy reshaping 
+  # 3.  Optional tidy reshaping 
   if (tidy) {
     res_mat <- as.data.frame(as.table(res_mat),
                              stringsAsFactors = FALSE,

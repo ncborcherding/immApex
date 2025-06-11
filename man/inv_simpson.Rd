@@ -16,7 +16,7 @@ Numeric value ≥ 1.  Equals 1 when all observations belong to a
 }
 \description{
 Computes the inverse of Simpson’s concentration index, sometimes written
-as *1/D*.  This metric emphasises dominant categories.
+as *1/D*.  This metric emphasizes dominant categories.
 }
 \details{
 \deqn{1/D \;=\; \frac{1}{\sum_{i} p_i^{\,2}}}

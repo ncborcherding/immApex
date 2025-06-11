@@ -2,10 +2,10 @@
 % Please edit documentation in R/calculateFrequency.R
 \name{calculateFrequency}
 \alias{calculateFrequency}
-\title{Relative residue frequencies at every position}
+\title{Relative Residue Frequencies at Every Position}
 \usage{
 calculateFrequency(
-  sequences,
+  input.sequences,
   max.length = NULL,
   sequence.dictionary = amino.acids,
   padding.symbol = ".",
@@ -13,7 +13,8 @@ calculateFrequency(
 )
 }
 \arguments{
-\item{sequences}{A character vector of AA or nucleotide strings.}
+\item{input.sequences}{Character vector of sequences (amino acid or 
+nucleotide)}
 
 \item{max.length}{Integer.  Pad/trim to this length. Defaults to
 `max(nchar(sequences))`.}
@@ -41,7 +42,7 @@ Either
 Quickly computes the per-position relative frequency of each symbol
 (amino-acid or nucleotide) in a set of biological sequences.  Variable-length
 strings are padded to a common width so the calculation is entirely
-vectorised (one logical comparison + one `colSums()` per residue).
+vectorized (one logical comparison + one `colSums()` per residue).
 }
 \examples{
 set.seed(1)
