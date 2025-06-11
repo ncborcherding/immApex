@@ -691,6 +691,7 @@ ggraph(g_tidy, layout = "fr") +
        color = "Detected\nCommunity") +
   theme_void()
 ```
+
 The plot clearly visualizes the network structure, and the distinct color groups demonstrate that the community detection algorithm successfully identified and separated the three original sequence families without any prior information. This unsupervised approach is a powerful tool for exploring the hidden structure within a complex repertoire.
 
 ***
