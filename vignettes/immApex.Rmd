@@ -24,9 +24,9 @@ set.seed(42)
 
 # Introduction
 
-Single-cell sequencing is an emerging technology in the field of immunology and oncology that allows researchers to couple RNA quantification and other modalities, like immune cell receptor profiling at the level of an individual cell. A number of workflows and software packages have been created to process and analyze single-cell transcriptomic data. These packages allow users to take the vast dimensionality of the data generated in single-cell-based experiments and distill the data into novel insights. Some of the packages within the R environment that offer single-cell immune profiling support include [scRepertoire](https://github.com/BorchLab/scRepertoire), [immunarch](https://github.com/immunomind/immunarch), and [immcantation](https://immcantation.readthedocs.io/en/stable/). None of these packages offer support for machine or deep learning applications for immune repertoire profiling. 
+Single-cell sequencing is mainstay technology in the field of immunology and oncology that allows researchers to couple RNA quantification and other modalities, like immune cell receptor profiling at the level of an individual cell. A number of workflows and software packages have been created to process and analyze single-cell transcriptomic data. These packages allow users to take the vast dimensionality of the data generated in single-cell-based experiments and distill the data into novel insights. Some of the packages within the R environment that offer single-cell immune profiling support include [scRepertoire](https://github.com/BorchLab/scRepertoire), [immunarch](https://github.com/immunomind/immunarch), and [immcantation](https://immcantation.readthedocs.io/en/stable/). None of these packages offer support for machine or deep learning applications for immune repertoire profiling. 
 
-**immApex** is meant to serve as an API for deep-learning models based on immune receptor sequencing. These functions extract or generate amino acid or nucleotide sequences and prepare them for deep learning tasks through [Keras3](https://tensorflow.rstudio.com/guides/keras/basics). **immApex** is the underlying structure for the BCR models in [Ibex](https://github.com/BorchLab/Ibex) and TCR models in [Trex](https://github.com/BorchLab/Trex). It should be noted that the tools here are created for immune receptor sequences; they will work more generally for nucleotide or amino acid sequences. The package itself supports AIRR, Adaptive, and 10x formats and interacts with the **scRepertoire** R package.
+**immApex** is meant to serve as an API for supervised and unsupervised learning tasks based on immune receptor sequencing. These functions extract or generate amino acid or nucleotide sequences and prepare them for downstream machine learning. **immApex** is the underlying structure for the BCR models in [Ibex](https://github.com/BorchLab/Ibex) and TCR models in [Trex](https://github.com/BorchLab/Trex). It should be noted that the tools here are created for immune receptor sequences; they will work more generally for nucleotide or amino acid sequences. The package itself supports AIRR, Adaptive, and 10x formats and interacts with the **scRepertoire** R package.
 
 More information is available at the [immApex GitHub Repo](https://github.com/BorchLab/immApex).
 
@@ -90,30 +90,6 @@ Adaptive_example <- formatGenes(immapex_example.data[["Adaptive"]],
                                 simplify.format = TRUE) 
 
 head(Adaptive_example[,c("aminoAcid","vGeneName", "v_IMGT", "v_IMGT.check")])
-```
-
-## getIMGT
-
-Depending on the sequencing technology and the version, we might want to expand the length of our sequence embedding approach. The first step in the process is pulling the reference sequences from the ImMunoGeneTics (IMGT) system using ```getIMGT()```. More information for IMGT can be found at [imgt.org](https://www.imgt.org/). Data from IMGT is under a CC BY-NC-ND 4.0 license. Please be aware that attribution is required for usage and should not be used to create commercial or derivative work. 
-
-Parameters for ```getIMGT()```
-
-* **species** One or two word designation of species. Currently supporting: "human", "mouse", "rat", "rabbit", "rhesus monkey", "sheep", "pig", "platypus", "alpaca", "dog", "chicken", and "ferret"
-* **chain** Sequence chain to access
-* **frame** Designation for "all", "inframe" or "inframe+gap"
-* **region** Sequence gene loci to access
-* **sequence.type** Type of sequence - "aa" for amino acid or "nt" for nucleotide
-
-Here, we will use the ```getIMGT()``` function to get the amino acid sequences for the TRBV region to get all the sequences by V gene allele.
-
-```{r }
-TRBV_aa <- getIMGT(species = "human",
-                   chain = "TRB",
-                   frame = "inframe",
-                   region = "v",
-                   sequence.type = "aa") 
-
-TRBV_aa[[1]][1]
 ```
 
 ## inferCDR
@@ -384,7 +360,7 @@ head(enc_onehot$flattened[, 1:10])
 
 ## propertyEncoder
 
-Instead of a binary vector, this method represents each amino acid using a set of continuous numerical values based on physicochemical properties (e.g., hydrophobicity, size, charge). This can capture the biochemical similarity between amino acids. Access this method by setting **mode** = `"property"` or using the ```propertyEncoder()``` alias.
+Instead of a binary vector, this method represents each amino acid using a set of continuous numerical values based on physicochemical properties (e.g., kideraFactors, FSGAI, etc). This can capture the biochemical similarity between amino acids. Access this method by setting **mode** = `"property"` or using the ```propertyEncoder()``` alias.
 
 **Mode-Specific Arguments**:
 
@@ -393,7 +369,7 @@ Instead of a binary vector, this method represents each amino acid using a set o
     
 Available **property.set** options include:
 
-* atchley - [citation](https://pubmed.ncbi.nlm.nih.gov/15851683/)
+* Atchley - [citation](https://pubmed.ncbi.nlm.nih.gov/15851683/)
 * crucianiProperties - [citation](https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/abs/10.1002/cem.856)
 * FASGAI - [citation](https://pubmed.ncbi.nlm.nih.gov/18318694/)
 * kideraFactors - [citation](https://link.springer.com/article/10.1007/BF01025492)
@@ -573,7 +549,7 @@ ggplot(top_features, aes(x = MeanDecreaseGini, y = reorder(Feature, MeanDecrease
   theme(legend.position = "none")
 ```
 
-The plot shows the features that the model found most useful for classification. The feature names correspond to specific Atchley factors at specific positions within the sequence, demonstrating how propertyEncoder allows the model to learn from the underlying biochemistry.
+The plot shows the features that the model found most useful for classification. The feature names correspond to specific Atchley factors at specific positions within the sequence - here residues 2 and 3 where the difference was encoded - demonstrating how ```propertyEncoder()``` allows the model to learn from the underlying biochemistry.
 
 ## Example 2: Unsupervised Clustering with PCA and Geometric Encoding
 
