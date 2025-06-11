@@ -1,15 +1,16 @@
 # immApex VERSION 1.3.1
 
 ## UNDERLYING CHANGES
-* Rebuilt ```propertyEncoder()``` and ```onehotEncoder()``` to use CPP backend with encodeSequences.cpp
-* Rebuilt ```buildNetwork()``` via CPP integration (fastEditEdges.cpp)
-* Motif quantification in ```calculateMotif()``` use CPP (calculateMotif.cpp)
+* Rebuilt ```propertyEncoder()``` and ```onehotEncoder()``` to use C++ backend with encodeSequences.cpp
+* Rebuilt ```buildNetwork()``` via C++ integration (fastEditEdges.cpp)
+* Motif quantification in ```calculateMotif()``` use C++ (calculateMotif.cpp)
 * Reduce overall dependencies on external packages
 * Improved speed of ```generateSequences()```, ```mutateSequences()```, ```adjacencyMatrix()```, ```tokenizeSequences()```, ```geometricEncoder```
 * Added group.by argument to ```getIR()```
 * Defunct ```variationalSequences()``` 
 * Removed keras3/tensorflow suggests/dependencies
 * Removed baslisk environment, python no longer required
+* Updated C++ backend to C++17
 
 ## NEW FEATURES
 * ```calculateEntropy()``` added to calculate the positional entropy along a biological sequence

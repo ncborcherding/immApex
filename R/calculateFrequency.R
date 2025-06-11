@@ -3,7 +3,7 @@
 #' Quickly computes the per-position relative frequency of each symbol
 #' (amino-acid or nucleotide) in a set of biological sequences.  Variable-length
 #' strings are padded to a common width so the calculation is entirely
-#' vectorised (one logical comparison + one `colSums()` per residue).
+#' vectorized (one logical comparison + one `colSums()` per residue).
 #'
 #' @param input.sequences  Character vector of sequences (amino acid or 
 #' nucleotide)
@@ -68,7 +68,7 @@ calculateFrequency <- function(input.sequences,
                                     paste0("Pos.", seq_len(max.length))))
   
   for (residue in c(sequence.dictionary, padding.symbol)) {
-    # logical comparison is vectorised; colSums is C-level
+    # logical comparison is vectorized; colSums is C-level
     res_mat[residue, ] <- colSums(seq_mat == residue) / nSeq
   }
   

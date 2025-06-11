@@ -20,7 +20,7 @@ buildNetwork(
 }
 \arguments{
 \item{input.data}{`data.frame`/`tibble` with sequence & metadata
-(optional – omit if you supply `sequences` directly).}
+(optional - omit if you supply `sequences` directly).}
 
 \item{input.sequences}{Character vector of sequences **or** column name
 inside `input.data`. Ignored when `NULL` and `seq_col` is non-`NULL`.}
@@ -29,13 +29,13 @@ inside `input.data`. Ignored when `NULL` and `seq_col` is non-`NULL`.}
 By default the function looks for common AIRR names (`junction_aa`, 
 `cdr3`, `v_call`, `j_call`).}
 
-\item{threshold}{≥ 1 for absolute distance **or** 0 < x ≤ 1 for relative.}
+\item{threshold}{>= 1 for absolute distance **or** 0 < x <= 1 for relative.}
 
 \item{filter.v, filter.j}{Logical; require identical V/J when `TRUE`.}
 
 \item{ids}{Optional character labels; recycled from row-names if missing.}
 
-\item{output}{`"edges"` (default) or `"sparse"` – return an edge-list
+\item{output}{`"edges"` (default) or `"sparse"` - return an edge-list
 `data.frame` **or** a symmetric `Matrix::dgCMatrix` adjacency matrix.}
 
 \item{weight}{`"dist"` (store the edit distance) **or** `"binary"`

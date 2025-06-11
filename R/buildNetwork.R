@@ -1,16 +1,16 @@
 #' Build Edit Distance Network
 #'
 #' @param input.data `data.frame`/`tibble` with sequence & metadata  
-#' (optional – omit if you supply `sequences` directly).
+#' (optional - omit if you supply `sequences` directly).
 #' @param input.sequences Character vector of sequences **or** column name
 #' inside `input.data`. Ignored when `NULL` and `seq_col` is non-`NULL`.
 #' @param seq_col,v_col,j_col Column names to use when `input.data` is given. 
 #' By default the function looks for common AIRR names (`junction_aa`, 
 #' `cdr3`, `v_call`, `j_call`).
-#' @param threshold ≥ 1 for absolute distance **or** 0 < x ≤ 1 for relative.
+#' @param threshold >= 1 for absolute distance **or** 0 < x <= 1 for relative.
 #' @param filter.v,filter.j Logical; require identical V/J when `TRUE`.
 #' @param ids Optional character labels; recycled from row-names if missing.
-#' @param output `"edges"` (default) or `"sparse"` – return an edge-list
+#' @param output `"edges"` (default) or `"sparse"` - return an edge-list
 #' `data.frame` **or** a symmetric `Matrix::dgCMatrix` adjacency matrix.
 #' @param weight `"dist"` (store the edit distance) **or** `"binary"`
 #' (all edges get weight 1). Ignored when `output = "edges"`.
@@ -25,6 +25,7 @@
 #'                       filter.v   = TRUE)
 #'
 #' @return edge-list `data.frame` **or** sparse adjacency `dgCMatrix`
+#' @importFrom Matrix sparseMatrix
 #' @export
 buildNetwork <- function(input.data        = NULL,
                          input.sequences   = NULL,
@@ -91,9 +92,9 @@ buildNetwork <- function(input.data        = NULL,
   
   ##  4. Input sanity checks 
   if (length(threshold) != 1 || !is.numeric(threshold) || threshold <= 0)
-    stop("`threshold` must be > 0 (integer or 0–1).")
+    stop("`threshold` must be > 0 (integer or 0-1).")
   if (threshold <= 1 && threshold <= 0)
-    stop("Relative threshold must be 0 < x ≤ 1.")
+    stop("Relative threshold must be 0 < x <= 1.")
   if (filter.v && is.null(v_vec))
     stop("`filter.v = TRUE` requires V gene information.")
   if (filter.j && is.null(j_vec))

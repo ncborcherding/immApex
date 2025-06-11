@@ -151,6 +151,7 @@ sequenceDecoder <- function(encoded.object,
 
 
 # Efficient Property Decoder 
+#' @importFrom stats dist
 .propertyDecoder <- function(cube, 
                              property.matrix, 
                              sequence.dictionary, 

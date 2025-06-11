@@ -1,8 +1,5 @@
 # test script for calculateEntropy.R - testcases are NOT comprehensive!
 
-## ------------------------------------------------------------------- 
-##  helpers                                                            
-## ------------------------------------------------------------------- 
 toy <- c("AA", "AB")          
 ref <- list(
   shannon      = log(2),                      # ln 2 ≃ 0.693147
@@ -17,18 +14,12 @@ ref <- list(
 
 metrics <- names(ref)
 
-## ------------------------------------------------------------------- 
-##  1. core output shape                                               
-## ------------------------------------------------------------------- 
 test_that("output vector has correct length and names", {
   out <- calculateEntropy(toy, method = "shannon")
   expect_length(out, 2)
   expect_named(out, c("Pos1", "Pos2"))
 })
 
-## ------------------------------------------------------------------- 
-##  2. numeric correctness for each built-in metric                    
-## ------------------------------------------------------------------- 
 test_that("each built-in metric matches analytic reference", {
   for (m in metrics) {
     val <- calculateEntropy(toy, method = m)
@@ -38,9 +29,6 @@ test_that("each built-in metric matches analytic reference", {
   }
 })
 
-## ------------------------------------------------------------------- 
-##  3. Hill number consistency checks                                  
-## ------------------------------------------------------------------- 
 test_that("hill metrics are self-consistent", {
   h0 <- calculateEntropy(toy, method = "hill0")[["Pos2"]]
   h1 <- calculateEntropy(toy, method = "hill1")[["Pos2"]]
@@ -51,12 +39,9 @@ test_that("hill metrics are self-consistent", {
 })
 
 
-## ------------------------------------------------------------------- 
-##  4. padding & aa.length handling                                    
-## ------------------------------------------------------------------- 
-test_that("explicit aa.length pads sequences correctly", {
+test_that("explicit max.length pads sequences correctly", {
   out <- calculateEntropy(toy, 
-                          aa.length = 4, 
+                          max.length = 4, 
                           method = "shannon")
   expect_length(out, 4)
   # padded columns (no real AA) should return 0
@@ -73,9 +58,6 @@ test_that("alternative padding.symbol is honoured", {
   expect_equal(out.dot, out.star)    
 })
 
-## ------------------------------------------------------------------- 
-##  5. argument validation errors                                      
-## ------------------------------------------------------------------- 
 test_that("invalid inputs raise informative errors", {
   expect_error(calculateEntropy(1:5),           "character")   # non-char input
   expect_error(calculateEntropy(toy, 

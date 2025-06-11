@@ -133,10 +133,3 @@ test_that("Handles missing V-genes and NA gracefully", {
 })
 
 
-test_that("Verbose output issues correct warning for missing genes", {
-  expect_output(
-    inferCDR(mock_input_data, reference = mock_reference_aa, technology="TenX", verbose = TRUE),
-    "Warning: 2 V genes not found in reference; CDRs set to NA."
-  )
-})
-

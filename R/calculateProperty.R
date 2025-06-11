@@ -1,13 +1,14 @@
 #' Position-wise Amino-Acid Property Profiles
 #'
 #' Computes a range of summary statistics for property values of one or more AA 
-#' property scales at ever esidue position of a set of protein (or peptide) 
-#' sequences. The function is entirely vectorised: it first calls 
+#' property scales at every residue position of a set of protein (or peptide) 
+#' sequences. The function is entirely vectorized: it first calls 
 #' [`calculateFrequency()`] to obtain a residue-by-position **frequency** 
 #' matrix *F* (each column sums to 1) and then performs a single matrix product.
 #'
 #' @param input.sequences Character vector of amino-acid strings.
-#' @param property.set See [`positionalPropertyProfile()`].
+#' @param property.set Character string (one of the supported names) 
+#' Defaults to `"Atchley"`.
 #' @param summary.fun Character string (`"mean"`, `"median"`, `"sum"`,
 #' `"min"`, `"max"`), **or** a function accepting a numeric vector and
 #' returning length-1 numeric.  Defaults to `"mean"`.
@@ -33,7 +34,6 @@ calculateProperty <- function(input.sequences,
                               property.set  = "Atchley",
                               summary.fun   = "mean",
                               transform     = "none",
-                              groups        = NULL,
                               max.length    = NULL,
                               padding.symbol = ".",
                               tidy           = FALSE) {
@@ -59,11 +59,6 @@ calculateProperty <- function(input.sequences,
   
   transform <- match.arg(transform,
                          c("none","sqrt","log1p","zscore","minmax"))
-  
-  if (!is.null(groups)) {
-    groups <- as.factor(groups)
-    stopifnot(length(groups) == length(input.sequences))
-  }
   
   if (is.null(max.length))
     max.length <- max(nchar(input.sequences), 1L)
@@ -133,7 +128,7 @@ calculateProperty <- function(input.sequences,
     return(.builtin_scales[[key]])
   
   if (requireNamespace("Peptides", quietly = TRUE)) {
-    acc <- Peptides:::AAdata                               # named list
+    acc <- utils::getFromNamespace("AAdata", "Peptides")  
     if (key %in% names(acc)) {
       v <- do.call(rbind, acc[[key]])
       return(v)
@@ -144,9 +139,9 @@ calculateProperty <- function(input.sequences,
        "Use one of the built-ins, ",
        "or supply a custom numeric matrix.")
 }
-amino.acids <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")
 
 .builtin_scales <- new.env(parent = emptyenv())
+amino.acids <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")
 
 .builtin_scales$Atchley <- t(matrix(c(
   # A (Alanine)

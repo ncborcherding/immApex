@@ -42,7 +42,7 @@ column names are the statistic labels.
 Computes a comprehensive panel of univariate statistics for every
 **row** *or* **column** of a numeric matrix.  It is designed for
 lightweight feature-engineering pipelines where many summaries are
-required up-front (e.g. before modelling).
+required up-front (e.g. before modeling).
 }
 \examples{
 m <- matrix(rnorm(20), 4, 5,

@@ -29,6 +29,8 @@ inferCDR(
 
 \item{sequences}{The specific regions of the CDR loop to get from the data, 
 such as \strong{CDR1}.}
+
+\item{verbose}{Logical. If `TRUE` (default), prints a progress message.}
 }
 \value{
 A data frame with the new columns of CDR sequences added.

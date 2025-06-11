@@ -9,7 +9,6 @@ calculateProperty(
   property.set = "Atchley",
   summary.fun = "mean",
   transform = "none",
-  groups = NULL,
   max.length = NULL,
   padding.symbol = ".",
   tidy = FALSE
@@ -18,7 +17,8 @@ calculateProperty(
 \arguments{
 \item{input.sequences}{Character vector of amino-acid strings.}
 
-\item{property.set}{See [`positionalPropertyProfile()`].}
+\item{property.set}{Character string (one of the supported names) 
+Defaults to `"Atchley"`.}
 
 \item{summary.fun}{Character string (`"mean"`, `"median"`, `"sum"`,
 `"min"`, `"max"`), **or** a function accepting a numeric vector and
@@ -42,8 +42,8 @@ scale, position, value.
 }
 \description{
 Computes a range of summary statistics for property values of one or more AA 
-property scales at ever esidue position of a set of protein (or peptide) 
-sequences. The function is entirely vectorised: it first calls 
+property scales at every residue position of a set of protein (or peptide) 
+sequences. The function is entirely vectorized: it first calls 
 [`calculateFrequency()`] to obtain a residue-by-position **frequency** 
 matrix *F* (each column sums to 1) and then performs a single matrix product.
 }

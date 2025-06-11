@@ -22,6 +22,7 @@
 #' @param directed Logical; if FALSE (default) the matrix is symmetrised.
 #'
 #' @export
+#' @importFrom stats setNames
 #' @return An adjacency matrix.
 
 adjacencyMatrix <- function(input.sequences,
@@ -67,7 +68,7 @@ adjacencyMatrix <- function(input.sequences,
   all_adjacencies <- all_adjacencies[!sapply(all_adjacencies, is.null)]
   
   if (length(all_adjacencies) == 0L) {
-    stop("All sequences have length < 2 – no adjacencies to compute.")
+    stop("All sequences have length < 2 - no adjacencies to compute.")
   }
   
   # Combine all 'from' and 'to' vectors
@@ -82,12 +83,12 @@ adjacencyMatrix <- function(input.sequences,
                        dimnames = list(dict, dict))
   
   
-  # --- Make Symmetrical (if requested) ---
+  # Make Symmetrical (if requested) 
   if (!directed) {
     adj_matrix <- adj_matrix + t(adj_matrix)
   }
   
-  # --- Normalize (if requested) ---
+  # Normalize (if requested) 
   if (normalize) {
     total <- sum(adj_matrix)
     if (total == 0) {

@@ -17,7 +17,7 @@ vignette: >
 
 
 ```{r, echo=FALSE, results="hide", message=FALSE}
-knitr::opts_chunk$set(error=FALSE, message=FALSE, warning=FALSE)
+knitr::opts_chunk$set(error=FALSE, message=FALSE, warning=FALSE, tidy = FALSE)
 library(BiocStyle)
 set.seed(42)
 ```
@@ -36,7 +36,7 @@ More information is available at the [immApex GitHub Repo](https://github.com/Bo
 suppressMessages(library(immApex))
 suppressMessages(library(ggplot2))
 suppressMessages(library(viridis))
-suppressMessages(library(magrittr))
+suppressMessages(library(dplyr))
 suppressMessages(library(igraph))
 suppressMessages(library(tidygraph))
 suppressMessages(library(ggraph))
@@ -58,7 +58,7 @@ Parameters for ```getIMGT()```
 
 Here, we will use the ```getIMGT()``` function to get the amino acid sequences for the TRBV region to get all the sequences by V gene allele.
 
-```{r tidy = FALSE}
+```{r }
 TRBV_aa <- getIMGT(species = "human",
                    chain = "TRB",
                    frame = "inframe",
@@ -82,7 +82,7 @@ Parameters for ```formatGenes()```
 
 Here, we will use the built-in example from Adaptive Biotechnologies and reformat and simplify the **v** region. ```formatGenes()``` will add 2 columns to the end of the data frame per region selected - 1) **v_IMGT** will be the formatted gene calls and 2) **v_IMGT.check** is a binary for if the formatted region appears in the IMGT database. In the example below, "TRBV2-1" is not recognized as a designation within IMGT.
 
-```{r tidy = FALSE}
+```{r }
 data("immapex_example.data")
 Adaptive_example <- formatGenes(immapex_example.data[["Adaptive"]],
                                 region = "v",
@@ -106,7 +106,7 @@ Parameters for ```getIMGT()```
 
 Here, we will use the ```getIMGT()``` function to get the amino acid sequences for the TRBV region to get all the sequences by V gene allele.
 
-```{r tidy = FALSE}
+```{r }
 TRBV_aa <- getIMGT(species = "human",
                    chain = "TRB",
                    frame = "inframe",
@@ -128,7 +128,7 @@ Parameters for ```inferCDR```
 * **sequence.type** Type of sequence - "aa" for amino acid or "nt" for nucleotide
 * **sequences** The specific regions of the CDR loop to get from the data.
 
-```{r tidy = FALSE}
+```{r }
 Adaptive_example <- inferCDR(Adaptive_example,
                              chain = "TRB", 
                              reference = TRBV_aa,
@@ -154,7 +154,7 @@ Parameters for ```generateSequences()```
 * **max.length** Maximum length of the final sequence
 * **sequence.dictionary** The letters to use in sequence generation (default are all amino acids)
 
-```{r tidy = FALSE}
+```{r }
 sequences <- generateSequences(prefix.motif = "CAS",
                                suffix.motif = "YF",
                                number.of.sequences = 1000,
@@ -166,7 +166,7 @@ head(sequences)
 
 If we want to generate nucleotide sequences instead of amino acids, we must to change the **sequence.dictionary**.
 
-```{r tidy = FALSE}
+```{r }
 nucleotide.sequences <- generateSequences(number.of.sequences = 1000,
                                           min.length = 8,
                                           max.length = 16, 
@@ -187,7 +187,7 @@ Parameters for ```mutateSequences()```
 * **position.end** The ending position to mutate along the sequence. Default NULL will end the random mutations at the last position.
 * **sequence.dictionary** The letters to use in sequence mutation (default are all amino acids)
 
-```{r tidy = FALSE}
+```{r }
 mutated.sequences <- mutateSequences(sequences, 
                                      number.of.sequences = 1,
                                      position.start = 3,                                  
@@ -210,7 +210,7 @@ Parameters for ```calculateFrequency()```
 * **max.length**: The length to align sequences to by padding/trimming.
 * **tidy**: If TRUE, returns a long-format data frame suitable for ggplot2.
 
-```{r tidy = FALSE}
+```{r }
 freq.matrix <- calculateFrequency(sequences, 
                                   max.length = 20)
 head(freq.matrix[, 1:10])
@@ -224,7 +224,7 @@ Parameters for `calculateEntropy()`
 
 * **method**: The diversity metric to use: "shannon", "inv.simpson", "gini.simpson", "norm.entropy", "pielou", or Hill numbers ("hill0", "hill1", "hill2").
 
-```{r tidy = FALSE}
+```{r }
 shannon.entropy <- calculateEntropy(sequences, 
                                     method = "shannon")
 head(shannon.entropy)
@@ -239,7 +239,7 @@ Parameters for `calculateProperty()`
 * **property.set**: The amino acid property scale to use (e.g., "Atchley").
 * **summary.fun**: The summary statistic to apply ("mean", "median", "sum" etc.).
 
-```{r tidy = FALSE}
+```{r }
 # Calculate the mean of Atchley factors at each position
 atchley.profile <- calculateProperty(sequences, 
                                      property.set = "Atchley", 
@@ -255,7 +255,7 @@ Parameters for `calculateGeneUsage()`
 * **loci**: A character vector of one or two column names corresponding to the gene loci.
 * **summary**: The output format: "proportion" (default), "count", or "percent".
 
-```{r tidy = FALSE}
+```{r }
 # Using the built-in AIRR data
 data_airr <- immapex_example.data[["AIRR"]]
 
@@ -276,7 +276,7 @@ Parameters for `calculateMotif()`
 * **min.depth**: The minimum number of times a motif must appear to be included in the output.
 * **discontinuous**: If TRUE, also finds motifs with a single gap (e.g., "C.S").
 
-```{r tidy = FALSE}
+```{r }
 motif.counts <- calculateMotif(sequences, 
                                motif.lengths = 3, 
                                min.depth = 5)
@@ -287,14 +287,14 @@ head(motif.counts)
 
 This function calculates a positional probability matrix (PPM) for a group of sequences. This can be used to represent the sequence profile of an antigen-specific repertoire or to generate a sequence logo.
 
-```{r tidy = FALSE}
+```{r }
 ppm.matrix <- probabilityMatrix(sequences)
 head(ppm.matrix)
 ```
 
 The PPM can also be converted to a positional weight matrix (PWM) using a log-likelihood ratio.
 
-```{r tidy = FALSE}
+```{r }
 set.seed(42)
 # Generate a sample background frequency
 back.freq <- sample(1:1000, 20)
@@ -314,7 +314,7 @@ These functions help analyze relationships between residues or whole sequences.
 
 `adjacencyMatrix()` summarizes transitions between adjacent residues, creating a matrix of co-occurrence counts.
 
-```{r tidy = FALSE}
+```{r }
 adj.matrix <- adjacencyMatrix(sequences, 
                               normalize = FALSE)
 adj.matrix[1:10, 1:10]
@@ -322,7 +322,7 @@ adj.matrix[1:10, 1:10]
 
 `buildNetwork()` constructs a similarity network where nodes are sequences and edges connect sequences with an edit distance below a given threshold.
 
-```{r tidy = FALSE}
+```{r }
 # Building an edge list
 g1 <- buildNetwork(data.frame(sequences = sequences),
                    seq_col = "sequences",
@@ -371,7 +371,7 @@ One-hot encoding is a common method that transforms each amino acid at each posi
 * **padding.symbol**: The single character used to pad sequences shorter than max.length.
 * **sequence.dictionary**: The letters to use in encoding (default are all amino acids)
 
-```{r tidy = FALSE}
+```{r }
 # Generate one-hot encoding using the main function
 enc_onehot <- sequenceEncoder(sequences, mode = "onehot", verbose = FALSE)
 
@@ -393,7 +393,7 @@ Instead of a binary vector, this method represents each amino acid using a set o
     
 Available **property.set** options include:
 
-* atchleyFactors - [citation](https://pubmed.ncbi.nlm.nih.gov/15851683/)
+* atchley - [citation](https://pubmed.ncbi.nlm.nih.gov/15851683/)
 * crucianiProperties - [citation](https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/abs/10.1002/cem.856)
 * FASGAI - [citation](https://pubmed.ncbi.nlm.nih.gov/18318694/)
 * kideraFactors - [citation](https://link.springer.com/article/10.1007/BF01025492)
@@ -405,7 +405,7 @@ Available **property.set** options include:
 * zScales - [citation](https://pubmed.ncbi.nlm.nih.gov/9651153/)
 
 
-```{r tidy = FALSE}
+```{r }
 # Generate property-based encoding using FASGAI factors
 enc_prop <- sequenceEncoder(sequences,
                             mode = "property",
@@ -428,7 +428,7 @@ Parameters for ```geometricEncoder()```
 * **method**: Select the following substitution matrices: "BLOSUM45", "BLOSUM50", "BLOSUM62", "BLOSUM80", "BLOSUM100", "PAM30", "PAM40", "PAM70", "PAM120", or "PAM250"
 * **theta**: The angle in which to create the rotation matrix
 
-```{r tidy = FALSE}
+```{r }
 # Generate a geometric embedding for each sequence
 enc_geo <- sequenceEncoder(sequences,
                            mode = "geometric",
@@ -458,7 +458,7 @@ Parameters for ```tokenizeSequences()```
 * **max.length** Additional length to pad, NULL will pad sequences to the max length of input.sequences
 * **convert.to.matrix** Return a matrix (**TRUE**) or a vector (**FALSE**)
 
-```{r tidy = FALSE}
+```{r }
 token.matrix <- tokenizeSequences(input.sequences =  c(sequences, mutated.sequences), 
                                   add.startstop = TRUE,
                                   start.token = "!",
@@ -478,7 +478,7 @@ Parameters for ```sequenceDecoder()```
 * **property.set** For `mode = "property"`, a character vector of property names (e.g., `"Atchley"`) that were used for the original encoding.
 * **call.threshold** The relative strictness of sequence calling with higher values being more stringent
 
-```{r tidy = FALSE}
+```{r }
 property.matrix <- propertyEncoder(input.sequences =  c(sequences, mutated.sequences), 
                                    property.set = "FASGAI")
 
@@ -503,160 +503,223 @@ head(OHE.sequences)
 
 # Training a Model
 
-## Autoencoder
+## Example 1: Classifying Sequences with Random Forest
 
-For the vignette - we will use an autoencoder for sequence embedding. The code below is based on the [Trex](https://github.com/BorchLab/Trex) R package. The overall structure of the autoencoder is the same. However, some of the parameters are modified for the sake of the vignette. We will use the **sequence.matrix** we generated above from the ```onehotEncoder()```.
+A common task is to classify sequences into groups, such as predicting whether an immune receptor binds to a specific antigen. Here, we'll train a Random Forest model to distinguish between two classes of sequences based on their physicochemical properties
 
-The steps to train the model include: 
+**Step 1: Simulate Data and Engineer Features**
 
-1. Subsetting sequences
-2. Defining parameters for the model
-3. Forming the autoencoder structure - encoder and decoder
-4. Fitting the model
+First, we'll simulate two distinct classes of sequences using ```generateSequences()```. We'll then use ```propertyEncoder()``` with the "Atchley" factors to convert each sequence into a flattened numerical vector. Each element in the vector represents a specific physicochemical property at a specific position, transforming our variable-length sequences into a fixed-size feature matrix suitable for machine learning.
 
-```{r tidy = FALSE}
-#Sampling to make Training/Validation Data Cohorts
-set.seed(42)
-num_sequences <- nrow(sequence.matrix[[2]])
-indices <- 1:num_sequences
-train_indices <- sample(indices, size = floor(0.8 * num_sequences))
-val_indices <- setdiff(indices, train_indices)
-    
-x_train <- sequence.matrix[[2]][train_indices,]
-x_val <- sequence.matrix[[2]][val_indices,]
-   
-# Parameters
-input_shape <- dim(x_train)[2]
-epochs <- 20
-batch_size <- 128
-encoding_dim <- 40 
-hidden_dim1 <- 256 # Hidden layer 1 size
-hidden_dim2 <- 128  # Hidden layer 2 size
-    
-es <- callback_early_stopping(monitor = "val_loss",
-                              min_delta = 0,
-                              patience = 4,
-                              verbose = 1,
-                              mode = "min")
-                    
-# Define the Model
-input_seq <- layer_input(shape = c(input_shape))
-        
-# Encoder Layers
-encoded <- input_seq %>%
-          layer_dense(units = hidden_dim1, name = "e.1") %>%
-          layer_batch_normalization(name = "bn.1") %>%
-          layer_activation('leaky_relu', name = "act.1") %>%
-          layer_dense(units = hidden_dim2, name = "e.2") %>%
-          layer_batch_normalization(name = "bn.2") %>%
-          layer_activation('leaky_relu', name = "act.2") %>%
-          layer_dense(units = encoding_dim, activation = 'selu', name = "latent")
-                
-# Decoder Layers
-decoded <- encoded %>%
-          layer_dense(units = hidden_dim2, name = "d.2") %>%
-          layer_batch_normalization(name = "bn.3") %>%
-          layer_activation('leaky_relu', name = "act.3") %>%
-          layer_dense(units = hidden_dim1, name = "d.1") %>%
-          layer_batch_normalization(name = "bn.4") %>%
-          layer_activation('leaky_relu', name = "act.4") %>%
-          layer_dense(units = input_shape, activation = 'sigmoid')
-      
-# Autoencoder Model
-autoencoder <- keras_model(input_seq, decoded)
-autoencoder %>% keras3::compile(optimizer = optimizer_adam(learning_rate = 0.0001),
-                                   loss = "mse")
-      
-# Train the model
-history <- autoencoder %>% fit(x = x_train,
-                               y = x_train,
-                               validation_data = list(x_val, x_val),
-                               epochs = epochs,
-                               batch_size = batch_size,
-                               shuffle = TRUE,
-                               callbacks = es, 
-                               verbose = 0)
-
-plot(history) + 
-  scale_color_viridis(option = "B", discrete = TRUE) + 
-  scale_fill_manual(values = c("black","black")) + 
-  theme_classic()
-```
-
-## Classifier
-
-We can also build classifiers directly using deep or shallow neural networks. Building deep classifiers requires more data than classical machine learning methods, like random forests, so the vignette may not be ideal.
-
-The first step is to generate distinct types of sequences using ```generateSequences()``` and ```onehotEncoder()``` to prepare the data for the model.
-
-```{r tidy = FALSE}
+```{r}
+# Step 1a: Generate two distinct classes of sequences
 class1.sequences <- generateSequences(prefix.motif = "CAS",
-                                      suffix.motif = "YF",
-                                      number.of.sequences = 10000,
-                                      min.length = 8,
-                                      max.length = 16)
+                                      number.of.sequences = 500)
 
-class2.sequences <- generateSequences(prefix.motif = "CASF",
-                                      suffix.motif = "YF",
-                                      number.of.sequences = 10000,
-                                      min.length = 8,
-                                      max.length = 16)
+class2.sequences <- generateSequences(prefix.motif = "CSG",
+                                      number.of.sequences = 500)
 
-labels <- as.numeric(c(rep(0, 10000), rep(1, 10000)))
+# Combine sequences and create labels
+all.sequences <- c(class1.sequences, class2.sequences)
+labels <- as.factor(c(rep("Class1", 500), rep("Class2", 500)))
 
-classifier.matrix <- onehotEncoder(input.sequences =  c(class1.sequences, class2.sequences))
+# Step 1b: Use propertyEncoder to create a feature matrix from Atchley factors
+feature.matrix <- propertyEncoder(all.sequences, 
+                                  property.set = "Atchley",
+                                  verbose = FALSE)
+
+# Combine the flattened feature matrix and labels into the final data frame
+training.data <- data.frame(feature.matrix$flattened, labels)
 ```
 
-Next, we will define and train the Keras3 classifier model using artificial sequences. We will use a simple convolutional neural network with 2 layers and then a single neuron that will classify the sequences into class 1 or class 2 (here, the labels are 0 and 1).
+**Step 2: Train and Evaluate the Model**
 
-```{r tidy = FALSE}
-#Input shape will be 1D as we are using a matrix
-input.shape <- dim(classifier.matrix[[2]])[2]
+Now we can train the Random Forest classifier. This model is robust, requires minimal tuning, and can provide insights into which features (in this case, which property at which position) are most important for distinguishing between the classes.
 
-#Simple model structure
-classifier.model <- keras_model_sequential() %>% 
-                        layer_dense(units = 128, activation = "relu", 
-                                    input_shape = c(input.shape)) %>%
-                        layer_dense(units = 32, activation = "relu") %>%
-                        layer_dense(units = 1, activation = "sigmoid")
+```{r}
+suppressMessages(library(randomForest))
 
-classifier.model %>% compile(
-        optimizer = optimizer_adam(learning_rate = 0.00001),
-        loss = "binary_crossentropy",
-        metrics = c("accuracy")
-)
+# Train the Random Forest model
+set.seed(42) # for reproducibility
+rf.model <- randomForest(labels ~ ., 
+                         data = training.data, 
+                         ntree = 100, 
+                         importance = TRUE) # Set importance=TRUE to calculate scores
 
-#Separating data and labels
-set.seed(42)
-val_indices <- sample(nrow(classifier.matrix[[2]]), 10000*0.2)
-x_val <- classifier.matrix[[2]][val_indices,]
-x_train <- classifier.matrix[[2]][-val_indices,]
+# Print the confusion matrix to see model performance
+print(rf.model)
+```
 
-val_labels <- labels[val_indices]
-train_labels <- labels[-val_indices]
+A key advantage of Random Forest is the ability to easily extract feature importance. We can create a plot to see which positional Atchley factors were most influential in the model's predictions.
 
-#Training the classifier.model
-history <- classifier.model %>% fit(x_train, 
-                                    train_labels, 
-                                    epochs = 20, 
-                                    batch_size = 32, 
-                                    validation_data = list(x_val, val_labels),
-                                    verbose = 0
-)
+```{r}
+# Extract feature importance data from the model
+importance.data <- as.data.frame(importance(rf.model))
+importance.data$Feature <- rownames(importance.data)
 
-plot(history) + 
-  scale_color_viridis(option = "B", discrete = TRUE) + 
-  scale_fill_manual(values = c("black","black")) + 
+# Get the top 15 most important features
+top_features <- importance.data[order(importance.data$MeanDecreaseGini, decreasing = TRUE), ][1:15,]
+
+# Plot using ggplot2
+ggplot(top_features, aes(x = MeanDecreaseGini, y = reorder(Feature, MeanDecreaseGini))) +
+  geom_col(aes(fill = MeanDecreaseGini)) +
+  scale_fill_viridis_c() +
+  labs(title = "Top 15 Most Important Features",
+       x = "Mean Decrease in Gini Impurity",
+       y = "Feature (Property and Position)") +
+  theme_classic() +
+  theme(legend.position = "none")
+```
+
+The plot shows the features that the model found most useful for classification. The feature names correspond to specific Atchley factors at specific positions within the sequence, demonstrating how propertyEncoder allows the model to learn from the underlying biochemistry.
+
+## Example 2: Unsupervised Clustering with PCA and Geometric Encoding
+
+Sometimes we don't have labels, but we want to see if our sequences form natural clusters. We can use dimensionality reduction techniques like Principal Component Analysis (PCA) to visualize the relationships between sequences. The ```geometricEncoder()``` function is perfect for this, as it creates a rich, fixed-length numerical embedding for each sequence.
+
+**Step 1: Simulate and Encode a Mixed Population of Sequences**
+
+We'll generate three distinct families of sequences. Then, we will use ```geometricEncoder()``` to transform them into a 20-dimensional numerical matrix.
+
+```{r}
+# Generate three distinct groups of sequences
+groupA <- generateSequences(prefix.motif = "CA", 
+                            number.of.sequences = 100, 
+                            min.length = 2)
+groupB <- generateSequences(prefix.motif = "QR", 
+                            number.of.sequences = 100, 
+                            min.length = 2)
+groupC <- generateSequences(prefix.motif = "YY", 
+                            number.of.sequences = 100, 
+                            min.length = 2)
+
+# Combine them and create a vector of original group IDs for later visualization
+mixed.sequences <- c(groupA, groupB, groupC)
+original.groups <- as.factor(rep(c("Group A", "Group B", "Group C"), each = 100))
+
+# Use geometricEncoder to create embeddings
+geometric.embeddings <- geometricEncoder(mixed.sequences, 
+                                         method = "BLOSUM62", 
+                                         verbose = FALSE)
+```
+
+**Step 2: Perform PCA and Visualize Clusters** 
+
+With our geometric.embeddings matrix, we can now perform PCA and plot the results. If the geometric encoding captures the underlying differences in our sequence families, we should see distinct clusters in the plot of the first two principal components.
+
+```{r}
+# Perform PCA on the embedding matrix
+pca.result <- prcomp(geometric.embeddings$summary, center = TRUE, scale. = TRUE)
+
+# Prepare data for plotting with ggplot2
+pca.data <- data.frame(PC1 = pca.result$x[,1],
+                       PC2 = pca.result$x[,2],
+                       Group = original.groups)
+
+# Plot PC1 vs PC2 using ggplot2 and viridis
+ggplot(pca.data, aes(x = PC1, y = PC2, color = Group)) +
+  geom_point(size = 3, alpha = 0.8) +
+  scale_color_viridis(discrete = TRUE) +
+  labs(title = "PCA of Geometric Sequence Embeddings",
+       x = "Principal Component 1",
+       y = "Principal Component 2") +
   theme_classic()
 ```
 
-Here, we can achieve a validation accuracy of 98.25%, which is impressive. But to contextualize, we used ```generateSequences()``` and distinct motifs - "CAS" vs "CASF" to create our 2 classes of sequences. Using sequences from experimental data will likely result in lower accuracy or require greater model complexity.
+The resulting plot clearly shows three distinct clusters, demonstrating that the ```geometricEncoder()``` successfully captured the structural differences between our sequence families, allowing for their separation in an unsupervised manner.
+
+## Example 3: Identifying Sequence Communities with Network Analysis
+
+Beyond analyzing individual sequences, we can explore the relationships between sequences by building a similarity network. A powerful machine learning application for these networks is community detection, an unsupervised clustering method that finds groups of densely connected nodes. In immunology, this can be used to identify clonal families or groups of sequences with shared features.
+
+**Step 1: Simulate Data with Inherent Structure**
+
+First, we will simulate a dataset containing three distinct "families" of sequences. Our goal is to see if the network analysis can blindly recover these groups without being given the labels.
+
+```{r}
+set.seed(42)
+# Generate three distinct groups of sequences to simulate clonal families
+family1 <- unique(generateSequences(prefix.motif = "CASS", 
+                             suffix.motif = "YF", 
+                             min.length = 6,
+                             number.of.sequences = 60))
+family2 <- unique(generateSequences(prefix.motif = "CARS", 
+                             suffix.motif = "GF",
+                             min.length = 6,
+                             number.of.sequences = 60))
+family3 <- unique(generateSequences(prefix.motif = "CSVA", 
+                             suffix.motif = "HF", 
+                             min.length = 6,
+                             number.of.sequences = 60))
+
+# Combine into a single data frame
+all_sequences_df <- data.frame(
+  sequence = c(family1, family2, family3),
+  original_family = c(rep("Family 1", 42), rep("Family 2", 40), rep("Family 3", 46))
+)
+```
+
+**Step 2: Build the Sequence Network**
+
+Next, we use ```buildNetwork()``` to create an edge list based on sequence similarity (edit distance). We then convert this list into a formal graph object using the igraph package, which is the standard for network analysis in R.
+
+```{r}
+# Build the edge list: connect sequences with an edit distance of 3 or less
+edge_list <- buildNetwork(all_sequences_df,
+                          seq_col = "sequence",
+                          threshold = 3)
+
+# Replace numerical edge list with the sequences
+edge_list_sequences <- as.matrix(data.frame(
+  from = all_sequences_df$sequence[as.numeric(edge_list$from)],
+  to = all_sequences_df$sequence[as.numeric(edge_list$to)],
+  dist = edge_list$dist
+))
+
+# Create a graph object from the edge list and node data
+# This graph now contains all our sequences as nodes
+sequence_graph <- graph_from_data_frame(d = edge_list_sequences, 
+                                        vertices = all_sequences_df, 
+                                        directed = FALSE)
+E(sequence_graph)$weight <- edge_list_sequences[,3]
+```
+
+**Step 3: Perform Community Detection**
+
+Now we apply a machine learning algorithm to find communities. The `igraph` package offers many algorithms; we will use "Walktrap," a method that finds communities through a series of short random walks. The idea is that walks are more likely to get "trapped" within densely connected parts of the network (i.e., communities).
+
+```{r}
+# Perform community detection using the Walktrap algorithm
+communities <- cluster_walktrap(sequence_graph)
+
+# Add the community membership as an attribute to the graph nodes
+V(sequence_graph)$community <- communities$membership
+```
+
+**Step 4: Visualize and Interpret the Communities**
+
+Finally, we use `ggraph` to visualize the network, coloring each node by the community it was assigned to by the algorithm. If the analysis was successful, the colors should align with the original sequence families we simulated.
+
+```{r}
+# Convert to tidygraph for use with ggraph
+g_tidy <- as_tbl_graph(sequence_graph)
+
+# Plot the network, coloring nodes by their detected community
+ggraph(g_tidy, layout = "fr") + 
+  geom_edge_link(aes(alpha = weight), show.legend = FALSE) +
+  geom_node_point(aes(color = as.factor(community)), size = 4) +
+  scale_color_viridis(discrete = TRUE, option = "D") +
+  labs(title = "Sequence Network with Detected Communities",
+       color = "Detected\nCommunity") +
+  theme_void()
+```
+The plot clearly visualizes the network structure, and the distinct color groups demonstrate that the community detection algorithm successfully identified and separated the three original sequence families without any prior information. This unsupervised approach is a powerful tool for exploring the hidden structure within a complex repertoire.
 
 ***
 
 # Conclusion
 
-This has been a general overview of the capabilities of **immApex** for processing immune receptor sequences and making deep learning models. If you have any questions, comments, or suggestions, feel free to visit the [GitHub repository](https://github.com/BorchLab/immApex).
+This has been a general overview of the capabilities of **immApex** for processing immune receptor sequences, extracting features, and developing algorithms. If you have any questions, comments, or suggestions, feel free to visit the [GitHub repository](https://github.com/BorchLab/immApex).
 
 ## Session Info
 

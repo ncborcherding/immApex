@@ -9,7 +9,7 @@
     expect_error(getIR(input.data = dummy_data, 
                        chains = "TRA",
                        sequence.type = "invalidType"),
-                 "'arg' should be one of “aa”, “nt”")
+                 regexp = "should be one of")
   })
   
   test_that("Test for valid chain type", {

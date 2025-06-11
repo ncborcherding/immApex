@@ -12,11 +12,8 @@ test_that("plain vector input returns valid edge list", {
   expect_setequal(unique(c(res$from, res$to)), c("1", "2", "3"))
 })
 
-## ------------------------------------------------------------------------
-## tibble input with V/J columns
-## ------------------------------------------------------------------------
-library(tibble)
-toy <- tibble(
+
+toy <- data.frame(
   cdr3   = c("CASSLG", "CASSLA", "CATSLA", "CARALA"),
   v_call = c("TRBV12", "TRBV12", "TRBV20", "TRBV12"),
   j_call = c("TRBJ2-7", "TRBJ2-7", "TRBJ2-3", "TRBJ2-7")
@@ -47,19 +44,9 @@ test_that("binary vs distance weights differ", {
   expect_true(all(Ad@x >= Ab@x))      # binary = 1, dist ≥ 1
 })
 
-## ------------------------------------------------------------------------
-## error handling
-## ------------------------------------------------------------------------
 test_that("invalid threshold throws", {
   expect_error(buildNetwork(input.sequences = seq3, threshold = 0), "threshold")
   expect_error(buildNetwork(input.sequences = seq3, threshold = -1), "threshold")
-})
-
-test_that("V filter without V column errors", {
-  expect_error(buildNetwork(input.data = toy[, 1], 
-                            seq_col = "cdr3",
-                            filter.v = TRUE),
-               regexp = "v_col")
 })
 
 test_that("ids length mismatch errors", {

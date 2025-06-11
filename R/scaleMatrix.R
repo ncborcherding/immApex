@@ -26,6 +26,7 @@
 #' @param na.rm Logical; drop NAs when computing summaries.
 #'
 #' @return Matrix of identical dimension (dimnames preserved).
+#' @importFrom stats mad median sd 
 #' @export
 #'
 #' @examples

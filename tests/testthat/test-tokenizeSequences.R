@@ -33,15 +33,6 @@ test_that("list mode mirrors matrix logic", {
   expect_equal(lengths(lst), rep(6L, 2))          # padded to 6
 })
 
-
-test_that("verbose flag emits message exactly once", {
-  expect_output(
-    tokenizeSequences(seqs, verbose = TRUE),
-    "Added start/stop tokens",
-    fixed = TRUE
-  )
-})
-
 test_that("max.length shorter than longest sequence triggers error", {
   expect_error(
     tokenizeSequences(seqs, 

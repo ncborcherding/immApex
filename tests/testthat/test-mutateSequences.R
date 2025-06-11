@@ -5,20 +5,17 @@
   seq2 <- "CASSLGQGAETQYF"                  
   input <- c(seq1, seq2)
   
-  # -------------------------------------------------------------------------
   test_that("basic output shape is correct", {
-    out <- mutateSequences(input, n.sequences = 3, mutation.rate = 0.1)
+    out <- mutateSequences(input, number.of.sequences = 3, mutation.rate = 0.1)
     expect_type(out, "character")
     expect_length(out, length(input) * 3)
   })
   
-  # -------------------------------------------------------------------------
   test_that("identical length is maintained", {
-    out <- mutateSequences(input, n.sequences = 2, mutation.rate = 0.2)
+    out <- mutateSequences(input, number.of.sequences = 2, mutation.rate = 0.2)
     expect_equal(as.numeric(nchar(out)), rep(nchar(rep(input, each = 2)), 1))
   })
   
-  # -------------------------------------------------------------------------
   test_that("mutation.rate = 0 returns originals verbatim", {
     expect_identical(
       as.character(mutateSequences(input, mutation.rate = 0)),
@@ -26,7 +23,6 @@
     )
   })
   
-  # -------------------------------------------------------------------------
   test_that("mutation.rate = 1 changes *every* position", {
     set.seed(42)
     mut <- mutateSequences(seq1, mutation.rate = 1)  # single string
@@ -34,7 +30,6 @@
                        strsplit(seq1, "")[[1]]))
   })
   
-  # -------------------------------------------------------------------------
   test_that("requested window boundaries are honoured", {
     set.seed(1)
     win <- mutateSequences(seq1,
@@ -46,7 +41,6 @@
                  substr(seq1, unchanged, unchanged))
   })
   
-  # -------------------------------------------------------------------------
   test_that("ceil((p1-p0+1)*rate) mutations applied (probabilistic)", {
     # deterministic check by seeding and forcing small window
     set.seed(123)
@@ -61,13 +55,11 @@
     expect_equal(num_mut, ceiling(win_len * rate))
   })
   
-  # -------------------------------------------------------------------------
   test_that("all output symbols come from sequence.dictionary", {
     out <- mutateSequences(seq1, mutation.rate = 1)
     expect_true(all(unique(unlist(strsplit(out, ""))) %in% aa))
   })
   
-  # -------------------------------------------------------------------------
   test_that("invalid input raises informative errors", {
     expect_error(
       mutateSequences(123),                             # non-character
@@ -88,12 +80,10 @@
     )
   })
   
-  # -------------------------------------------------------------------------
-  test_that("n.sequences = 0 gives zero-length result", {
-    expect_length(mutateSequences(seq1, n.sequences = 0), 0)
+  test_that("number.of.sequences = 0 gives zero-length result", {
+    expect_length(mutateSequences(seq1, number.of.sequences = 0), 0)
   })
   
-  # -------------------------------------------------------------------------
   test_that("custom dictionary is accepted and used", {
     custom <- c("A", "B", "C")
     set.seed(7)

@@ -36,6 +36,7 @@
 #' \strong{nt} for nucleotide
 #' @param sequences The specific regions of the CDR loop to get from the data, 
 #' such as \strong{CDR1}. 
+#' @param verbose Logical. If `TRUE` (default), prints a progress message.
 #'                             
 #' @importFrom stringr str_split
 #' 
@@ -80,7 +81,7 @@ inferCDR <- function(input.data,
   }
   
   # Build a lookup table ------------------------------------------------------
-  if (verbose) message("Building V-gene / CDR map …\n")
+  if (verbose) message("Building V-gene / CDR map...")
   
   ref_seqs <- reference[["sequences"]]
   ref_names <- names(ref_seqs)

@@ -42,7 +42,7 @@ Either
 Quickly computes the per-position relative frequency of each symbol
 (amino-acid or nucleotide) in a set of biological sequences.  Variable-length
 strings are padded to a common width so the calculation is entirely
-vectorised (one logical comparison + one `colSums()` per residue).
+vectorized (one logical comparison + one `colSums()` per residue).
 }
 \examples{
 set.seed(1)

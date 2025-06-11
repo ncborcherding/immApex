@@ -28,7 +28,7 @@ shannon_entropy <- function(cnt) {
 #' Inverse Simpson Diversity
 #'
 #' Computes the inverse of Simpson’s concentration index, sometimes written
-#' as *1/D*.  This metric emphasises dominant categories.
+#' as *1/D*.  This metric emphasizes dominant categories.
 #'
 #' \deqn{1/D \;=\; \frac{1}{\sum_{i} p_i^{\,2}}}
 #'

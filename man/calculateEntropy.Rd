@@ -13,6 +13,8 @@ calculateEntropy(
 )
 }
 \arguments{
+\item{input.sequences}{`character()`. Vector of CDR3 AA strings.}
+
 \item{max.length}{`integer(1)`. Target length to align / pad to.
 *Default* = `max(nchar(sequences))`.}
 
@@ -21,8 +23,6 @@ calculateEntropy(
 `"hill1"`, `"hill2"`) **or** a custom function as described above.}
 
 \item{padding.symbol}{Symbol to use for padding at the end of sequences.}
-
-\item{sequences}{`character()`. Vector of CDR3 AA strings.}
 }
 \value{
 Named `numeric()` vector of diversity scores,
@@ -31,15 +31,15 @@ Named `numeric()` vector of diversity scores,
 \description{
 Computes residue-wise diversity for a set of aligned (right-padded)
 CDR3 amino-acid sequences using *any* supported diversity estimator
-in **immApex**.  The following metrics are recognised:
+in **immApex**.  The following metrics are recognized:
 
-* **Shannon entropy:**           \link[=shannon_entropy]{\code{shannon_entropy}}
-* **Inverse Simpson:**           \link[=inv_simpson]{\code{inv_simpson}}
-* **Gini–Simpson index:**        \link[=gini_simpson]{\code{gini_simpson}}
-* **Normalised entropy:**        \link[=norm_entropy]{\code{norm_entropy}}
-* **Pielou evenness:**           \link[=pielou_evenness]{\code{pielou_evenness}}
-* **Hill numbers** (orders 0, 1, 2):
-  \link[=hill_q]{\code{hill_q}}(0), \code{hill_q(1)}, \code{hill_q(2)}
+* **Shannon entropy:**           \code{\link[=shannon_entropy]{shannon_entropy}}
+* **Inverse Simpson:**           \code{\link[=inv_simpson]{inv_simpson}}
+* **Gini–Simpson index:**        \code{\link[=gini_simpson]{gini_simpson}}
+* **Normalized entropy:**        \code{\link[=norm_entropy]{norm_entropy}}
+* **Pielou evenness:**           \code{\link[=pielou_evenness]{pielou_evenness}}
+* * **Hill numbers** (orders 0, 1, 2): \code{\link[=hill_q]{hill_q(0)}}, 
+\code{\link[=hill_q]{hill_q(1)}}, \code{\link[=hill_q]{hill_q(2)}}
 
 You may also supply a **custom function** to `method`; it must take a
 numeric vector of clone counts and return a single numeric value.

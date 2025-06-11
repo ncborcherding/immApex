@@ -56,7 +56,7 @@ test_that("Throws errors for invalid inputs", {
   # Error for sequences that are too short to have adjacencies
   sequences_too_short <- c("A", "G")
   expect_error(adjacencyMatrix(sequences_too_short, sequence.dictionary = c("A", "G")),
-               "All sequences have length < 2 – no adjacencies to compute.")
+               "All sequences have length < 2 - no adjacencies to compute.")
   
   # Stopifnot checks for input types
   expect_error(adjacencyMatrix(input.sequences = 123))

@@ -3,7 +3,7 @@
 #' Computes a comprehensive panel of univariate statistics for every
 #' **row** *or* **column** of a numeric matrix.  It is designed for
 #' lightweight feature-engineering pipelines where many summaries are
-#' required up-front (e.g. before modelling).
+#' required up-front (e.g. before modeling).
 #'
 #' @param x Numeric matrix (will be coerced with \code{as.matrix()}).
 #' @param margin Integer. 1 = operate row-wise; 2 = column-wise (default 2).
@@ -31,6 +31,7 @@
 #' (rows of the input when \code{margin = 1}, otherwise columns) and one 
 #' **column per requested statistic**. Row-names (if present) are preserved; 
 #' column names are the statistic labels.
+#' @importFrom stats IQR mad median sd var
 #'
 #' @export
 #' @examples

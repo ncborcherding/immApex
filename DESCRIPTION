@@ -11,26 +11,28 @@ biocViews: Software, ImmunoOncology, SingleCell, Classification, Annotation, Seq
 Depends: 
 	R (>= 4.3.0)
 Imports: 
-	basilisk, 
         hash,
 	httr,
-	magrittr,
+	Matrix,
 	matrixStats,
 	methods,
 	Rcpp,
 	rvest,
 	SingleCellExperiment,
 	stats,
-	stringi,
 	stringr,
         utils
 Suggests: 
 	BiocStyle,
+	dplyr,
 	ggraph,
 	ggplot2,
+	igraph,
 	knitr,
 	graph,
 	markdown,
+	Peptides,
+	randomForest,
 	rmarkdown, 
 	scRepertoire,
 	spelling,

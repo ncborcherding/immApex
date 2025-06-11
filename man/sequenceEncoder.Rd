@@ -19,7 +19,8 @@ sequenceEncoder(
   summary.fun = "",
   max.length = NULL,
   nthreads = parallel::detectCores(),
-  verbose = TRUE
+  verbose = TRUE,
+  ...
 )
 
 onehotEncoder(..., mode = "onehot")
@@ -58,6 +59,9 @@ longest sequence sets the maximum. Not used in geometric mode.}
 \item{nthreads}{Number of threads for C++ backend. Not used in geometric mode.}
 
 \item{verbose}{Logical. If `TRUE` (default), prints a progress message.}
+
+\item{...}{Additional arguments passed to `sequenceEncoder()` when using 
+wrapper functions (`onehotEncoder`, `propertyEncoder`, `geometricEncoder`).}
 }
 \value{
 A named `list` containing the encoded data and metadata.
@@ -74,7 +78,7 @@ A named `list` containing the encoded data and metadata.
 of amino-acid sequences into one of three representations:
 1.  **one-hot**: A binary representation for each amino acid position.
 2.  **property-based**: A numerical representation based on amino acid properties
-    (e.g., hydropathy, charge).
+    (e.g., Atchley, kideraFactors, etc).
 3.  **geometric**: A fixed-length 20-dimensional vector for each sequence,
     derived from a substitution matrix and geometric rotation.
 }

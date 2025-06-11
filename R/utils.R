@@ -6,6 +6,7 @@ amino.acids <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M"
 
 "%!in%" <- Negate("%in%")
 
+#' @importFrom utils head
 .check.sequences <- function(sequences, dict) {
   pat <- sprintf("[^%s]", paste(dict, collapse = ""))
   any(grepl(pat, head(sequences, 20L)))  

@@ -27,6 +27,7 @@
 #' @param verbose Print messages corresponding to the processing step
 #' 
 #' @export
+#' @importFrom stats setNames
 #' @return Integer matrix (rows = sequences, cols = positions) or list of vectors.
 tokenizeSequences <- function(input.sequences, 
                               add.startstop = TRUE,
