@@ -53,7 +53,7 @@ getIR <- function(input.data,
   
   # build IR per chain --------------------------------------------------------
   IR <- lapply(chains, function(ch) {
-    df <- .get_vdj_matrix(meta[[col.pos]], meta[["CTgene"]], ch)
+    df <- .get_vdj_matrix(meta[[col.pos]], meta[["CTgene"]], chains)
     df$barcode <- rownames(meta)
     df$chain   <- ch
     if (!is.null(group.by)) df[[group.by]] <- grp_vec
@@ -110,21 +110,56 @@ getIR <- function(input.data,
 #' @keywords internal
 .get_vdj_matrix <- function(ct_aa, ct_gene, chain) {
   
-  # Split once, slice columns
-  aa_mat   <- .split_to_matrix(ct_aa)
-  gene_mat <- .split_to_matrix(ct_gene, ".")
+  # Pre-process to remove secondary chains (anything after a ';')
+  ct_aa_clean <- gsub(";.*", "", ct_aa)
+  ct_gene_clean <- gsub(";.*", "", ct_gene)
   
-  idx <- switch(chain,
-                TRA = c(2, 4), TRG = c(2, 4), Light = c(2, 4),
-                TRB = c(3, 5), TRD = c(3, 5), Heavy = c(3, 5)
-  )
+  # Split the strings into alpha/beta chain components.
+  aa_list <- strsplit(ct_aa_clean, "_")
+  gene_list <- strsplit(ct_gene_clean, "_")
   
-  data.frame(
-    cdr3_aa = aa_mat[, idx[1]],
-    v = gene_mat[, 1],
-    d = if (chain %in% c("TRB", "TRD", "Heavy")) gene_mat[, 2] else NA,
-    j = gene_mat[, if (chain %in% c("TRB", "TRD", "Heavy")) 3 else 2],
-    c = gene_mat[, if (chain %in% c("TRB", "TRD", "Heavy")) 4 else 3],
-    stringsAsFactors = FALSE
-  )
+  aa_mat <- do.call(rbind, lapply(aa_list, `length<-`, 2))
+  gene_mat <- do.call(rbind, lapply(gene_list, `length<-`, 2))
+  
+  # Determine which column to use based on the requested chain.s.
+  is_second_type <- chain %in% c("TRB", "TRD", "Light")
+  is_heavy_type <- chain %in% c("TRB", "TRD", "Heavy")
+  col_idx <- if (is_second_type) 2 else 1
+  
+  cdr3_selected <- aa_mat[, col_idx]
+  gene_selected <- gene_mat[, col_idx]
+  
+  # Split the selected gene strings by '.' to get V, D, J, C segments..
+  gene_selected_safe <- ifelse(is.na(gene_selected), "", gene_selected)
+  gene_parts_list <- strsplit(gene_selected_safe, "\\.")
+  
+  # Determine the expected number of gene segments and create the matrix.
+  max_genes <- if (is_heavy_type) 4 else 3 
+  gene_parts_mat <- do.call(rbind, lapply(gene_parts_list, `length<-`, max_genes))
+  
+  # Assemble the final data frame with the extracted components.
+  if (is_heavy_type) {
+    df <- data.frame(
+      cdr3_aa = cdr3_selected,
+      v = gene_parts_mat[, 1],
+      d = gene_parts_mat[, 2],
+      j = gene_parts_mat[, 3],
+      c = gene_parts_mat[, 4],
+      stringsAsFactors = FALSE
+    )
+  } else {
+    df <- data.frame(
+      cdr3_aa = cdr3_selected,
+      v = gene_parts_mat[, 1],
+      d = NA, # D gene is not applicable for light/alpha chains
+      j = gene_parts_mat[, 2],
+      c = gene_parts_mat[, 3],
+      stringsAsFactors = FALSE
+    )
+  }
+  
+  # Final cleanup
+  df[df == "NA" | df == "None" | df == ""] <- NA
+  
+  return(df)
 }
