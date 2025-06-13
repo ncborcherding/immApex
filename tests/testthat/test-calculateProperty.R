@@ -5,7 +5,7 @@ test_that("baseline output (mean, Atchley) has correct dimensions & names", {
   seqs <- c("ACDE", "ACDF")                      # L = 4
   
   res  <- calculateProperty(seqs,
-                            property.set = "Atchley",
+                            property.set = "atchleyFactors",
                             summary.fun  = "mean")
   
   expect_type(res, "double")
@@ -16,10 +16,10 @@ test_that("baseline output (mean, Atchley) has correct dimensions & names", {
 
 test_that("first column equals simple mean of Atchley values", {
   seqs <- c("AC", "AC")                          # all residues identical
-  res  <- calculateProperty(seqs, "Atchley")
+  res  <- calculateProperty(seqs, "atchleyFactors")
   
-  Avals <- .builtin_scales$Atchley[ , "A"]        # AF1..AF5 for Alanine
-  Cvals <- .builtin_scales$Atchley[ , "C"]        # for checking col-2
+  Avals <- .builtin_scales$atchleyFactors[ , "A"]        # AF1..AF5 for Alanine
+  Cvals <- .builtin_scales$atchleyFactors[ , "C"]        # for checking col-2
   
   expect_equal(res[ , "Pos.1"], Avals, tolerance = 1e-12)
   expect_equal(res[ , "Pos.2"], Cvals, tolerance = 1e-12)

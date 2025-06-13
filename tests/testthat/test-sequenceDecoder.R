@@ -14,7 +14,7 @@ test_that("sequenceDecoder rejects invalid inputs", {
 })
 
 test_that("sequenceDecoder handles property mode argument errors", {
-  encoded <- sequenceEncoder("A", mode = "property", property.set = "Atchley")
+  encoded <- sequenceEncoder("A", mode = "property", property.set = "atchleyFactors")
   
   # Error when no property info is provided
   expect_error(
@@ -91,13 +91,13 @@ test_that(".propertyDecoder handles padding and thresholds", {
   sequences <- c("CA", "R")
   encoded <- sequenceEncoder(sequences, 
                              mode = "property", 
-                             property.set = "Atchley")
+                             property.set = "atchleyFactors")
   
   # Test padding removal (default)
   expect_equal(
     as.vector(sequenceDecoder(encoded$cube, 
                     mode = "property", 
-                    property.set = "Atchley", 
+                    property.set = "atchleyFactors", 
                     call.threshold = 0.1)),
     c("CA", "R")
   )
@@ -106,7 +106,7 @@ test_that(".propertyDecoder handles padding and thresholds", {
   expect_equal(
     as.vector(sequenceDecoder(encoded$cube, 
                     mode = "property", 
-                    property.set = "Atchley", 
+                    property.set = "atchleyFactors", 
                     remove.padding = FALSE, 
                     call.threshold = 0.1)),
     c("CA", "R.")
@@ -120,7 +120,7 @@ test_that(".propertyDecoder handles padding and thresholds", {
   expect_equal(
     as.vector(sequenceDecoder(perturbed_cube, 
                     mode = "property", 
-                    property.set = "Atchley", 
+                    property.set = "atchleyFactors", 
                     call.threshold = 0.1)[1]),
     "CA"
   )
@@ -129,7 +129,7 @@ test_that(".propertyDecoder handles padding and thresholds", {
   expect_equal(
     as.vector(sequenceDecoder(perturbed_cube, 
                     mode = "property", 
-                    property.set = "Atchley", 
+                    property.set = "atchleyFactors", 
                     call.threshold = 0.001)[1]),
     ".A"
   )
