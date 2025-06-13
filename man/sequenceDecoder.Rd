@@ -61,7 +61,7 @@ encoded.onehot <- sequenceEncoder(aa.sequences,
                                   mode = "onehot")
 encoded.prop <- sequenceEncoder(aa.sequences, 
                                 mode = "property", 
-                                property.set = "Atchley")
+                                property.set = "atchleyFactors")
 
 # Decode the sequences
 # 1. Decode from the full list object
@@ -71,7 +71,7 @@ decoded.1 <- sequenceDecoder(encoded.onehot,
 # 2. Decode from just the 3D cube array
 decoded.2 <- sequenceDecoder(encoded.prop$cube,
                              mode = "property",
-                             property.set = "Atchley")
+                             property.set = "atchleyFactors")
 
 
 }
