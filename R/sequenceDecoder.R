@@ -9,7 +9,7 @@
 #' @param mode The encoding mode used for decoding: `"onehot"` or `"property"`.
 #'   This is typically inferred if `encoded.object` is a list from `sequenceEncoder`.
 #' @param property.set For `mode = "property"`, a character vector of property
-#'   names (e.g., `"Atchley"`) that were used for the original encoding.
+#'   names (e.g., `"atchleyFactors"`) that were used for the original encoding.
 #'   See `?sequenceEncoder`. This is ignored if `property.matrix` is supplied.
 #' @param property.matrix For `mode = "property"`, the exact numeric matrix
 #'   (with dimensions `20 x P`) that was used for encoding. This overrides

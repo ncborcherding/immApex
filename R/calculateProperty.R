@@ -8,7 +8,9 @@
 #'
 #' @param input.sequences Character vector of amino-acid strings.
 #' @param property.set Character string (one of the supported names) 
-#' Defaults to `"Atchley"`.
+#' Defaults to `"atchleyFactors"`, but includes: `"crucianiProperties"`, 
+#' `"FASGAI"`, `"kideraFactors"`, `"MSWHIM"`, `"ProtFP"`, `"stScales"`, 
+#' `"tScales"`, `"VHSE"`, `"zScales"`
 #' @param summary.fun Character string (`"mean"`, `"median"`, `"sum"`,
 #' `"min"`, `"max"`), **or** a function accepting a numeric vector and
 #' returning length-1 numeric.  Defaults to `"mean"`.
@@ -143,7 +145,7 @@ calculateProperty <- function(input.sequences,
 .builtin_scales <- new.env(parent = emptyenv())
 amino.acids <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")
 
-.builtin_scales$Atchley <- t(matrix(c(
+.builtin_scales$atchleyFactors <- t(matrix(c(
   # A (Alanine)
   -0.591, -1.302, -0.733,  1.570, -0.146,
   # R (Arginine)

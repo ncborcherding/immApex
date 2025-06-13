@@ -18,7 +18,9 @@ calculateProperty(
 \item{input.sequences}{Character vector of amino-acid strings.}
 
 \item{property.set}{Character string (one of the supported names) 
-Defaults to `"Atchley"`.}
+Defaults to `"atchleyFactors"`, but includes: `"crucianiProperties"`, 
+`"FASGAI"`, `"kideraFactors"`, `"MSWHIM"`, `"ProtFP"`, `"stScales"`, 
+`"tScales"`, `"VHSE"`, `"zScales"`}
 
 \item{summary.fun}{Character string (`"mean"`, `"median"`, `"sum"`,
 `"min"`, `"max"`), **or** a function accepting a numeric vector and

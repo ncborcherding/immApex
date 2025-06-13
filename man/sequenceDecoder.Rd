@@ -23,7 +23,7 @@ numeric `matrix` (flattened 2D) or `array` (3D cube) from it.}
 This is typically inferred if `encoded.object` is a list from `sequenceEncoder`.}
 
 \item{property.set}{For `mode = "property"`, a character vector of property
-names (e.g., `"Atchley"`) that were used for the original encoding.
+names (e.g., `"atchleyFactors"`) that were used for the original encoding.
 See `?sequenceEncoder`. This is ignored if `property.matrix` is supplied.}
 
 \item{property.matrix}{For `mode = "property"`, the exact numeric matrix

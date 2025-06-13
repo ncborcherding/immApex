@@ -35,8 +35,10 @@ single-letter code).}
 
 \item{mode}{Either `"onehot"`, `"property"`, or `"geometric"`.}
 
-\item{property.set}{*Optional `character` vector* of property names for
-`"property"` mode. Ignored if `property.matrix` is supplied.}
+\item{property.set}{Character string (one of the supported names) 
+ Defaults to `"atchleyFactors"`, but includes: `"crucianiProperties"`, 
+`"FASGAI"`, `"kideraFactors"`, `"MSWHIM"`, `"ProtFP"`, `"stScales"`, 
+`"tScales"`, `"VHSE"`, `"zScales"` Ignored if `property.matrix` is supplied.}
 
 \item{property.matrix}{*Optional numeric matrix (`20 × P`)*. Overrides
 `property.set` in `"property"` mode.}
@@ -78,7 +80,7 @@ A named `list` containing the encoded data and metadata.
 of amino-acid sequences into one of three representations:
 1.  **one-hot**: A binary representation for each amino acid position.
 2.  **property-based**: A numerical representation based on amino acid properties
-    (e.g., Atchley, kideraFactors, etc).
+    (e.g., atchleyFactors, kideraFactors, etc).
 3.  **geometric**: A fixed-length 20-dimensional vector for each sequence,
     derived from a substitution matrix and geometric rotation.
 }
