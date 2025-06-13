@@ -218,7 +218,7 @@ Parameters for `calculateProperty()`
 ```{r }
 # Calculate the mean of Atchley factors at each position
 atchley.profile <- calculateProperty(sequences, 
-                                     property.set = "Atchley", 
+                                     property.set = "atchleyFactors", 
                                      summary.fun = "mean")
 head(atchley.profile[, 1:6])
 ```
@@ -503,7 +503,7 @@ labels <- as.factor(c(rep("Class1", 500), rep("Class2", 500)))
 
 # Step 1b: Use propertyEncoder to create a feature matrix from Atchley factors
 feature.matrix <- propertyEncoder(all.sequences, 
-                                  property.set = "Atchley",
+                                  property.set = "atchleyFactors",
                                   verbose = FALSE)
 
 # Combine the flattened feature matrix and labels into the final data frame
