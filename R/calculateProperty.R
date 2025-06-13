@@ -29,11 +29,11 @@
 #' @examples
 #' set.seed(1)
 #' seqs <- c("CASSLGQGAETQYF", "CASSPGQGDYEQYF", "CASSQETQYF")
-#' aa.Atchley <- calculateProperty(seqs, property.set = "Atchley")
+#' aa.Atchley <- calculateProperty(seqs, property.set = "atchleyFactors")
 #' 
 #' @export
 calculateProperty <- function(input.sequences,
-                              property.set  = "Atchley",
+                              property.set  = "atchleyFactors",
                               summary.fun   = "mean",
                               transform     = "none",
                               max.length    = NULL,
