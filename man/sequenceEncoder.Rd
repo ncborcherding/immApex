@@ -106,12 +106,17 @@ and then applies a planar rotation to the resulting vector.
 aa <- c("CARDRST", "YYYGMD", "ACACACAC")
 
 # One-hot encoding
-enc_onehot <- sequenceEncoder(aa, mode = "onehot")
+enc_onehot <- sequenceEncoder(aa, 
+                              mode = "onehot")
 
 # Property-based encoding
-enc_prop <- sequenceEncoder(aa, mode = "property", property.set = "Atchley")
+enc_prop <- sequenceEncoder(aa, 
+                            mode = "property", 
+                            property.set = "atchleyFactors")
 
 # Geometric encoding
-enc_geo <- sequenceEncoder(aa, mode = "geometric", method = "BLOSUM62")
+enc_geo <- sequenceEncoder(aa, 
+                           mode = "geometric", 
+                           method = "BLOSUM62")
 
 }
