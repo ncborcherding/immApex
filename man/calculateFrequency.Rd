@@ -9,6 +9,7 @@ calculateFrequency(
   max.length = NULL,
   sequence.dictionary = amino.acids,
   padding.symbol = ".",
+  summary.fun = c("proportion", "count", "percent"),
   tidy = FALSE
 )
 }
@@ -25,6 +26,11 @@ tracked (defaults to the 20 canonical amino acids; supply
 
 \item{padding.symbol}{Single character used for right-padding. **Must not**
 be present in `sequence.dictionary`.}
+
+\item{summary.fun}{Character string choosing the summary statistic:
+* `"proportion"` (default) – each cell sums to 1 over the table.  
+* `"count"`      – raw counts.  
+* `"percent"`    – proportion × 100.}
 
 \item{tidy}{Logical; if `TRUE` a long-format `data.frame` is returned
 instead of a matrix (useful for plotting with *ggplot2*).}
@@ -45,12 +51,12 @@ strings are padded to a common width so the calculation is entirely
 vectorized (one logical comparison + one `colSums()` per residue).
 }
 \examples{
-set.seed(1)
+# Amino Acid example
 seqs <- c("CASSLGQGAETQYF", "CASSPGQGDYEQYF", "CASSQETQYF")
 rel.freq <- calculateFrequency(seqs)
 head(rel.freq[, 1:5])                  
 
-## Nucleotide example
+# Nucleotide example
 dna <- c("ATGCC", "ATGAC", "ATGGC")
 calculateFrequency(dna,
                    sequence.dictionary = c("A","C","G","T"),

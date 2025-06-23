@@ -46,13 +46,7 @@ calculateProperty <- function(input.sequences,
             nchar(padding.symbol) == 1L)
   
   if (is.character(summary.fun)) {
-    summary.fun <- switch(summary.fun,
-                          "mean"   = base::mean,
-                          "median" = stats::median,
-                          "sum"    = base::sum,
-                          "min"    = base::min,
-                          "max"    = base::max,
-                          stop("Unknown summary.fun keyword: ", summary.fun))
+    summary.fun <- .summary.function(summary.fun)
   }
   
   if (!is.function(summary.fun))
@@ -84,6 +78,7 @@ calculateProperty <- function(input.sequences,
     max.length          = max.length,
     sequence.dictionary = amino.acids,
     padding.symbol      = padding.symbol,
+    summary.fun         = "proportion",
     tidy                = FALSE)[amino.acids, , drop = FALSE]
   
   # 3. Summary per position 

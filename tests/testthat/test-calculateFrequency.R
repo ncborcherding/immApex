@@ -6,8 +6,9 @@ aa_20 <- c("A","C","D","E","F","G","H","I","K","L",
 dna_4 <- c("A","C","G","T")
 
 # Helper to check column sums ≈ 1 -----------------------------------------
-cols_sum_to_one <- function(mat, tol = 1e-12)
+cols_sum_to_one <- function(mat, tol = 1e-12) {
   all(abs(colSums(mat) - 1) < tol)
+}
 
 ## -------------------------------------------------------------------------
 test_that("matrix dimensions & names are correct (AA default)", {

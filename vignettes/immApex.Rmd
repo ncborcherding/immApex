@@ -369,7 +369,7 @@ Instead of a binary vector, this method represents each amino acid using a set o
     
 Available **property.set** options include:
 
-* Atchley - [citation](https://pubmed.ncbi.nlm.nih.gov/15851683/)
+* atchleyFactors - [citation](https://pubmed.ncbi.nlm.nih.gov/15851683/)
 * crucianiProperties - [citation](https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/abs/10.1002/cem.856)
 * FASGAI - [citation](https://pubmed.ncbi.nlm.nih.gov/18318694/)
 * kideraFactors - [citation](https://link.springer.com/article/10.1007/BF01025492)

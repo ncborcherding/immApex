@@ -8,7 +8,7 @@ calculateGeneUsage(
   input.data,
   loci,
   levels = NULL,
-  summary = c("proportion", "count", "percent")
+  summary.fun = c("proportion", "count", "percent")
 )
 }
 \arguments{
@@ -21,7 +21,7 @@ columns named in `loci` contain gene identifiers.}
 levels to include.  Missing levels are filled with zeros. If `NULL`
 (default) only observed levels appear.}
 
-\item{summary}{Character string choosing the summary statistic:
+\item{summary.fun}{Character string choosing the summary statistic:
 * `"proportion"` (default) – each cell sums to 1 over the table.  
 * `"count"`      – raw counts.  
 * `"percent"`    – proportion × 100.}

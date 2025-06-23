@@ -6,6 +6,42 @@ amino.acids <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M"
 
 "%!in%" <- Negate("%in%")
 
+.summary.function <- function(x) {
+  x <- switch(x,
+              "mean"   = base::mean,
+              "median" = stats::median,
+              "sum"    = base::sum,
+              "min"    = base::min,
+              "max"    = base::max,
+              stop("Unknown summary.fun keyword: ", x))
+}
+
+.scale.counts <- function(tab, mode, denominator = NULL) {
+  # If a denominator is not provided, calculate it based on the input 'tab'
+  if (is.null(denominator)) {
+    denominator <- sum(tab)
+  }
+  switch(mode,
+         count      = tab,
+         proportion = {
+           if (sum(denominator) == 0) {
+             tab[] <- 0
+             tab
+           } else {
+             tab / denominator
+           }
+         },
+         percent    = {
+           if (sum(denominator) == 0) {
+             tab[] <- 0
+             tab
+           } else {
+             100 * tab / denominator
+           }
+         })
+}
+
+
 #' @importFrom utils head
 .check.sequences <- function(sequences, dict) {
   pat <- sprintf("[^%s]", paste(dict, collapse = ""))
@@ -14,20 +50,19 @@ amino.acids <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M"
 
 #Add additional sequence padding to max length
 .padded.strings <- function(strings, max.length, pad = ".", collapse = TRUE) {
+  # 1. Truncate all strings to be AT MOST max.length.
+  truncated_strings <- substr(strings, 1, max.length)
   
-  #Internal functions
-  pad_right <- function(x, width, pad) {
-    stopifnot(nchar(pad) == 1L)             
-    need <- pmax.int(0L, width - nchar(x))   
-    paste0(x, strrep(pad, need))             
-  }
-  pad_vector <- function(s) c(strsplit(s, "")[[1L]],
-                              rep(pad, max.length - nchar(s)))
+  # 2. Calculate the needed padding for the  strings.
+  needed_padding <- max.length - nchar(truncated_strings)
+  
+  # 3. Add the padding to the right of each string.
+  final_strings <- paste0(truncated_strings, strrep(pad, needed_padding))
   
   if (collapse) {
-    pad_right(strings, max.length, pad)                       # base-R, no loop
+    return(final_strings)
   } else {
-    lapply(strings, function(s) pad_vector(s))
+    return(strsplit(final_strings, ""))
   }
 }
 

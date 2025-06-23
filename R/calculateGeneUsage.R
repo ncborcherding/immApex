@@ -10,7 +10,7 @@
 #' @param levels Optional list of length 1 or 2 with the full set of factor
 #' levels to include.  Missing levels are filled with zeros. If `NULL`
 #' (default) only observed levels appear.
-#' @param summary Character string choosing the summary statistic:
+#' @param summary.fun Character string choosing the summary statistic:
 #'   * `"proportion"` (default) – each cell sums to 1 over the table.  
 #'   * `"count"`      – raw counts.  
 #'   * `"percent"`    – proportion × 100.
@@ -28,27 +28,20 @@
 calculateGeneUsage <- function(input.data,
                                loci,
                                levels  = NULL,
-                               summary = c("proportion", "count", "percent"))
-{
-  summary <- match.arg(summary)
+                               summary.fun = c("proportion", "count", "percent")) {
+  # Preflight checks-----------------------------------------------------------
+  summary.fun <- match.arg(summary.fun)
   stopifnot(is.data.frame(input.data),
             is.character(loci), length(loci) %in% 1:2,
             all(loci %in% names(input.data)))
-  
-  ## helper to scale counts -------------------------------------------------
-  .scaleCounts <- function(tab, mode) {
-    switch(mode,
-           count      = tab,
-           proportion = tab / sum(tab),
-           percent    = 100 * tab / sum(tab))
-  }
+
   
   ## single locus -------------------------------------------------------------
   if (length(loci) == 1L) {
     x <- input.data[[loci[1]]]
     tab <- if (is.null(levels)) table(x)
     else table(factor(x, levels = levels[[1]]))
-    out <- .scaleCounts(tab, summary)
+    out <- .scale.counts(tab, summary.fun)
     return(out)          # return vector
   }
   
@@ -60,5 +53,5 @@ calculateGeneUsage <- function(input.data,
   else
     table(factor(x, levels = levels[[1]]),
           factor(y, levels = levels[[2]]))
-  .scaleCounts(tab, summary)          # matrix
+  .scale.counts(tab, summary.fun)          # matrix
 }
