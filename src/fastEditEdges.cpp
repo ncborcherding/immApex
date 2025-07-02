@@ -1,7 +1,7 @@
 // ── src/fastEditEdges.cpp ───────────────────────────────────────────────────
 #include <Rcpp.h>
 #include <numeric>
-#include <cmath>          // for ceil, lround
+#include <cmath>          
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -44,7 +44,7 @@ static inline int lv_threshold(const std::string &a,
 }
 
 // ----------------------------------------------------------------------------
-//  Main export
+//  Main export 
 // ----------------------------------------------------------------------------
 // [[Rcpp::export]]
 DataFrame fast_edge_list(CharacterVector           seqs,
@@ -57,7 +57,7 @@ DataFrame fast_edge_list(CharacterVector           seqs,
 {
   int n = seqs.size();
   if (n < 2) stop("At least two sequences are required.");
-  if (thresh < 0) stop("`thresh` must be ≥ 0.");
+  if (thresh < 0) stop("`thresh` must be >= 0.");
   
   // 1) Read sequences + lengths
   std::vector<std::string> s(n);
@@ -94,7 +94,7 @@ DataFrame fast_edge_list(CharacterVector           seqs,
     lbl = as< std::vector<std::string> >(ix);
   }
   
-  // 4) Reserve output buffers (worst-case n*(n-1)/2 edges)
+  // 4) Reserve output buffers
   size_t approx = (size_t)n * (n-1) / 2;
   std::vector<std::string> out_from; out_from.reserve(approx);
   std::vector<std::string> out_to;   out_to  .reserve(approx);
@@ -122,27 +122,35 @@ DataFrame fast_edge_list(CharacterVector           seqs,
       if (match_v && v[i] != v[k]) continue;
       if (match_j && J[i] != J[k]) continue;
       
-      // compute pairwise maxd
-      int maxd;
+      int max_len = std::max(lens[i], lens[k]);
+      if (max_len == 0) continue; // Skip empty sequences
+      
+      int maxd; // Maximum allowed absolute Levenshtein distance
+      
       if (thresh >= 1.0) {
         maxd = std::lround(thresh);
       } else {
-        maxd = std::ceil(thresh * std::max(lens[i], lens[k]));
+        double dist_thresh_rel = 1.0 - thresh;
+        maxd = std::floor(dist_thresh_rel * max_len);
       }
+      
+      // if length difference > max allowed distance, skip calculation.
       if (std::abs(lens[i] - lens[k]) > maxd) continue;
       
+      // Calculate Levenshtein distance with early-exit optimization.
       int d = lv_threshold(s[i], s[k], maxd);
+      
+      // Filter: Return only edges that meet the threshold criteria.
       if (d <= maxd) {
         loc_from.push_back(lbl[i]);
-        loc_to  .push_back(lbl[k]);
-        // [FIX] Calculate and push back the correct distance type
-        if (thresh < 1.0) {
-          // Relative distance mode
-          double rel_dist = static_cast<double>(d) / std::max(lens[i], lens[k]);
-          loc_d.push_back(rel_dist);
+        loc_to.push_back(lbl[k]);
+        
+        // Store the appropriate distance value in the output data frame.
+        if (thresh >= 1.0) {
+          loc_d.push_back(static_cast<double>(d)); // Store absolute distance
         } else {
-          // Absolute distance mode
-          loc_d.push_back(static_cast<double>(d));
+          double rel_dist = static_cast<double>(d) / max_len;
+          loc_d.push_back(rel_dist); // Store relative distance
         }
       }
     }
